@@ -17,15 +17,16 @@ const contactSchema = new mongoose.Schema({
             type: String
         }
     },
+    account: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Account'
+    },
     contactTitle: {
         type: String
     },
     contactEmail: {
         type: String
-    },
-    account: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Account'
     },
     contactPhone: {
         mobile: {
@@ -50,17 +51,12 @@ const contactSchema = new mongoose.Schema({
                 message: "Please enter phone with the `+` format (do not add space)"
             }
         }
-    },
-    lastModified: {
-        type: Date,
-        required: true,
-        default: new Date
-    },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
     }
-});
+},
+// Schema Options
+{
+    timestamps: true
+}
+);
 
 module.exports = mongoose.model('Contact', contactSchema);

@@ -7,13 +7,18 @@ const validatePhoneNumber = (ph) => {
 }
 
 const validateUserPosition = (pos) => {
-    const positions = ['director', 'BM', 'AM'];
-    return positions.includes(pos);
+    const positions = ['director', 'bm', 'am'];
+    return positions.includes(String(pos).toLowerCase());
 }
 
 const validatePostcode = (postcode) => {
     const regex = new RegExp('^[1-9]+$');
-    return regex.test(postcode)
+    return regex.test(String(postcode))
+}
+
+const validateEmail = (email) => {
+    const regex = new RegExp('^([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})$');
+    return regex.test(String(email).toLowerCase());
 }
 
 const userSchema = new mongoose.Schema({
@@ -21,7 +26,11 @@ const userSchema = new mongoose.Schema({
     userEmail: { 
         type: String, 
         unique: true,
-        required: true 
+        required: true,
+        validate: {
+            validator: validateEmail,
+            message: "Please enter a valid email"
+        }
     },
     name: {
         firstName: { 
@@ -33,7 +42,7 @@ const userSchema = new mongoose.Schema({
         },
         lastName: { 
             type: String
-        },
+        }
     },
     userDOB: { 
         type: Date,
@@ -41,9 +50,16 @@ const userSchema = new mongoose.Schema({
         default: new Date('1970-01-01')
     },
     userPhone: { 
-        mobile: { 
+        mobile1: { 
             type: String,
             required: true,
+            validate: {
+                validator: validatePhoneNumber,
+                message: "Please enter phone with the `+` format (do not add space)"
+            }
+        },
+        mobile2: { 
+            type: String,
             validate: {
                 validator: validatePhoneNumber,
                 message: "Please enter phone with the `+` format (do not add space)"
@@ -64,6 +80,10 @@ const userSchema = new mongoose.Schema({
             validator: validateUserPosition,
             message: "Please enter the correct position"
         },
+    },
+    reportTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     department: {
         type: mongoose.Schema.Types.ObjectId,
@@ -96,12 +116,12 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
         required: true
-    },
-    lastModified: {
-        type: Date,
-        default: new Date(),
-        required: true
     }
-});
+},
+// Schema Options
+{
+    timestamps: true
+}
+);
 
 module.exports = mongoose.model('User', userSchema);

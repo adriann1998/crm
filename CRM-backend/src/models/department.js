@@ -8,17 +8,7 @@ const departmentSchema = new mongoose.Schema({
     },
     director: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'User',
-        
-    },
-    employeeCount: {
-        type: Number,
-        required: true,
-        validate: {
-            validator: (n) => n >= 0,
-            message: "Employee count must greater than -1"
-        }
     }
 });
 

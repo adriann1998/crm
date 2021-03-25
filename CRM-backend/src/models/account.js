@@ -9,11 +9,12 @@ const accountSchema = new mongoose.Schema({
     },
     accAlias: {
         type: String,
-    },
-    lastModified: {
-        type: Date,
-        default: new Date()
     }
-});
+},
+// Schema Options
+{
+    timestamps: true
+}
+);
 
 module.exports = mongoose.model('Account', accountSchema);

@@ -1,3 +1,4 @@
+// IMPORTS
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -5,7 +6,8 @@ const morgan = require('morgan');
 const accounts = require('./routers/account');
 const contacts = require('./routers/contact');
 const departments = require('./routers/department');
-const opportunities = require('./routers/opportunity');
+const prospects = require('./routers/prospect');
+const quotes = require('./routers/quote');
 const users = require('./routers/user');
 
 const app = express();
@@ -17,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/CRM', {useNewUrlParser: true, useUni
     if (err) {
         return console.log('Mongoose - connection error:', err);
     }
-    console.log('Connect Successfully');
+    console.log('Connected to database Successfully');
 });
 
 //Configuring Endpoints
@@ -27,6 +29,41 @@ app.post('/accounts', accounts.createOne);
 app.get('/accounts/:id', accounts.getOne);
 app.put('/accounts/:id', accounts.updateOne);
 app.delete('/accounts/:id', accounts.deleteOne);
+
+//Contact RESTFul endpoionts 
+app.get('/contacts', contacts.getAll);
+app.post('/contacts', contacts.createOne);
+app.get('/contacts/:id', contacts.getOne);
+app.put('/contacts/:id', contacts.updateOne);
+app.delete('/contacts/:id', contacts.deleteOne);
+
+//Department RESTFul endpoionts 
+app.get('/departments', departments.getAll);
+app.post('/departments', departments.createOne);
+app.get('/departments/:id', departments.getOne);
+app.put('/departments/:id', departments.updateOne);
+app.delete('/departments/:id', departments.deleteOne);
+
+//Prospect RESTFul endpoionts 
+app.get('/prospects', prospects.getAll);
+app.post('/prospects', prospects.createOne);
+app.get('/prospects/:id', prospects.getOne);
+app.put('/prospects/:id', prospects.updateOne);
+app.delete('/prospects/:id', prospects.deleteOne);
+
+//Quote RESTFul endpoionts 
+app.get('/quotes', quotes.getAll);
+app.post('/quotes', quotes.createOne);
+app.get('/quotes/:id', quotes.getOne);
+app.put('/quotes/:id', quotes.updateOne);
+app.delete('/quotes/:id', quotes.deleteOne);
+
+//User RESTFul endpoionts 
+app.get('/users', users.getAll);
+app.post('/users', users.createOne);
+app.get('/users/:id', users.getOne);
+app.put('/users/:id', users.updateOne);
+app.delete('/users/:id', users.deleteOne);
 
 //Contact RESTFul endpoints
 // app.get('/contacts', movies.getAll);
