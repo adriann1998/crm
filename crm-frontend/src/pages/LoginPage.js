@@ -1,89 +1,124 @@
+// components
 import React, { useState } from 'react';
+import { 
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container
+} from '@material-ui/core';
+import { Alert } from 'react-bootstrap';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Copyright from '../components/Copyright';
+
+// utils
 import PropTypes from 'prop-types';
-import { Button, Form, Alert } from 'react-bootstrap';
-import crypto from 'crypto';
-import '../styles/pages/LoginPage.scss';
+import { useStyles, validateForm, loginUser } from '../utils/LoginUtil';
 
+export default function Login ( {setToken} ) {
 
-const appSecret = 'ASDF1341NF351VSD';
-const hash = (string) => {
-  return (crypto
-    .createHmac('sha256', appSecret)
-    .update(string)
-    .digest('hex')
-  )
-};
+  const [userEmail, setUserEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
 
-async function loginUser(credentials) {
-    credentials.password = hash(credentials.password);
-    return fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
-    })
-      .then(data => data.json())
-}
+  const classes = useStyles();
 
-function LoginPage ( {setToken} ) {
-
-    const [userEmail, setUserEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = React.useState("")
-
-    function validateForm() {
-      return userEmail.length > 0 && password.length > 0;
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const token = await loginUser({
+      userEmail,
+      password
+    });
+    if (token.token) {
+      setToken(token);
+      setErrorMessage("");
+    } 
+    else {
+      setErrorMessage("Incorrect username or password");
+      setPassword("");
     }
+  };
 
-    const handleSubmit = async e => {
-        e.preventDefault();
-        const token = await loginUser({
-          userEmail,
-          password
-        });
-        if (token.token) {
-          setToken(token); 
-          setErrorMessage("");
-        } 
-        else {
-          setErrorMessage("Incorrect username or password")
-        }
-    };
-
-    return(
-      <div className="Login">
-        <Form onSubmit={handleSubmit}>
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <form className={classes.form} onSubmit={handleSubmit}>
           {errorMessage.length > 0 &&  
             <Alert variant="danger">{errorMessage}</Alert>
           }
-          <Form.Group size="lg" controlId="userEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              autoFocus
-              type="email"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group size="lg" controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
-          <Button block size="lg" type="submit" disabled={!validateForm()}>
-            Login
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            type="email"
+            autoFocus
+            onChange={(e) => setUserEmail(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            disabled={!validateForm(userEmail, password)}
+          >
+            Sign In
           </Button>
-        </Form>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="#" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
       </div>
-    )
-}
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
+  );
+};
 
-LoginPage.propTypes = {
-    setToken: PropTypes.func.isRequired
-}
-
-export default LoginPage;
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+};

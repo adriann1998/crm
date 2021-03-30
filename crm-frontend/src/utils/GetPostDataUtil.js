@@ -1,9 +1,9 @@
-export function getData (uri) {
+export const getData = (uri) => {
     return fetch(uri)
         .then(data => data.json())
 }
 
-export function postData(uri, item) {
+export const postData = (uri, item) => {
     return fetch(uri, {
       method: 'POST',
       headers: {

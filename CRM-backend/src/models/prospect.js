@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-const greaterThanZero = (n) =>{ 
-    return n > 0
-};
-
 const prospectSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     prospectName: {
@@ -18,27 +14,19 @@ const prospectSchema = new mongoose.Schema({
     prospectAmount: {
         type: Number,
         required: true,
-        // validate: {
-        //     validator: function (n) {return n > 0} ,
-        //     message: "Amount must be greater than zero" 
-        // }
+        min: 0
     },
     endUser: {
         type: String
     },
     GPM: {
         type: Number,
-        // validate: {
-        //     validator: function (n) {return n > 0 && n <= 100},
-        //     message: "GPM range must be [0,100]"
-        // }
+        min: 0,
+        max: 100
     },
     expectedDuration: {
-        tpye: Number,
-        // validate: {
-        //     validator: greaterThanZero,
-        //     message: "Expected duration must be greater than zero"
-        // }
+        type: Number,
+        min: 0
     },
     desc: {
         type: String

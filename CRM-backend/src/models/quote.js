@@ -15,10 +15,7 @@ const quoteSchema = new mongoose.Schema({
     amountQuoted: {
         type: Number,
         required: true,
-        validate: {
-            validator: (n) => n > 0,
-            message: "Please enter an amount greater than zero"
-        }
+        min: 0
     },
     descriptions:{
         type: String

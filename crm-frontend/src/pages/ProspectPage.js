@@ -5,6 +5,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter, numberFilter, dateFilter } from 'react-bootstrap-table2-filter';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { getData } from '../utils/GetPostDataUtil';
+import accounting from 'accounting';
 
 function ProspectPage() {
 
@@ -36,7 +37,7 @@ function ProspectPage() {
     text: 'Amount',
     sort: true,
     filter: numberFilter(),
-    formatter: (n) => n ? 'Rp. ' + n.toString() : undefined
+    formatter: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : undefined
   }, {
     dataField: 'endUser',
     text: 'End User',
