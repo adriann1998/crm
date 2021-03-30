@@ -3,6 +3,8 @@ const Quote = require('../models/quote');
 module.exports = {
     getAll: function (req, res) {
         Quote.find({})
+            .lean().populate('prospect', 'prospectName')
+            .lean().populate('user', 'userEmail name')
             .exec(function (err, quotes) {
                 if (err) return res.status(404).json(err);
                 res.json(quotes);
@@ -19,6 +21,8 @@ module.exports = {
     },
     getOne: function (req, res) {
         Quote.findOne({ _id: req.params.id })
+            .lean().populate('prospect', 'prospectName')
+            .lean().populate('user', 'userEmail name')
             .exec(function (err, quote) {
                 if (err) return res.status(400).json(err);
                 if (!quote) return res.status(404).json();

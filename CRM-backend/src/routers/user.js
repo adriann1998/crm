@@ -3,6 +3,7 @@ const User = require('../models/user');
 module.exports = {
     getAll: function (req, res) {
         User.find({})
+            .populate('department', 'departmentName')
             .exec(function (err, users) {
                 if (err) return res.status(404).json(err);
                 res.json(users);
@@ -19,6 +20,7 @@ module.exports = {
     },
     getOne: function (req, res) {
         User.findOne({ _id: req.params.id })
+            .populate('department', 'departmentName')
             .exec(function (err, user) {
                 if (err) return res.status(400).json(err);
                 if (!user) return res.status(404).json();

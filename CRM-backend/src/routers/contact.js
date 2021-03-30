@@ -3,6 +3,7 @@ const Contact = require('../models/contact');
 module.exports = {
     getAll: function (req, res) {
         Contact.find({})
+            .lean().populate('account', 'accName accAlias')
             .exec(function (err, contacts) {
                 if (err) return res.status(404).json(err);
                 res.json(contacts);
@@ -19,6 +20,7 @@ module.exports = {
     },
     getOne: function (req, res) {
         Contact.findOne({ _id: req.params.id })
+            .lean().populate('account', 'accName accAlias')
             .exec(function (err, contact) {
                 if (err) return res.status(400).json(err);
                 if (!contact) return res.status(404).json();

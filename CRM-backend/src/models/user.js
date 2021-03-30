@@ -12,13 +12,18 @@ const validateUserPosition = (pos) => {
 }
 
 const validatePostcode = (postcode) => {
-    const regex = new RegExp('^[1-9]+$');
-    return regex.test(String(postcode))
+    const regex = new RegExp('^[1-9][0-9]+$');
+    return regex.test(postcode)
 }
 
 const validateEmail = (email) => {
     const regex = new RegExp('^([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})$');
     return regex.test(String(email).toLowerCase());
+}
+
+const validateName = (name) => {
+    const regex = new RegExp('^[a-zA-Z]+$');
+    return regex.test(name);
 }
 
 const userSchema = new mongoose.Schema({
@@ -32,16 +37,32 @@ const userSchema = new mongoose.Schema({
             message: "Please enter a valid email"
         }
     },
+    password: { 
+        type: String,
+        required: true,
+    },
     name: {
         firstName: { 
             type: String,
-            required: true
+            required: true,
+            validate: {
+                validator: validateName,
+                message: "Please enter a valid first name"
+            }
         },
         middleName: { 
-            type: String
+            type: String,
+            validate: {
+                validator: validateName,
+                message: "Please enter a valid middle name"
+            }
         },
         lastName: { 
-            type: String
+            type: String,
+            validate: {
+                validator: validateName,
+                message: "Please enter a valid last name"
+            }
         }
     },
     userDOB: { 

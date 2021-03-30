@@ -3,6 +3,7 @@ const Prospect = require('../models/prospect');
 module.exports = {
     getAll: function (req, res) {
         Prospect.find({})
+            .lean().populate('account', 'accName accAlias')
             .exec(function (err, prospects) {
                 if (err) return res.status(404).json(err);
                 res.json(prospects);
@@ -19,6 +20,7 @@ module.exports = {
     },
     getOne: function (req, res) {
         Prospect.findOne({ _id: req.params.id })
+            .lean().populate('account', 'accName accAlias')
             .exec(function (err, prospect) {
                 if (err) return res.status(400).json(err);
                 if (!prospect) return res.status(404).json();

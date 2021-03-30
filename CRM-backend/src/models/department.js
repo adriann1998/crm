@@ -9,7 +9,13 @@ const departmentSchema = new mongoose.Schema({
     director: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        default: null
     }
-});
+},
+// Schema Options
+{
+    timestamps: true
+}
+);
 
 module.exports = mongoose.model('Department', departmentSchema);

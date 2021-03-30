@@ -3,6 +3,7 @@ const Department = require('../models/department');
 module.exports = {
     getAll: function (req, res) {
         Department.find({})
+            .lean().populate('director', 'name')
             .exec(function (err, departments) {
                 if (err) return res.status(404).json(err);
                 res.json(departments);
@@ -19,6 +20,7 @@ module.exports = {
     },
     getOne: function (req, res) {
         Department.findOne({ _id: req.params.id })
+            .lean().populate('director', 'name')
             .exec(function (err, department) {
                 if (err) return res.status(400).json(err);
                 if (!department) return res.status(404).json();

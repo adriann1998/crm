@@ -6,15 +6,28 @@ const validatePhoneNumber = (ph) => {
     return regex.test(ph);
 }
 
+const validateName = (name) => {
+    const regex = new RegExp('^[a-zA-Z]+$');
+    return regex.test(name);
+}
+
 const contactSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: {
         firstName: {
             type: String,
-            required: true
+            required: true,
+            validate: {
+                validator: validateName,
+                message: "Please enter a valid first name"
+            }
         },
         lastName: {
-            type: String
+            type: String,
+            validate: {
+                validator: validateName,
+                message: "Please enter a valid last name"
+            }
         }
     },
     account: {
