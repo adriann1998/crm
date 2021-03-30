@@ -4,18 +4,22 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter, dateFilter } from 'react-bootstrap-table2-filter';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-
+import { getData } from '../utils/GetPostDataUtil';
 
 function ContactPage() {
   
   const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
-    fetch('/contacts', {method: 'GET'})
-      .then(response => response.json())
-      .then(data => setContacts(data))
-      .catch((err) => console.log(err))
-  }, []);
+    let mounted = true;
+    getData('/contacts')
+      .then(data => {
+        if(mounted) {
+          setContacts(data)
+        }
+      })
+    return () => mounted = false;
+  }, [])
 
   const columns = [{
       dataField: 'name.firstName',

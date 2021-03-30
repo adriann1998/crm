@@ -1,7 +1,11 @@
 import React from 'react';
-// import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Nav } from 'react-bootstrap';
+import { Nav, Button } from 'react-bootstrap';
+
+const logout = () => {
+    sessionStorage.clear();
+    window.location.reload();
+}
 
 const NavigationBar = () => {
     return (
@@ -27,6 +31,9 @@ const NavigationBar = () => {
             <LinkContainer to="/user">
                 <Nav.Link eventKey={7}>USER</Nav.Link>
             </LinkContainer>
+            <Button variant="danger" style={{ marginLeft: "auto" }} onClick={logout}>
+                Logout
+            </Button>
         </Nav>
     )
 }

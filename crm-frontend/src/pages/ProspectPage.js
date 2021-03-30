@@ -4,17 +4,22 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter, numberFilter, dateFilter } from 'react-bootstrap-table2-filter';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { getData } from '../utils/GetPostDataUtil';
 
 function ProspectPage() {
 
   const [prospects, setProspects] = useState([]);
 
   useEffect(() => {
-    fetch('/prospects', {method: 'GET'})
-      .then(response => response.json())
-      .then(data => setProspects(data))
-      .catch((err) => console.log(err))
-  }, []);
+    let mounted = true;
+    getData('/prospects')
+      .then(data => {
+        if(mounted) {
+          setProspects(data)
+        }
+      })
+    return () => mounted = false;
+  }, [])
 
   const columns = [{
     dataField: 'prospectName',

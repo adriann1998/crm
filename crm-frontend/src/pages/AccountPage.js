@@ -2,17 +2,21 @@ import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { getData } from '../utils/GetPostDataUtil';
 
 function AccountPage() {
 
   const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
-    fetch('/accounts', {method: 'GET'})
-      .then(response => response.json())
-      .then(data => data.map((d, key) => {d.key = key; return d}))
-      .then(data => {setAccounts(data)})
-      .catch((err) => console.log(err))
+    let mounted = true;
+    getData('/accounts')
+      .then(data => {
+        if(mounted) {
+          setAccounts(data)
+        }
+      })
+    return () => mounted = false;
   }, [])
 
   const columns = [{

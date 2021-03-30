@@ -1,20 +1,26 @@
-// IMPORTS
+// Import middleware
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+
+// Import router callback functions
 const accounts = require('./routers/account');
 const contacts = require('./routers/contact');
 const departments = require('./routers/department');
 const prospects = require('./routers/prospect');
 const quotes = require('./routers/quote');
 const users = require('./routers/user');
+import login from './routers/login';
+const cors = require('cors');
 
 const app = express();
 app.listen(8080);
 app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
+
 mongoose.connect('mongodb://localhost:27017/CRM', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true}, function (err) {
     if (err) {
         return console.log('Mongoose - connection error:', err);
@@ -22,7 +28,13 @@ mongoose.connect('mongodb://localhost:27017/CRM', {useNewUrlParser: true, useUni
     console.log('Connected to database Successfully');
 });
 
-//Configuring Endpoints
+/* ----------------------------------
+Endpoints Configuration
+---------------------------------- */
+
+// Login ednpoint
+app.post('/login', login);  
+
 //Account RESTFul endpoionts 
 app.get('/accounts', accounts.getAll);
 app.post('/accounts', accounts.createOne);
@@ -64,14 +76,3 @@ app.post('/users', users.createOne);
 app.get('/users/:id', users.getOne);
 app.put('/users/:id', users.updateOne);
 app.delete('/users/:id', users.deleteOne);
-
-//Contact RESTFul endpoints
-// app.get('/contacts', movies.getAll);
-// app.get('/movies/:id', movies.getOne);
-// app.get('/movies/:year1/:year2', movies.getAllYearsBetween);
-// app.post('/movies', movies.createOne);
-// app.post('/movies/:movieid/actors', movies.addActor);
-// app.put('/movies/:id', movies.updateOne);
-// app.delete('/movies/:id', movies.deleteOne);
-// app.delete('/movies/:movieid/:actorid', movies.deleteActorFromMovie);
-// app.delete('/movies/', movies.deleteYearsBetween);

@@ -10,7 +10,8 @@ import {
 // import Components
 import NavigationBar from './components/NavigationBar';
 
-// import pages
+// import Pages
+import LoginPage from './pages/LoginPage';
 import AccountPage from './pages/AccountPage';
 import ContactPage from './pages/ContactPage';
 import DepartmentPage from './pages/DepartmentPage';
@@ -20,7 +21,17 @@ import ProspectPage from './pages/ProspectPage';
 import QuotePage from './pages/QuotePage';
 import UserPage from './pages/UserPage';
 
+// import Utils
+import useToken from './utils/SetTokenUtil';
+
 function App() {
+
+  const { token, setToken } = useToken();
+
+  if(!token) {
+    return <LoginPage setToken={setToken} />
+  }
+
   return (
     <Router>
       <div className="App">

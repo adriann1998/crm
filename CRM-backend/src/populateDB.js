@@ -1,5 +1,6 @@
 //Import packages
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 //Configure MongoDB
 const Account = require('./models/account');
@@ -24,6 +25,16 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true},
             generateAccountsDummyData();    // generates accounts, then prospects, then contacts, then quotes
         }
 });
+
+// hash function
+const appSecret = 'ASDF1341NF351VSD';
+const hash = (string) => {
+  return (crypto
+    .createHmac('sha256', appSecret)
+    .update(string)
+    .digest('hex')
+  );
+};
 
 // random data and its generator
 const firstNames = ["Oliver", "Noah", "Jack", "Taylor", "Amelia", "Olivia", "Islah", "Leo", "Lucas", "Henry", "Zoe", "Sophia", "Mia", "Grace", "Ava"];
@@ -209,7 +220,7 @@ const generateUserDummyData = () => {
         for (let i = 0; i < N; i++) {
             let departmentId = departments[Math.floor(Math.random() * departments.length)]._id;
             let newUser = {
-                userEmail: `email${i}@gmail.com`, password: "compnet", userDOB: getRandomDOB(),
+                userEmail: `email${i}@compnet.com`, password: hash("compnet"), userDOB: getRandomDOB(),
                 name: {firstName: getRandomFirstName(), lastName: getRandomLastName()},
                 userPhone: {mobile1: getRandomPhone(), mobile2: getRandomPhone(), work: getRandomPhone()},
                 userPosition: getRandomRole(), reportTo: null,

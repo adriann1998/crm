@@ -4,17 +4,22 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { getData } from '../utils/GetPostDataUtil';
 
 function DepartmentPage() {
 
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
-    fetch('/departments', {method: 'GET'})
-      .then(response => response.json())
-      .then(data => setDepartments(data))
-      .catch((err) => console.log(err))
-  }, []);
+    let mounted = true;
+    getData('/departments')
+      .then(data => {
+        if(mounted) {
+          setDepartments(data)
+        }
+      })
+    return () => mounted = false;
+  }, [])
 
   const columns = [{
     dataField: 'departmentName',
