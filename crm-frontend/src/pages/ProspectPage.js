@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import filterFactory, { textFilter, numberFilter, dateFilter } from 'react-bootstrap-table2-filter';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import { getData } from '../utils/GetPostDataUtil';
+import Table from '../components/Table';
 import accounting from 'accounting';
+import { getData } from '../utils/GetPostDataUtil';
 
 function ProspectPage() {
 
@@ -22,60 +19,56 @@ function ProspectPage() {
     return () => mounted = false;
   }, [])
 
-  const columns = [{
-    dataField: 'prospectName',
-    text: 'Prospect Name',
-    sort: true,
-    filter: textFilter()
-  }, {
-    dataField: 'account.accName',
-    text: 'Account Name',
-    sort: true,
-    filter: textFilter()
-  }, {
-    dataField: 'prospectAmount',
-    text: 'Amount',
-    sort: true,
-    filter: numberFilter(),
-    formatter: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : undefined
-  }, {
-    dataField: 'endUser',
-    text: 'End User',
-    sort: true,
-    filter: textFilter()
-  }, {
-    dataField: 'GPM',
-    text: 'GPM',
-    sort: true,
-    filter: numberFilter(),
-    formatter: (n) => n ? n.toString() + '%' : undefined
-  }, {
-    dataField: 'expectedDuration',
-    text: 'Expected Duration',
-    sort: true,
-    filter: numberFilter()
-  }, {
-    dataField: 'createdAt',
-    text: 'Created At',
-    filter: dateFilter(),
-    formatter: (date) => new Date(date).toString().substring(4, 15)
-  }, {
-    dataField: 'updatedAt',
-    text: 'Last Updated',
-    filter: dateFilter(),
-    formatter: (date) => new Date(date).toString().substring(4, 15)
-}]
+  const columns = [
+    { 
+      id: 'prospectName', 
+      label: 'Prospect Name', 
+      minWidth: 100
+    }, { 
+      id: 'account', 
+      label: 'Account', 
+      minWidth: 100,
+      format: (account) => account.accName
+    }, { 
+      id: 'endUser', 
+      label: 'End User', 
+      minWidth: 100
+    }, { 
+      id: 'prospectAmount', 
+      label: 'Prospect Amount', 
+      minWidth: 100,
+      format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : undefined
+    }, { 
+      id: 'GPM', 
+      label: 'GPM', 
+      minWidth: 100,
+      format: (n) => n ? n.toString() + '%' : undefined
+    }, { 
+      id: 'endUser', 
+      label: 'End User', 
+      minWidth: 100
+    }, { 
+      id: 'expectedDuration', 
+      label: 'Expected Duration', 
+      minWidth: 100,
+      format: (n) => `${n} months`
+    }, { 
+      id: 'createdAt', 
+      label: 'Created At', 
+      minWidth: 150,
+      format: (date) => new Date(date).toString().substring(4, 15)
+    }, { 
+      id: 'updatedAt', 
+      label: 'Updated At', 
+      minWidth: 150,
+      format: (date) => new Date(date).toString().substring(4, 15)
+    }
+  ];
 
   return (
     <React.Fragment>
       <Title title="Prospect Page" />
-      <BootstrapTable
-            keyField="_id"
-            data={ prospects }
-            columns={ columns }
-            filter={ filterFactory() }
-            pagination={ paginationFactory() }
-        />
+      <Table columns={columns} rows={prospects} />
     </React.Fragment>
   );
 }

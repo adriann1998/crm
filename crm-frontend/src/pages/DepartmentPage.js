@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import Table from '../components/Table';
 import { getData } from '../utils/GetPostDataUtil';
 
 function DepartmentPage() {
@@ -21,32 +18,28 @@ function DepartmentPage() {
     return () => mounted = false;
   }, [])
 
-  const columns = [{
-    dataField: 'departmentName',
-    text: 'Department Name',
-    sort: true,
-    filter: textFilter()
-  }, {
-    dataField: 'director',
-    text: 'Director Name',
-    sort: true,
-    filter: textFilter()
-  }, {
-    dataField: 'updatedAt',
-    text: 'Last Updated',
-    formatter: (date) => new Date(date).toString().substring(4, 15)
-}]
+  const columns = [
+    { 
+      id: 'departmentName', 
+      label: 'Name', 
+      minWidth: 150
+    }, { 
+      id: 'director', 
+      label: 'Director', 
+      minWidth: 100,
+      format: (director) => director ? `${director.name.firstName} ${director.name.lastName}` : '-'
+    }, { 
+      id: 'updatedAt', 
+      label: 'Updated At', 
+      minWidth: 150,
+      format: (date) => new Date(date).toString().substring(4, 15)
+    }
+  ];
 
   return (
     <React.Fragment>
       <Title title="Department Page" /> 
-      <BootstrapTable
-            keyField="_id"
-            data={ departments }
-            columns={ columns }
-            filter={ filterFactory() }
-            pagination={ paginationFactory() }
-        />
+      <Table columns={columns} rows={departments} />
     </React.Fragment>
   );
 }
