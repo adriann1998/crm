@@ -10,72 +10,72 @@ import BusinessIcon from '@material-ui/icons/Business';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import PersonIcon from '@material-ui/icons/Person';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 
 export const mainListItems = (
   <div>
-    <LinkContainer to="/">
+    <Link to="/">
       <ListItem button>
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItem>
-    </LinkContainer>
+    </Link>
     
-    <LinkContainer to="/account">
+    <Link to="/account">
       <ListItem button>
         <ListItemIcon>
           <BusinessIcon />
         </ListItemIcon>
         <ListItemText primary="Account" />
       </ListItem>
-    </LinkContainer>
+    </Link>
 
-    <LinkContainer to="/contact">
+    <Link to="/contact">
       <ListItem button>
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
         <ListItemText primary="Contact" />
       </ListItem>
-    </LinkContainer>
+    </Link>
     
-    <LinkContainer to="/department">
+    <Link to="/department">
       <ListItem button>
         <ListItemIcon>
           <HomeWorkIcon />
         </ListItemIcon>
         <ListItemText primary="Department" />
       </ListItem>
-    </LinkContainer>
+    </Link>
 
-    <LinkContainer to="/prospect">
+    <Link to="/prospect">
       <ListItem button>
         <ListItemIcon>
           <AttachMoneyIcon />
         </ListItemIcon>
         <ListItemText primary="Prospect" />
       </ListItem>
-    </LinkContainer>
+    </Link>
     
-    <LinkContainer to="/quote">
+    <Link to="/quote">
       <ListItem button>
         <ListItemIcon>
         <AssignmentIcon />
         </ListItemIcon>
         <ListItemText primary="Quote" />
       </ListItem>
-    </LinkContainer>
+    </Link>
     
-    <LinkContainer to="/user">
+    <Link to="/user">
       <ListItem button>
         <ListItemIcon>
           <PersonIcon />
         </ListItemIcon>
         <ListItemText primary="User" />
       </ListItem>
-    </LinkContainer>
+    </Link>
   </div>
 );
 

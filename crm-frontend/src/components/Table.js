@@ -34,7 +34,7 @@ export default function Table ( {columns, rows} ) {
   };
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} style={{width: "99%",marginLeft:10, marginRight:10}}>
       <TableContainer className={classes.container}>
         <MaterialUITable stickyHeader aria-label="sticky table">
           <TableHead>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
 import { getData } from '../utils/GetPostDataUtil';
+import AddButton from '../components/AddButton';
+import { Link } from 'react-router-dom';
 
 function DepartmentPage() {
 
@@ -38,7 +40,10 @@ function DepartmentPage() {
 
   return (
     <React.Fragment>
-      <Title title="Department Page" /> 
+      <Title title="Department Page" />
+      <Link to="/form-department">
+          <AddButton />
+        </Link> 
       <Table columns={columns} rows={departments} />
     </React.Fragment>
   );

@@ -220,7 +220,8 @@ const generateUserDummyData = () => {
         for (let i = 0; i < N; i++) {
             let departmentId = departments[Math.floor(Math.random() * departments.length)]._id;
             let newUser = {
-                userEmail: `email${i}@compnet.com`, password: hash("compnet"), userDOB: getRandomDOB(),
+                userEmail: `email${i}@compnet.com`, password: hash("compnet"), 
+                NIK: i.toString().padStart(10, "0"), userDOB: getRandomDOB(),
                 name: {firstName: getRandomFirstName(), lastName: getRandomLastName()},
                 userPhone: {mobile1: getRandomPhone(), mobile2: getRandomPhone(), work: getRandomPhone()},
                 userPosition: getRandomRole(), reportTo: null,

@@ -8,7 +8,7 @@ const accountSchema = new mongoose.Schema({
         unique: true
     },
     accAlias: {
-        type: String,
+        type: String
     }
 },
 // Schema Options

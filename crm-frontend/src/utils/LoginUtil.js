@@ -26,7 +26,7 @@ export const validateForm = (userEmail, password) => {
 }
 
 const appSecret = 'ASDF1341NF351VSD';
-const hash = (string) => {
+export const hash = (string) => {
   return (Crypto
     .createHmac('sha256', appSecret)
     .update(string)

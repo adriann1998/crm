@@ -31,6 +31,12 @@ import NotFoundPage from './pages/NotFoundPage';
 import ProspectPage from './pages/ProspectPage';
 import QuotePage from './pages/QuotePage';
 import UserPage from './pages/UserPage';
+import AccountFormPage from './pages/AccountFormPage';
+import ContactFormPage from './pages/ContactFormPage';
+import DepartmentFormPage from './pages/DepartmentFormPage';
+import ProspectFormPage from './pages/ProspectFormPage';
+import UserFormPage from './pages/UserFormPage';
+import QuoteFormPage from './pages/QuoteFormPage';
 
 export default function Dashboard() {
 
@@ -97,6 +103,12 @@ export default function Dashboard() {
             <Route path="/prospect" component={ProspectPage} />
             <Route path="/user" component={UserPage} />
             <Route path="/quote" component={QuotePage} />
+            <Route path="/form-account" component={AccountFormPage}></Route>
+            <Route path="/form-contact" component={ContactFormPage}></Route>
+            <Route path="/form-department" component={DepartmentFormPage}></Route>
+            <Route path="/form-prospect" component={ProspectFormPage}></Route>
+            <Route path="/form-user" component={UserFormPage}></Route>
+            <Route path="/form-quote" component={QuoteFormPage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
         <Copyright />

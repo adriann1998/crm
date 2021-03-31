@@ -9,7 +9,6 @@ import {
     Checkbox,
     Link,
     Grid,
-    Box,
     Typography,
     Container
 } from '@material-ui/core';
@@ -112,9 +111,7 @@ export default function Login ( {setToken} ) {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
+      <Copyright />
     </Container>
   );
 };

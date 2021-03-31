@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
-import AddButton from '../components/AddButton';
 import { getData } from '../utils/GetPostDataUtil';
 import accounting from 'accounting';
+import AddButton from '../components/AddButton';
+import { Link } from 'react-router-dom';
 
 
 function QuotePage() {
@@ -54,14 +55,12 @@ function QuotePage() {
     }
   ];
 
-  const handleAdd = () => {
-    alert("fsdfs")
-  }
-
   return (
     <React.Fragment>
       <Title title="Quote Page" />
-      <AddButton onClick={handleAdd} />
+      <Link to="/form-quote">
+        <AddButton />
+      </Link>
       <Table columns={columns} rows={quotes} />
     </React.Fragment>
   );

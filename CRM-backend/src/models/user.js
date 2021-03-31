@@ -26,6 +26,11 @@ const validateName = (name) => {
     return regex.test(name);
 }
 
+const validateNIK = (nik) => {
+    const regex = new RegExp('^[0-9]{11}');
+    return regex.test(nik);
+}
+
 const userSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     userEmail: { 
@@ -40,6 +45,15 @@ const userSchema = new mongoose.Schema({
     password: { 
         type: String,
         required: true,
+    },
+    NIK: { 
+        type: String,
+        required: true,
+        unique: true,
+        validate: {
+            validator: validateNIK,
+            message: "NIK must be exactly 11 digits"
+        }
     },
     name: {
         firstName: { 

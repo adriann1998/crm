@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
 import { getData } from '../utils/GetPostDataUtil';
+import AddButton from '../components/AddButton';
+import { Link } from 'react-router-dom';
 
 function UserPage() {
 
@@ -20,6 +22,10 @@ function UserPage() {
 
   const columns = [
     { 
+      id: 'NIK', 
+      label: 'NIK', 
+      minWidth: 150
+    }, { 
       id: 'name', 
       label: 'Full Name', 
       minWidth: 150,
@@ -58,6 +64,9 @@ function UserPage() {
   return (
     <React.Fragment>
         <Title title="User Page" />
+        <Link to="/form-user">
+          <AddButton />
+        </Link>
         <Table columns={columns} rows={users} />
     </React.Fragment>
   );

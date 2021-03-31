@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
 import { getData } from '../utils/GetPostDataUtil';
+import AddButton from '../components/AddButton';
+import { Link } from 'react-router-dom';
 
 function ContactPage() {
   
@@ -58,6 +60,9 @@ function ContactPage() {
   return (
     <React.Fragment>
         <Title title="Contact Page" />
+        <Link to="/form-contact">
+          <AddButton />
+        </Link>
         <Table columns={columns} rows={contacts} />
     </React.Fragment>
   );

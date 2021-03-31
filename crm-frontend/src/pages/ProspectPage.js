@@ -3,6 +3,8 @@ import Title from '../components/Title';
 import Table from '../components/Table';
 import accounting from 'accounting';
 import { getData } from '../utils/GetPostDataUtil';
+import AddButton from '../components/AddButton';
+import { Link } from 'react-router-dom';
 
 function ProspectPage() {
 
@@ -21,6 +23,10 @@ function ProspectPage() {
 
   const columns = [
     { 
+      id: '_id', 
+      label: 'Prospect Id', 
+      minWidth: 100
+    }, { 
       id: 'prospectName', 
       label: 'Prospect Name', 
       minWidth: 100
@@ -29,10 +35,6 @@ function ProspectPage() {
       label: 'Account', 
       minWidth: 100,
       format: (account) => account.accName
-    }, { 
-      id: 'endUser', 
-      label: 'End User', 
-      minWidth: 100
     }, { 
       id: 'prospectAmount', 
       label: 'Prospect Amount', 
@@ -68,6 +70,9 @@ function ProspectPage() {
   return (
     <React.Fragment>
       <Title title="Prospect Page" />
+      <Link to="/form-prospect">
+          <AddButton />
+        </Link>
       <Table columns={columns} rows={prospects} />
     </React.Fragment>
   );
