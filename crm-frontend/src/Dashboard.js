@@ -121,12 +121,12 @@ export default function Dashboard() {
             <Route path="/prospect" component={ProspectPage} />
             <Route path="/quote" component={QuotePage} />
             <Route path="/user" component={UserPage} />
-            <Route path="/form-account" component={AccountFormPage}></Route>
-            <Route path="/form-contact" component={ContactFormPage}></Route>
-            <Route path="/form-department" component={DepartmentFormPage}></Route>
-            <Route path="/form-prospect" component={ProspectFormPage}></Route>
-            <Route path="/form-quote" component={QuoteFormPage}></Route>
-            <Route path="/form-user" component={UserFormPage}></Route>
+            <Route path="/form/account" component={AccountFormPage}></Route>
+            <Route path="/form/contact" component={ContactFormPage}></Route>
+            <Route path="/form/department" component={DepartmentFormPage}></Route>
+            <Route path="/form/prospect" component={ProspectFormPage}></Route>
+            <Route path="/form/quote" component={QuoteFormPage}></Route>
+            <Route path="/form/user" component={UserFormPage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
         </div>

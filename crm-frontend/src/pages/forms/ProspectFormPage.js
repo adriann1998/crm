@@ -13,28 +13,31 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import { useStyles, postData } from '../../utils/FormUtil';
-import { useHistory, Link } from "react-router-dom";
+import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function ProspectFormPage ( ) {
+
+  const location = useLocation();
+  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const editMode = defaultValues !== undefined;
   
   const classes = useStyles();
   const history = useHistory();
 
-  const [prospectName, setProspectName] = useState("");
-  const [account, setAccount] = useState("");
-  const [prospectAmount, setProspectAmount] = useState("");
-  const [endUser, setEndUser] = useState("");
-  const [GPM, setGPM] = useState(0);
-  const [expectedDuration, setExpectedDuration] = useState(0);
-  const [desc, setDesc] = useState("");
+  const [prospectName, setProspectName] = useState(editMode ? defaultValues.prospectName : "");
+  const [account, setAccount] = useState(editMode ? defaultValues.account._id : "");
+  const [prospectAmount, setProspectAmount] = useState(editMode ? defaultValues.prospectAmount : 0);
+  const [endUser, setEndUser] = useState(editMode ? defaultValues.endUser : "");
+  const [GPM, setGPM] = useState(editMode ? defaultValues.GPM : 0);
+  const [expectedDuration, setExpectedDuration] = useState(editMode ? defaultValues.expectedDuration : 0);
+  const [desc, setDesc] = useState(editMode ? defaultValues.desc : "");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = '/prospects';
     const formData = {
       prospectName: prospectName,
       account: account,
@@ -44,7 +47,16 @@ export default function ProspectFormPage ( ) {
       expectedDuration: expectedDuration,
       desc: desc
     };
-    const response = await postData(endpoint, formData);
+    let response;
+    let endpoint;
+    if (editMode) {
+      endpoint = `/prospects/${defaultValues._id}`;
+      response = await putData(endpoint, formData);
+    }
+    else {
+      endpoint = '/prospects';
+      response = await postData(endpoint, formData);
+    }
     if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
@@ -117,6 +129,7 @@ export default function ProspectFormPage ( ) {
                 label="Prospect Name"
                 name="prospectName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.prospectName : ""}
                 onChange={(e) => setProspectName(e.target.value)}
               />
             </Grid>
@@ -128,6 +141,7 @@ export default function ProspectFormPage ( ) {
                 id="account"
                 label="Account ID"
                 name="account"
+                defaultValue={editMode ? defaultValues.account._id : ""}
                 inputProps={{ maxLength: 24, minLength: 24 }}
                 onChange={(e) => setAccount(e.target.value)}
               />
@@ -140,6 +154,7 @@ export default function ProspectFormPage ( ) {
                 label="End User"
                 name="endUser"
                 autoFocus
+                defaultValue={editMode ? defaultValues.endUser : ""}
                 onChange={(e) => setEndUser(e.target.value)}
               />
             </Grid>
@@ -153,6 +168,7 @@ export default function ProspectFormPage ( ) {
                 name="prospectAmount"
                 type="Number"
                 inputProps={{ min: 0}}
+                defaultValue={editMode ? defaultValues.prospectAmount : 0}
                 onChange={(e) => setProspectAmount(e.target.value)}
               />
             </Grid>
@@ -164,6 +180,7 @@ export default function ProspectFormPage ( ) {
                 label="GPM"
                 name="GPM"
                 type="Number"
+                defaultValue={editMode ? defaultValues.GPM : 0}
                 inputProps={{ min: 0, max:100}}
                 onChange={(e) => setGPM(e.target.value)}
               />
@@ -176,6 +193,7 @@ export default function ProspectFormPage ( ) {
                 label="Expected Duration"
                 name="expectedDuration"
                 type="Number"
+                defaultValue={editMode ? defaultValues.GPM : 0}
                 inputProps={{ min: 0}}
                 onChange={(e) => setExpectedDuration(e.target.value)}
               />
@@ -189,6 +207,7 @@ export default function ProspectFormPage ( ) {
                 name="desc"
                 multiline
                 rows={4}
+                defaultValue={editMode ? defaultValues.desc : ''}
                 inputProps={{ maxLength: 500}}
                 onChange={(e) => setDesc(e.target.value)}
               />

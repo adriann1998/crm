@@ -22,6 +22,7 @@ import EditIcon from "@material-ui/icons/EditOutlined";
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 // utils 
 import { getData, deleteData } from '../utils/FormUtil';
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -40,8 +41,7 @@ export default function Table({ columns, baseURL }) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [deleteRowId, setDeleteRowId] = useState("");
-  // const [editDialog, setEditDialog] = useState(false);
-  // const [editRowId, setEditRowId] = useState("");
+  const history = useHistory();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -87,22 +87,13 @@ export default function Table({ columns, baseURL }) {
     setDeleteRowId("");
   }
 
-  // const handleClickEditIcon = (_id) => {
-  //   setEditDialog(true);
-  //   setEditRowId(_id)
-  // };
+  const handleClickEditIcon = (_id) => {
+    const urlParam = baseURL.substring(1, baseURL.length - 1);
+    history.push(`/form/${urlParam}`, {defaultValues: rows.find((r) => r._id === _id)});
+  };
 
-  // const handleEditRowConfirm = () => {
-
-  // }
-
-  // const handleCloseEditDialog = () => {
-  //   setEditDialog(false);
-  //   setEditRowId("");
-  // }
-
-  return (
-    <React.Fragment>
+  const DeleteDialog = () => {
+    return (
       <Dialog
         open={deleteDialog}
         onClose={handleCloseDeleteDialog}
@@ -113,17 +104,23 @@ export default function Table({ columns, baseURL }) {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Row cannot be reverted once deleted
-          </DialogContentText>
+        </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteDialog} color="primary">
             Cancel
-          </Button>
+        </Button>
           <Button onClick={handleDeleteRowConfirm} color="primary" autoFocus>
             OK
-          </Button>
+        </Button>
         </DialogActions>
       </Dialog>
+    )
+  }
+
+  return (
+    <React.Fragment>
+      <DeleteDialog />
       <Paper className={classes.root}>
         <TableContainer className={classes.container}>
           <MaterialUITable stickyHeader aria-label="sticky table">
@@ -146,20 +143,18 @@ export default function Table({ columns, baseURL }) {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
                     <TableCell className={classes.selectTableCell}>
-                      <React.Fragment>
-                        <IconButton
-                          aria-label="edit"
-                          onClick={() => { }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => {handleClickDeleteIcon(row._id)}}
-                        >
-                          <DeleteOutlineIcon />
-                        </IconButton>
-                      </React.Fragment>
+                      <IconButton
+                        aria-label="edit"
+                        onClick={() => handleClickEditIcon(row._id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => { handleClickDeleteIcon(row._id) }}
+                      >
+                        <DeleteOutlineIcon />
+                      </IconButton>
                     </TableCell>
                     {columns.map((column, index) => {
                       const value = row[column.id];

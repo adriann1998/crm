@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Avatar, 
-  Button, 
+import {
+  Avatar,
+  Button,
   CssBaseline,
   TextField,
   Grid,
@@ -18,32 +18,36 @@ import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import { useStyles, postData } from '../../utils/FormUtil';
-import { useHistory, Link } from "react-router-dom";
+import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useHistory, useLocation, Link } from "react-router-dom";
 
-export default function UserFormPage ( ) {
-  
+export default function UserFormPage() {
+
+  const location = useLocation();
+  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const editMode = defaultValues !== undefined;
+
   const classes = useStyles();
   const history = useHistory();
 
-  const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [userDOB, setUserDOB] = useState(new Date('1970-01-01'));
-  const [NIK, setNIK] = useState("");
-  const [mobilePhone1, setMobilePhone1] = useState("");
-  const [mobilePhone2, setMobilePhone2] = useState("");
-  const [workPhone, setWorkPhone] = useState("");
-  const [userPosition, setUserPosition] = useState("am");
-  const [reportTo, setReportTo] = useState(null);
-  const [department, setDepartment] = useState("");
-  const [street, setStreet] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [postcode, setPoscode] = useState(0);
+  const [firstName, setFirstName] = useState(editMode ? defaultValues.name.firstName : "");
+  const [middleName, setMiddleName] = useState(editMode ? defaultValues.name.middleName : "");
+  const [lastName, setLastName] = useState(editMode ? defaultValues.name.lastName : "");
+  const [userEmail, setUserEmail] = useState(editMode ? defaultValues.userEmail : "");
+  const [password, setPassword] = useState(editMode ? defaultValues.password : "");
+  const [passwordConfirm, setPasswordConfirm] = useState(editMode ? defaultValues.password : "");
+  const [userDOB, setUserDOB] = useState(editMode ? defaultValues.userDOB : new Date('1970-01-01'));
+  const [NIK, setNIK] = useState(editMode ? defaultValues.NIK : "");
+  const [mobilePhone1, setMobilePhone1] = useState(editMode ? defaultValues.userPhone.mobile1 : "");
+  const [mobilePhone2, setMobilePhone2] = useState(editMode ? defaultValues.userPhone.mobile2 : "");
+  const [workPhone, setWorkPhone] = useState(editMode ? defaultValues.userPhone.work : "");
+  const [userPosition, setUserPosition] = useState(editMode ? defaultValues.userPosition : "am");
+  const [reportTo, setReportTo] = useState(editMode ? (defaultValues.reportTo ? defaultValues.reportTo._id : null) : null);
+  const [department, setDepartment] = useState(editMode ? defaultValues.department._id : '');
+  const [street, setStreet] = useState(editMode ? defaultValues.userAddress.street : '');
+  const [city, setCity] = useState(editMode ? defaultValues.userAddress.street : '');
+  const [state, setState] = useState(editMode ? defaultValues.userAddress.state : '');
+  const [postcode, setPoscode] = useState(editMode ? defaultValues.userAddress.postcode : 0);
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -56,7 +60,6 @@ export default function UserFormPage ( ) {
   const handleSubmit = async (e) => {
     if (passwordMatch) {
       e.preventDefault();
-      const endpoint = '/users';
       const formData = {
         name: {
           firstName: firstName,
@@ -70,7 +73,7 @@ export default function UserFormPage ( ) {
         userPhone: {
           mobile1: mobilePhone1,
           mobile2: mobilePhone2 ? mobilePhone2 : undefined,
-          work: workPhone ? workPhone :undefined
+          work: workPhone ? workPhone : undefined
         },
         userPosition: userPosition,
         reportTo: reportTo,
@@ -82,8 +85,16 @@ export default function UserFormPage ( ) {
           postcode: postcode
         }
       };
-      const response = await postData(endpoint, formData);
-      console.log(response);
+      let response;
+      let endpoint;
+      if (editMode) {
+        endpoint = `/users/${defaultValues._id}`;
+        response = await putData(endpoint, formData);
+      }
+      else {
+        endpoint = '/users';
+        response = await postData(endpoint, formData);
+      }
       if (response === null) {
         setSuccessOpen(false);
         setErrorOpen(true);
@@ -129,23 +140,23 @@ export default function UserFormPage ( ) {
         </Collapse>
         <Collapse in={errorOpen}>
           <Alert
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleErrorAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-              severity="error"
-            >
-              Data Invalid!
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleErrorAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="error"
+          >
+            Data Invalid!
             </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
-          New User
+          {editMode ? "Edit User" : "New User"}
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -159,6 +170,8 @@ export default function UserFormPage ( ) {
                 name="userEmail"
                 autoFocus
                 type="email"
+                disabled={editMode}
+                defaultValue={editMode ? defaultValues.userEmail : ""}
                 onChange={(e) => setUserEmail(e.target.value)}
               />
             </Grid>
@@ -171,6 +184,8 @@ export default function UserFormPage ( ) {
                 label="NIK"
                 name="NIK"
                 autoFocus
+                disabled={editMode}
+                defaultValue={editMode ? defaultValues.NIK : ""}
                 inputProps={{ maxLength: 11, minLength: 11 }}
                 onChange={(e) => setNIK(e.target.value)}
               />
@@ -214,6 +229,7 @@ export default function UserFormPage ( ) {
                 label="First Name"
                 name="firstName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.name.firstName : ""}
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
@@ -225,6 +241,7 @@ export default function UserFormPage ( ) {
                 label="Middle Name"
                 name="middleName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.name.middleName : ""}
                 onChange={(e) => setMiddleName(e.target.value)}
               />
             </Grid>
@@ -236,6 +253,7 @@ export default function UserFormPage ( ) {
                 label="Last Name"
                 name="lastName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.name.lastName : ""}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </Grid>
@@ -266,6 +284,7 @@ export default function UserFormPage ( ) {
                 label="Department ID"
                 name="department"
                 autoFocus
+                defaultValue={editMode ? defaultValues.department._id : ""}
                 inputProps={{ maxLength: 24, minLength: 24 }}
                 onChange={(e) => setDepartment(e.target.value)}
               />
@@ -277,7 +296,7 @@ export default function UserFormPage ( ) {
                 fullWidth
                 labelId="userPosition"
                 id="userPosition"
-                value={userPosition}
+                defaultValue={editMode ? defaultValues.userPosition : userPosition}
                 onChange={(e) => setUserPosition(e.target.value)}
               >
                 <MenuItem value={"am"}>Account Manager</MenuItem>
@@ -294,6 +313,7 @@ export default function UserFormPage ( ) {
                 name="reportTo"
                 autoFocus
                 disabled={userPosition === 'director'}
+                defaultValue={editMode ? (defaultValues.reportTo ? defaultValues.reportTo._id : null) : null}
                 inputProps={{ maxLength: 24, minLength: 24 }}
                 onChange={(e) => setReportTo(e.target.value)}
               />
@@ -307,6 +327,7 @@ export default function UserFormPage ( ) {
                 label="Mobile Phone 1"
                 name="mobile1"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userPhone.mobile1 : ''}
                 onChange={(e) => setMobilePhone1(e.target.value)}
               />
             </Grid>
@@ -318,6 +339,7 @@ export default function UserFormPage ( ) {
                 label="Mobile Phone 2"
                 name="moobile2"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userPhone.mobile2 : ''}
                 onChange={(e) => setMobilePhone2(e.target.value)}
               />
             </Grid>
@@ -329,6 +351,7 @@ export default function UserFormPage ( ) {
                 label="Work Phone"
                 name="workPhone"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userPhone.work : ''}
                 onChange={(e) => setWorkPhone(e.target.value)}
               />
             </Grid>
@@ -341,6 +364,7 @@ export default function UserFormPage ( ) {
                 label="Street"
                 name="street"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userAddress.street : ''}
                 onChange={(e) => setStreet(e.target.value)}
               />
             </Grid>
@@ -353,6 +377,7 @@ export default function UserFormPage ( ) {
                 label="City"
                 name="city"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userAddress.city : ''}
                 onChange={(e) => setCity(e.target.value)}
               />
             </Grid>
@@ -365,6 +390,7 @@ export default function UserFormPage ( ) {
                 label="State"
                 name="state"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userAddress.state : ''}
                 onChange={(e) => setState(e.target.value)}
               />
             </Grid>
@@ -377,6 +403,7 @@ export default function UserFormPage ( ) {
                 label="Postcode"
                 name="postcode"
                 autoFocus
+                defaultValue={editMode ? defaultValues.userAddress.postcode : ''}
                 onChange={(e) => setPoscode(e.target.value)}
               />
             </Grid>
@@ -390,10 +417,10 @@ export default function UserFormPage ( ) {
           >
             Submit
           </Button>
-          <div style={{textAlign: 'center'}}>
+          <div style={{ textAlign: 'center' }}>
             Or
-            <br/>
-          <Link to="/user">Cancel</Link>
+            <br />
+            <Link to="/user">Cancel</Link>
           </div>
         </form>
       </div>

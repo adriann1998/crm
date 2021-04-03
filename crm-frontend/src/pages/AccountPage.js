@@ -13,6 +13,7 @@ function AccountPage( ) {
     }, { 
       id: 'accAlias', 
       label: 'Alias',
+      format: (accAlias) => accAlias ? accAlias : ''
     }, { 
       id: 'createdAt', 
       label: 'Created At',
@@ -27,7 +28,7 @@ function AccountPage( ) {
   return (
     <React.Fragment>
         <Title title="Home Page" />
-        <Link to="/form-account">
+        <Link to="/form/account">
           <AddButton />
         </Link>
         <Table columns={columns} baseURL={'/accounts'} />

@@ -10,10 +10,11 @@ function ContactPage() {
     { 
       id: 'name', 
       label: 'Name',
-      format: (name) => name ? `${name.firstName} ${name.lastName}` : ''
+      format: (name) => name.lastName ? `${name.firstName} ${name.lastName}` : `${name.firstName}`
     }, { 
       id: 'contactTitle', 
-      label: 'Title'
+      label: 'Title',
+      format: (contactTitle) => contactTitle ? contactTitle : ''
     }, { 
       id: 'account', 
       label: 'Account',
@@ -39,7 +40,7 @@ function ContactPage() {
   return (
     <React.Fragment>
         <Title title="Contact Page" />
-        <Link to="/form-contact">
+        <Link to="/form/contact">
           <AddButton />
         </Link>
         <Table columns={columns} baseURL={'/contacts'} />

@@ -13,28 +13,40 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
-import { useStyles, postData } from '../../utils/FormUtil';
-import { useHistory, Link } from "react-router-dom";
+import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function DepartmentFormPage ( ) {
+
+  const location = useLocation();
+  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const editMode = defaultValues !== undefined;
   
   const classes = useStyles();
   const history = useHistory();
 
-  const [departmentName, setDepartmentName] = useState("");
-  const [directorId, setDirectorId] = useState("");
+  const [departmentName, setDepartmentName] = useState(editMode ? defaultValues.departmentName : "");
+  const [directorId, setDirectorId] = useState(editMode ? (defaultValues.director ? defaultValues.director._id : "") : "");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = '/departments';
     const formData = {
       departmentName: departmentName,
       director: directorId ? directorId : null
     };
-    const response = await postData(endpoint, formData);
+    let response;
+    let endpoint;
+    if (editMode) {
+      endpoint = `/departments/${defaultValues._id}`;
+      response = await putData(endpoint, formData);
+    }
+    else {
+      endpoint = '/departments';
+      response = await postData(endpoint, formData);
+    }
     if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
@@ -94,7 +106,7 @@ export default function DepartmentFormPage ( ) {
             </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
-          New Department
+        {editMode ? "Edit Department" : "New Department"} 
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -107,6 +119,7 @@ export default function DepartmentFormPage ( ) {
                 label="Department Name"
                 name="departmentName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.departmentName : ''}
                 onChange={(e) => setDepartmentName(e.target.value)}
               />
             </Grid>
@@ -117,6 +130,7 @@ export default function DepartmentFormPage ( ) {
                 id="Director ID"
                 label="Director ID"
                 name="directorId"
+                defaultValue={editMode ? (defaultValues.director ? defaultValues.director._id : '') : ''}
                 onChange={(e) => setDirectorId(e.target.value)}
               />
             </Grid>

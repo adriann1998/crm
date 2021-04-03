@@ -24,7 +24,7 @@ function DepartmentPage() {
   return (
     <React.Fragment>
       <Title title="Department Page" />
-      <Link to="/form-department">
+      <Link to="/form/department">
           <AddButton />
         </Link> 
       <Table columns={columns} baseURL={'/departments'}/>

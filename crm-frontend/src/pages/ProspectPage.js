@@ -47,7 +47,7 @@ function ProspectPage(  ) {
   return (
     <React.Fragment>
       <Title title="Prospect Page" />
-      <Link to="/form-prospect">
+      <Link to="/form/prospect">
           <AddButton />
         </Link>
       <Table columns={columns} baseURL={'/prospects'}/>

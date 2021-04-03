@@ -13,28 +13,40 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import BusinessIcon from '@material-ui/icons/Business';
-import { useStyles, postData } from '../../utils/FormUtil';
-import { useHistory, Link } from "react-router-dom";
+import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function AccountFormPage() {
+  
+  const location = useLocation();
+  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const editMode = defaultValues !== undefined;
 
   const classes = useStyles();
   const history = useHistory();
 
-  const [accName, setAccName] = useState("");
-  const [accAlias, setAccAlias] = useState("");
+  const [accName, setAccName] = useState(editMode ? defaultValues.accName : "");
+  const [accAlias, setAccAlias] = useState(editMode ? defaultValues.accAlias : "");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = '/accounts';
-    const data = {
+    const formData = {
       accName: accName,
-      accAlias: accAlias ? accAlias : undefined
+      accAlias: accAlias
     };
-    const response = await postData(endpoint, data);
+    let response;
+    let endpoint;
+    if (editMode) {
+      endpoint = `/accounts/${defaultValues._id}`;
+      response = await putData(endpoint, formData);
+    }
+    else {
+      endpoint = '/accounts';
+      response = await postData(endpoint, formData);
+    }
     if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
@@ -46,7 +58,7 @@ export default function AccountFormPage() {
   };
 
   const handleSuccessAlertClose = () => {
-    history.push("/quote");
+    history.push("/account");
   };
 
   const handleErrorAlertClose = () => {
@@ -94,7 +106,7 @@ export default function AccountFormPage() {
               </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
-          New Account
+          {editMode ? "Edit Account" : "New Account"} 
           </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -107,6 +119,7 @@ export default function AccountFormPage() {
                 label="Account Name"
                 name="accName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.accName : ''}
                 onChange={(e) => setAccName(e.target.value)}
               />
             </Grid>
@@ -117,6 +130,7 @@ export default function AccountFormPage() {
                 id="accAlias"
                 label="Account Alias"
                 name="accAlias"
+                defaultValue={editMode ? defaultValues.accAlias : ''}
                 onChange={(e) => setAccAlias(e.target.value)}
               />
             </Grid>

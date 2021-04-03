@@ -42,7 +42,7 @@ function UserPage(  ) {
   return (
     <React.Fragment>
         <Title title="User Page" />
-        <Link to="/form-user">
+        <Link to="/form/user">
           <AddButton />
         </Link>
         <Table columns={columns} baseURL={'/users'} />

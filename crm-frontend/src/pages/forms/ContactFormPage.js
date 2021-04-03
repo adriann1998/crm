@@ -13,33 +13,36 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import PeopleIcon from '@material-ui/icons/People';
-import { useStyles, postData } from '../../utils/FormUtil';
-import { useHistory, Link } from "react-router-dom";
+import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function ContactFormPage ( ) {
+
+  const location = useLocation();
+  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const editMode = defaultValues !== undefined;
   
   const classes = useStyles();
   const history = useHistory();
 
-  const [firstName, setfirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [account, setAccount] = useState("");
-  const [contactTitle, setContacTitle] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [mobilePhone, setMobilePhone] = useState("");
-  const [workPhone, setWorkPhone] = useState("");
-  const [officePhone, setOfficePhone] = useState("");
+  const [firstName, setfirstName] = useState(editMode ? defaultValues.name.firstName : "");
+  const [lastName, setLastName] = useState(editMode ? defaultValues.name.lastName : "");
+  const [account, setAccount] = useState(editMode ? defaultValues.account._id : "");
+  const [contactTitle, setContacTitle] = useState(editMode ? defaultValues.contactTitle : "");
+  const [contactEmail, setContactEmail] = useState(editMode ? defaultValues.contactEmail : "");
+  const [mobilePhone, setMobilePhone] = useState(editMode ? defaultValues.contactPhone.mobile : "");
+  const [workPhone, setWorkPhone] = useState(editMode ? defaultValues.contactPhone.work : "");
+  const [officePhone, setOfficePhone] = useState(editMode ? defaultValues.contactPhone.office : "");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = '/contacts';
     const formData = {
       name: {
         firstName: firstName,
-        lastname: lastName ? lastName : undefined
+        lastName: lastName
       },
       account: account,
       contactTitle: contactTitle ? contactTitle : undefined,
@@ -50,7 +53,17 @@ export default function ContactFormPage ( ) {
         office: officePhone ? officePhone : undefined
       }
     };
-    const response = await postData(endpoint, formData);
+    console.log(formData);
+    let response;
+    let endpoint;
+    if (editMode) {
+      endpoint = `/contacts/${defaultValues._id}`;
+      response = await putData(endpoint, formData);
+    }
+    else {
+      endpoint = '/accounts';
+      response = await postData(endpoint, formData);
+    }
     if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
@@ -110,7 +123,7 @@ export default function ContactFormPage ( ) {
             </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
-          New Contact
+          {editMode ? "Edit Contact" : "New Contact"}
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -123,6 +136,7 @@ export default function ContactFormPage ( ) {
                 label="First Name"
                 name="firstName"
                 autoFocus
+                defaultValue={editMode ? defaultValues.name.firstName : ''}
                 onChange={(e) => setfirstName(e.target.value)}
               />
             </Grid>
@@ -133,6 +147,7 @@ export default function ContactFormPage ( ) {
                 id="lastName"
                 label="Last Name"
                 name="lastName"
+                defaultValue={editMode ? defaultValues.name.lastName : ''}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </Grid>
@@ -143,6 +158,7 @@ export default function ContactFormPage ( ) {
                 id="contactTitle"
                 label="Contact Title"
                 name="contactTitle"
+                defaultValue={editMode ? defaultValues.contactTitle : ''}
                 onChange={(e) => setContacTitle(e.target.value)}
               />
             </Grid>
@@ -154,6 +170,7 @@ export default function ContactFormPage ( ) {
                 label="Contact Email"
                 name="contactEmail"
                 type="email"
+                defaultValue={editMode ? defaultValues.contactEmail : ''}
                 onChange={(e) => setContactEmail(e.target.value)}
               />
             </Grid>
@@ -165,6 +182,7 @@ export default function ContactFormPage ( ) {
                 id="accountId"
                 label="Account ID"
                 name="accountId"
+                defaultValue={editMode ? defaultValues.account._id : ''}
                 inputProps={{ maxLength: 24, minLength: 24 }}
                 onChange={(e) => setAccount(e.target.value)}
               />
@@ -177,6 +195,7 @@ export default function ContactFormPage ( ) {
                 id="mobilePhone"
                 label="Mobile PhoneNumber"
                 name="mobilePhone"
+                defaultValue={editMode ? defaultValues.contactPhone.mobile : ''}
                 onChange={(e) => setMobilePhone(e.target.value)}
               />
             </Grid>
@@ -187,6 +206,7 @@ export default function ContactFormPage ( ) {
                 id="workPhone"
                 label="Work Phone Number"
                 name="workPhone"
+                defaultValue={editMode ? defaultValues.contactPhone.work : ''}
                 onChange={(e) => setWorkPhone(e.target.value)}
               />
             </Grid>
@@ -197,6 +217,7 @@ export default function ContactFormPage ( ) {
                 id="officePhone"
                 label="Office Phone"
                 name="officePhone"
+                defaultValue={editMode ? defaultValues.contactPhone.office : ''}
                 onChange={(e) => setOfficePhone(e.target.value)}
               />
             </Grid>

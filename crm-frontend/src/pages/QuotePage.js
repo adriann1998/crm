@@ -39,7 +39,7 @@ function QuotePage( ) {
   return (
     <React.Fragment>
       <Title title="Quote Page" />
-      <Link to="/form-quote">
+      <Link to="/form/quote">
         <AddButton />
       </Link>
       <Table columns={columns} baseURL={'/quotes'} />

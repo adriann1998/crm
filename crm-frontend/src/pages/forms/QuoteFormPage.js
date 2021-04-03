@@ -13,30 +13,42 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useStyles, postData } from '../../utils/FormUtil';
-import { useHistory, Link } from "react-router-dom";
+import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function QuoteFormPage ( ) {
+
+  const location = useLocation();
+  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const editMode = defaultValues !== undefined;
   
   const classes = useStyles();
   const history = useHistory();
 
-  const [prospectId, setProspectId] = useState("");
-  const [userId, setUserId] = useState("");
-  const [amountQuoted, setamountQuoted] = useState("");
+  const [prospectId, setProspectId] = useState(editMode ? (defaultValues.prospect ? defaultValues.prospect._id : "") : "");
+  const [userId, setUserId] = useState(editMode ? (defaultValues.user ? defaultValues.user._id : "") : "");
+  const [amountQuoted, setamountQuoted] = useState(editMode ? defaultValues.amountQuoted : 0);
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = '/quotes';
     const formData = {
       prospect: prospectId,
       user: userId,
       amountQuoted: amountQuoted
     };
-    const response = await postData(endpoint, formData);
+    let response;
+    let endpoint;
+    if (editMode) {
+      endpoint = `/quotes/${defaultValues._id}`;
+      response = await putData(endpoint, formData);
+    }
+    else {
+      endpoint = '/quotes';
+      response = await postData(endpoint, formData);
+    }
     if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
@@ -109,6 +121,7 @@ export default function QuoteFormPage ( ) {
                 label="Prospect Id"
                 name="prospectid"
                 autoFocus
+                defaultValue={editMode ? (defaultValues.prospect ? defaultValues.prospect._id : "") : ""}
                 inputProps={{ maxLength: 24, minLength: 24 }}
                 onChange={(e) => setProspectId(e.target.value)}
               />
@@ -121,6 +134,7 @@ export default function QuoteFormPage ( ) {
                 id="User ID"
                 label="User ID"
                 name="userId"
+                defaultValue={editMode ? (defaultValues.user ? defaultValues.user._id : "") : ""}
                 inputProps={{ maxLength: 24, minLength: 24 }}
                 onChange={(e) => setUserId(e.target.value)}
               />
@@ -134,6 +148,7 @@ export default function QuoteFormPage ( ) {
                 label="Amount Quoted"
                 name="amountQuoted"
                 type="Number"
+                defaultValue={editMode ? defaultValues.amountQuoted : 0}
                 onChange={(e) => setamountQuoted(e.target.value)}
               />
             </Grid>
