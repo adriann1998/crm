@@ -39,7 +39,7 @@ module.exports = {
     deleteOne: function (req, res) {
         Quote.findOneAndRemove({ _id: req.params.id }, function (err) {
             if (err) return res.status(400).json(err);
-            res.json();
+            res.status(204).json({});
         });
     }
 };

@@ -27,10 +27,10 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true},
 });
 
 // hash function
-const appSecret = 'ASDF1341NF351VSD';
+require('dotenv').config();
 const hash = (string) => {
   return (crypto
-    .createHmac('sha256', appSecret)
+    .createHmac('sha256', "CS0Faafvlljbmrt83N1415AFAdfD83FAfllvaddcaCSI23432C20acgswASDFFKA")
     .update(string)
     .digest('hex')
   );
@@ -221,7 +221,7 @@ const generateUserDummyData = () => {
             let departmentId = departments[Math.floor(Math.random() * departments.length)]._id;
             let newUser = {
                 userEmail: `email${i}@compnet.com`, password: hash("compnet"), 
-                NIK: i.toString().padStart(10, "0"), userDOB: getRandomDOB(),
+                NIK: i.toString().padStart(11, "0"), userDOB: getRandomDOB(),
                 name: {firstName: getRandomFirstName(), lastName: getRandomLastName()},
                 userPhone: {mobile1: getRandomPhone(), mobile2: getRandomPhone(), work: getRandomPhone()},
                 userPosition: getRandomRole(), reportTo: null,

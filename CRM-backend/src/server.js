@@ -33,7 +33,7 @@ Endpoints Configuration
 ---------------------------------- */
 
 // Login ednpoint
-app.post('/login', login);  
+app.post('/login', login);
 
 //Account RESTFul endpoionts 
 app.get('/accounts', accounts.getAll);

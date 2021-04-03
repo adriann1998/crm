@@ -1,8 +1,10 @@
 const User = require('../models/user');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+import hash from '../utils/hash';
 
-export default function login (req, res) {
-    const userCredentials = req.body;
+export default function login(req, res) {
+    let userCredentials = req.body;
+    userCredentials.password = hash(userCredentials.password);
     const token = jwt.sign(userCredentials, 'secretkey');;
     User.findOne(userCredentials, (err, result) => {
         if (!result) {
@@ -14,5 +16,5 @@ export default function login (req, res) {
         res.send({
             token: token
         });
-    }); 
+    });
 };

@@ -1,1 +1,5 @@
+# hash key
+.env
+
+# dependencies
 node_modules

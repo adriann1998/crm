@@ -1,3 +1,4 @@
+import hash from '../utils/hash';
 const mongoose = require('mongoose');
 const User = require('../models/user');
 module.exports = {
@@ -11,6 +12,7 @@ module.exports = {
     },
     createOne: function (req, res) {
         let newUserDetails = req.body;
+        newUserDetails.password = hash(newUserDetails.password);
         newUserDetails._id = new mongoose.Types.ObjectId();
         let user = new User(newUserDetails);
         user.save(function (err) {
@@ -37,7 +39,7 @@ module.exports = {
     deleteOne: function (req, res) {
         User.findOneAndRemove({ _id: req.params.id }, function (err) {
             if (err) return res.status(400).json(err);
-            res.json();
+            res.status(204).json({});
         });
     }
 };
