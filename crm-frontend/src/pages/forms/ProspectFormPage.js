@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import { 
+  Avatar, 
+  Button, 
+  CssBaseline,
+  TextField,
+  Grid,
+  Typography,
+  Container,
+  IconButton,
+  Collapse
+} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import IconButton from '@material-ui/core/IconButton';
-import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/Close';
-import { useStyles, submitForm } from '../utils/FormUtil';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import { useStyles, postData } from '../../utils/FormUtil';
 import { useHistory, Link } from "react-router-dom";
 
 export default function ProspectFormPage ( ) {
@@ -42,8 +44,8 @@ export default function ProspectFormPage ( ) {
       expectedDuration: expectedDuration,
       desc: desc
     };
-    const response = await submitForm(endpoint, formData);
-    if (!response._id) {
+    const response = await postData(endpoint, formData);
+    if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
     }
@@ -66,7 +68,7 @@ export default function ProspectFormPage ( ) {
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <AttachMoneyIcon />
         </Avatar>
         <Collapse in={successOpen}>
           <Alert

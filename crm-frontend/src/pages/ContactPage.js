@@ -1,58 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
-import { getData } from '../utils/GetPostDataUtil';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 
 function ContactPage() {
-  
-  const [contacts, setContacts] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    getData('/contacts')
-      .then(data => {
-        if(mounted) {
-          setContacts(data)
-        }
-      })
-    return () => mounted = false;
-  }, [])
 
   const columns = [
     { 
       id: 'name', 
-      label: 'Name', 
-      minWidth: 150,
-      format: (name) => `${name.firstName} ${name.lastName}`
+      label: 'Name',
+      format: (name) => name ? `${name.firstName} ${name.lastName}` : ''
     }, { 
       id: 'contactTitle', 
-      label: 'Title', 
-      minWidth: 100 
+      label: 'Title'
     }, { 
       id: 'account', 
-      label: 'Account', 
-      minWidth: 150,
-      format: (account) => account.accName
+      label: 'Account',
+      format: (account) => account ? account.accName : ''
     }, { 
       id: 'contactEmail', 
-      label: 'Email', 
-      minWidth: 150
+      label: 'Email'
     }, { 
       id: 'contactPhone', 
-      label: 'Mobile', 
-      minWidth: 150,
-      format: (contactPhone) => contactPhone.mobile
+      label: 'Mobile',
+      format: (contactPhone) => contactPhone ? contactPhone.mobile : ''
     }, { 
       id: 'createdAt', 
-      label: 'Created At', 
-      minWidth: 150,
+      label: 'Created At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'updatedAt', 
-      label: 'Updated At', 
-      minWidth: 150,
+      label: 'Updated At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }
   ];
@@ -63,7 +42,7 @@ function ContactPage() {
         <Link to="/form-contact">
           <AddButton />
         </Link>
-        <Table columns={columns} rows={contacts} />
+        <Table columns={columns} baseURL={'/contacts'} />
     </React.Fragment>
   );
 }

@@ -1,43 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
-import { getData } from '../utils/GetPostDataUtil';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 
-function AccountPage() {
-  
-  const [accounts, setAccounts] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    getData('/accounts')
-      .then(data => {
-        if(mounted) {
-          setAccounts(data);
-        }
-      })
-    return () => mounted = false;
-  }, []);
+function AccountPage( ) {
 
   const columns = [
     { 
       id: 'accName', 
-      label: 'Name', 
-      minWidth: 200 
+      label: 'Name'
     }, { 
       id: 'accAlias', 
-      label: 'Alias', 
-      minWidth: 100 
+      label: 'Alias',
     }, { 
       id: 'createdAt', 
-      label: 'Created At', 
-      minWidth: 150,
+      label: 'Created At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'updatedAt', 
-      label: 'Updated At', 
-      minWidth: 150,
+      label: 'Updated At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }
   ];
@@ -48,7 +30,7 @@ function AccountPage() {
         <Link to="/form-account">
           <AddButton />
         </Link>
-        <Table columns={columns} rows={accounts} />
+        <Table columns={columns} baseURL={'/accounts'} />
     </React.Fragment>
   );
 }

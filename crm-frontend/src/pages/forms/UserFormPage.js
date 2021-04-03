@@ -13,14 +13,13 @@ import {
   Select,
   InputLabel
 } from '@material-ui/core';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import PersonIcon from '@material-ui/icons/Person';
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import { useStyles, submitForm } from '../utils/FormUtil';
+import { useStyles, postData } from '../../utils/FormUtil';
 import { useHistory, Link } from "react-router-dom";
-import { hash } from '../utils/LoginUtil';
 
 export default function UserFormPage ( ) {
   
@@ -65,7 +64,7 @@ export default function UserFormPage ( ) {
           lastName: lastName ? lastName : undefined
         },
         userEmail: userEmail,
-        password: hash(password),
+        password: password,
         userDOB: userDOB,
         NIK: NIK,
         userPhone: {
@@ -83,9 +82,9 @@ export default function UserFormPage ( ) {
           postcode: postcode
         }
       };
-      const response = await submitForm(endpoint, formData);
+      const response = await postData(endpoint, formData);
       console.log(response);
-      if (!response._id) {
+      if (response === null) {
         setSuccessOpen(false);
         setErrorOpen(true);
       }
@@ -109,7 +108,7 @@ export default function UserFormPage ( ) {
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <PersonIcon />
         </Avatar>
         <Collapse in={successOpen}>
           <Alert
@@ -336,6 +335,7 @@ export default function UserFormPage ( ) {
             <Grid item xs={12} sm={4}>
               <TextField
                 variant="outlined"
+                required
                 fullWidth
                 id="street"
                 label="Street"
@@ -347,6 +347,7 @@ export default function UserFormPage ( ) {
             <Grid item xs={12} sm={4}>
               <TextField
                 variant="outlined"
+                required
                 fullWidth
                 id="city"
                 label="City"
@@ -355,9 +356,10 @@ export default function UserFormPage ( ) {
                 onChange={(e) => setCity(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={2}>
               <TextField
                 variant="outlined"
+                required
                 fullWidth
                 id="state"
                 label="State"
@@ -366,9 +368,10 @@ export default function UserFormPage ( ) {
                 onChange={(e) => setState(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={2}>
               <TextField
                 variant="outlined"
+                required
                 fullWidth
                 id="postcode"
                 label="Postcode"

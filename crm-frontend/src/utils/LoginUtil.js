@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles';
-import Crypto from 'crypto';
 
 export const useStyles = makeStyles((theme) => ({
   paper: {
@@ -25,17 +24,7 @@ export const validateForm = (userEmail, password) => {
   return userEmail.length > 0 && password.length > 0;
 }
 
-const appSecret = 'ASDF1341NF351VSD';
-export const hash = (string) => {
-  return (Crypto
-    .createHmac('sha256', appSecret)
-    .update(string)
-    .digest('hex')
-  )
-};
-
 export const loginUser = async (credentials) => {
-    credentials.password = hash(credentials.password);
     return fetch('/login', {
       method: 'POST',
       headers: {

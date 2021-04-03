@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import MaterialUITable from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
+import {
+  Paper,
+  Table as MaterialUITable,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  IconButton
+} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+// Icons
+import EditIcon from "@material-ui/icons/EditOutlined";
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+// utils 
+import { getData, deleteData } from '../utils/FormUtil';
 
 const useStyles = makeStyles({
   root: {
@@ -18,11 +32,16 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Table ( {columns, rows} ) {
+export default function Table({ columns, baseURL }) {
 
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rows, setRows] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [deleteRowId, setDeleteRowId] = useState("");
+  // const [editDialog, setEditDialog] = useState(false);
+  // const [editRowId, setEditRowId] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -33,50 +52,139 @@ export default function Table ( {columns, rows} ) {
     setPage(0);
   };
 
+  useEffect(() => {
+    let mounted = true;
+    getData(baseURL)
+      .then(data => {
+        if (mounted) {
+          data === null ? alert("Err") : setRows(data);
+        }
+      })
+    return () => mounted = false;
+  }, [baseURL]);
+
+  const handleClickDeleteIcon = (_id) => {
+    setDeleteDialog(true);
+    setDeleteRowId(_id);
+  };
+
+  const handleDeleteRowConfirm = () => {
+    deleteData(`${baseURL}/${deleteRowId}`)
+      .then(data => {
+        if (data === null) {
+          alert("Delete failed");
+        }
+        else {
+          let newRows = rows.filter(row => row._id !== deleteRowId);
+          setRows(newRows);
+        }
+      })
+    return handleCloseDeleteDialog();
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialog(false);
+    setDeleteRowId("");
+  }
+
+  // const handleClickEditIcon = (_id) => {
+  //   setEditDialog(true);
+  //   setEditRowId(_id)
+  // };
+
+  // const handleEditRowConfirm = () => {
+
+  // }
+
+  // const handleCloseEditDialog = () => {
+  //   setEditDialog(false);
+  //   setEditRowId("");
+  // }
+
   return (
-    <Paper className={classes.root} style={{width: "99%",marginLeft:10, marginRight:10}}>
-      <TableContainer className={classes.container}>
-        <MaterialUITable stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-              return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format ? column.format(value) : value}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </MaterialUITable>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
-    </Paper>
+    <React.Fragment>
+      <Dialog
+        open={deleteDialog}
+        onClose={handleCloseDeleteDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{`Delete?`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Row cannot be reverted once deleted
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteRowConfirm} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Paper className={classes.root}>
+        <TableContainer className={classes.container}>
+          <MaterialUITable stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left" width="150" />
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
+                    <TableCell className={classes.selectTableCell}>
+                      <React.Fragment>
+                        <IconButton
+                          aria-label="edit"
+                          onClick={() => { }}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => {handleClickDeleteIcon(row._id)}}
+                        >
+                          <DeleteOutlineIcon />
+                        </IconButton>
+                      </React.Fragment>
+                    </TableCell>
+                    {columns.map((column, index) => {
+                      const value = row[column.id];
+                      return (
+                        <TableCell key={index} align={column.align}>
+                          {column.format ? column.format(value) : value}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </MaterialUITable>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </React.Fragment>
   );
 }

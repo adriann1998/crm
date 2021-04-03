@@ -1,68 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
 import accounting from 'accounting';
-import { getData } from '../utils/GetPostDataUtil';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 
-function ProspectPage() {
-
-  const [prospects, setProspects] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    getData('/prospects')
-      .then(data => {
-        if(mounted) {
-          setProspects(data)
-        }
-      })
-    return () => mounted = false;
-  }, [])
+function ProspectPage(  ) {
 
   const columns = [
     { 
       id: '_id', 
-      label: 'Prospect Id', 
-      minWidth: 100
+      label: 'Prospect Id'
     }, { 
       id: 'prospectName', 
-      label: 'Prospect Name', 
-      minWidth: 100
+      label: 'Prospect Name'
     }, { 
       id: 'account', 
-      label: 'Account', 
-      minWidth: 100,
-      format: (account) => account.accName
+      label: 'Account',
+      format: (account) => account ? account.accName : ''
     }, { 
       id: 'prospectAmount', 
-      label: 'Prospect Amount', 
-      minWidth: 100,
+      label: 'Prospect Amount',
       format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : undefined
     }, { 
       id: 'GPM', 
-      label: 'GPM', 
-      minWidth: 100,
+      label: 'GPM',
       format: (n) => n ? n.toString() + '%' : undefined
     }, { 
       id: 'endUser', 
-      label: 'End User', 
-      minWidth: 100
+      label: 'End User'
     }, { 
       id: 'expectedDuration', 
-      label: 'Expected Duration', 
-      minWidth: 100,
-      format: (n) => `${n} months`
+      label: 'Expected Duration',
+      format: (n) => n ? `${n} months` : ''
     }, { 
       id: 'createdAt', 
-      label: 'Created At', 
-      minWidth: 150,
+      label: 'Created At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'updatedAt', 
-      label: 'Updated At', 
-      minWidth: 150,
+      label: 'Updated At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }
   ];
@@ -73,7 +50,7 @@ function ProspectPage() {
       <Link to="/form-prospect">
           <AddButton />
         </Link>
-      <Table columns={columns} rows={prospects} />
+      <Table columns={columns} baseURL={'/prospects'}/>
     </React.Fragment>
   );
 }

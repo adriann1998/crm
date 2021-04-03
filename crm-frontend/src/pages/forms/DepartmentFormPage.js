@@ -1,41 +1,41 @@
 import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import { 
+  Avatar, 
+  Button, 
+  CssBaseline,
+  TextField,
+  Grid,
+  Typography,
+  Container,
+  IconButton,
+  Collapse
+} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import IconButton from '@material-ui/core/IconButton';
-import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/Close';
-import { useStyles, submitForm } from '../utils/FormUtil';
+import HomeWorkIcon from '@material-ui/icons/HomeWork';
+import { useStyles, postData } from '../../utils/FormUtil';
 import { useHistory, Link } from "react-router-dom";
 
-export default function QuoteFormPage ( ) {
+export default function DepartmentFormPage ( ) {
   
   const classes = useStyles();
   const history = useHistory();
 
-  const [prospectId, setProspectId] = useState("");
-  const [userId, setUserId] = useState("");
-  const [amountQuoted, setamountQuoted] = useState("");
+  const [departmentName, setDepartmentName] = useState("");
+  const [directorId, setDirectorId] = useState("");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = '/quotes';
+    const endpoint = '/departments';
     const formData = {
-      prospect: prospectId,
-      user: userId,
-      amountQuoted: amountQuoted
+      departmentName: departmentName,
+      director: directorId ? directorId : null
     };
-    const response = await submitForm(endpoint, formData);
-    if (!response._id) {
+    const response = await postData(endpoint, formData);
+    if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
     }
@@ -46,7 +46,7 @@ export default function QuoteFormPage ( ) {
   };
 
   const handleSuccessAlertClose = () => {
-    history.push("/quote");
+    history.push("/department");
   };
 
   const handleErrorAlertClose = () => {
@@ -58,7 +58,7 @@ export default function QuoteFormPage ( ) {
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <HomeWorkIcon />
         </Avatar>
         <Collapse in={successOpen}>
           <Alert
@@ -94,7 +94,7 @@ export default function QuoteFormPage ( ) {
             </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
-          New Quote
+          New Department
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -103,36 +103,21 @@ export default function QuoteFormPage ( ) {
                 variant="outlined"
                 required
                 fullWidth
-                id="prospectId"
-                label="Prospect Id"
-                name="prospectid"
+                id="departmentName"
+                label="Department Name"
+                name="departmentName"
                 autoFocus
-                inputProps={{ maxLength: 24, minLength: 24 }}
-                onChange={(e) => setProspectId(e.target.value)}
+                onChange={(e) => setDepartmentName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
               <TextField
                 variant="outlined"
-                required
                 fullWidth
-                id="User ID"
-                label="User ID"
-                name="userId"
-                inputProps={{ maxLength: 24, minLength: 24 }}
-                onChange={(e) => setUserId(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="Amount Quoted"
-                label="Amount Quoted"
-                name="amountQuoted"
-                type="Number"
-                onChange={(e) => setamountQuoted(e.target.value)}
+                id="Director ID"
+                label="Director ID"
+                name="directorId"
+                onChange={(e) => setDirectorId(e.target.value)}
               />
             </Grid>
           </Grid>
@@ -148,7 +133,7 @@ export default function QuoteFormPage ( ) {
           <div style={{textAlign: 'center'}}>
             Or
             <br/>
-          <Link to="/quote">Cancel</Link>
+          <Link to="/department">Cancel</Link>
           </div>
         </form>
       </div>

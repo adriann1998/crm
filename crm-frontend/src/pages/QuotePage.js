@@ -1,56 +1,37 @@
 // components
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
-import { getData } from '../utils/GetPostDataUtil';
 import accounting from 'accounting';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 
 
-function QuotePage() {
-  const [quotes, setQuotes] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    getData('/quotes')
-      .then(data => {
-        if(mounted) {
-          setQuotes(data)
-        }
-      })
-    return () => mounted = false;
-  }, [])
+function QuotePage( ) {
 
   const columns = [
     { 
       id: '_id', 
-      label: 'Quote Id', 
-      minWidth: 100
+      label: 'Quote Id'
     }, { 
       id: 'prospect', 
-      label: 'Prospect Name', 
-      minWidth: 100,
-      format: (prospect) => prospect.prospectName
+      label: 'Prospect Name',
+      format: (prospect) => prospect ? prospect.prospectName : ''
     }, { 
       id: 'user', 
-      label: 'User Name', 
-      minWidth: 100,
-      format: (user) => `${user.name.firstName} ${user.name.middleName ? user.name.middleName : ''} ${user.name.lastName}`
+      label: 'User Name',
+      format: (user) => user ? `${user.name.firstName} ${user.name.middleName ? user.name.middleName : ''} ${user.name.lastName}` : ''
     }, { 
       id: 'amountQuoted', 
-      label: 'Amount', 
-      minWidth: 100,
-      format: (n) => accounting.formatMoney(n, "Rp", 2, ",", ".")
+      label: 'Amount',
+      format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : ''
     }, { 
       id: 'createdAt', 
-      label: 'Created At', 
-      minWidth: 150,
+      label: 'Created At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'updatedAt', 
-      label: 'Updated At', 
-      minWidth: 150,
+      label: 'Updated At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }
   ];
@@ -61,7 +42,7 @@ function QuotePage() {
       <Link to="/form-quote">
         <AddButton />
       </Link>
-      <Table columns={columns} rows={quotes} />
+      <Table columns={columns} baseURL={'/quotes'} />
     </React.Fragment>
   );
 }

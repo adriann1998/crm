@@ -81,6 +81,7 @@ export default function Login ( {setToken} ) {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <FormControlLabel

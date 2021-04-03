@@ -1,62 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Title from '../components/Title';
 import Table from '../components/Table';
-import { getData } from '../utils/GetPostDataUtil';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 
-function UserPage() {
-
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    getData('/users')
-      .then(data => {
-        if(mounted) {
-          setUsers(data)
-        }
-      })
-    return () => mounted = false;
-  }, [])
+function UserPage(  ) {
 
   const columns = [
     { 
       id: 'NIK', 
-      label: 'NIK', 
-      minWidth: 150
+      label: 'NIK'
     }, { 
       id: 'name', 
-      label: 'Full Name', 
-      minWidth: 150,
-      format: (name) => `${name.firstName} ${name.middleName ? name.middleName : ''} ${name.lastName}`
+      label: 'Full Name',
+      format: (name) => name ? `${name.firstName} ${name.middleName ? name.middleName : ''} ${name.lastName}` : ''
     }, { 
       id: 'userEmail', 
-      label: 'Email', 
-      minWidth: 100
+      label: 'Email'
     }, { 
       id: 'userPosition', 
-      label: 'Role', 
-      minWidth: 150
+      label: 'Role'
     }, { 
       id: 'department', 
-      label: 'Role', 
-      minWidth: 150,
-      format: (department) => department.departmentName
+      label: 'Department',
+      format: (department) => department ? department.departmentName : ''
     }, { 
       id: 'userStatus', 
-      label: 'Status', 
-      minWidth: 150,
+      label: 'Status',
       format: (stat) => stat ? "active" : "non-active"
     }, { 
       id: 'createdAt', 
-      label: 'Created At', 
-      minWidth: 150,
+      label: 'Created At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'updatedAt', 
-      label: 'Updated At', 
-      minWidth: 150,
+      label: 'Updated At',
       format: (date) => new Date(date).toString().substring(4, 15)
     }
   ];
@@ -67,7 +45,7 @@ function UserPage() {
         <Link to="/form-user">
           <AddButton />
         </Link>
-        <Table columns={columns} rows={users} />
+        <Table columns={columns} baseURL={'/users'} />
     </React.Fragment>
   );
 }

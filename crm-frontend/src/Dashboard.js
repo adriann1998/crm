@@ -16,9 +16,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Copyright from './components/Copyright';
 import { mainListItems, secondaryListItems } from './components/NavigationList';
 import {
-  BrowserRouter as Router,
   Route,
-  Switch
+  Switch,
+  useLocation
 } from 'react-router-dom';
 import { useStyles, logout } from './utils/DashboardUtil';
 
@@ -31,17 +31,20 @@ import NotFoundPage from './pages/NotFoundPage';
 import ProspectPage from './pages/ProspectPage';
 import QuotePage from './pages/QuotePage';
 import UserPage from './pages/UserPage';
-import AccountFormPage from './pages/AccountFormPage';
-import ContactFormPage from './pages/ContactFormPage';
-import DepartmentFormPage from './pages/DepartmentFormPage';
-import ProspectFormPage from './pages/ProspectFormPage';
-import UserFormPage from './pages/UserFormPage';
-import QuoteFormPage from './pages/QuoteFormPage';
+import AccountFormPage from './pages/forms/AccountFormPage';
+import ContactFormPage from './pages/forms/ContactFormPage';
+import DepartmentFormPage from './pages/forms/DepartmentFormPage';
+import ProspectFormPage from './pages/forms/ProspectFormPage';
+import UserFormPage from './pages/forms/UserFormPage';
+import QuoteFormPage from './pages/forms/QuoteFormPage';
 
 export default function Dashboard() {
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [pageTitle, setPageTitle] = React.useState("Dashboard");
+
+  const location = useLocation();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -51,8 +54,23 @@ export default function Dashboard() {
     setOpen(false);
   };
 
+  React.useEffect(() => {
+    let newTitle = "Dashboard";
+
+    switch(location.pathname) {
+      case "/account": newTitle = "Acount"; break;
+      case "/contact": newTitle = "Contact"; break;
+      case "/department": newTitle = "Departement"; break;
+      case "/prospect": newTitle = "Prospect"; break;
+      case "/quote": newTitle = "Quote"; break;
+      case "/user": newTitle = "User"; break;
+      default: newTitle = "Dashboard";
+
+    };
+    setPageTitle(newTitle);
+  }, [location]);
+
   return (
-    <Router>
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -67,7 +85,7 @@ export default function Dashboard() {
           <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            {pageTitle}
           </Typography>
           <IconButton color="inherit" onClick={logout}>
             <Badge color="secondary">
@@ -94,26 +112,26 @@ export default function Dashboard() {
         <List>{secondaryListItems}</List>
       </Drawer>
       <main className={classes.content}>
-        
+        <div style={{width: '98%', marginLeft:"auto", marginRight:"auto"}}>
           <Switch>
-            <Route path="/" component={HomePage} exact />
+            <Route path="/" exact component={HomePage}  />
             <Route path="/account" component={AccountPage} />
             <Route path="/contact" component={ContactPage} />
             <Route path="/department" component={DepartmentPage} />
             <Route path="/prospect" component={ProspectPage} />
-            <Route path="/user" component={UserPage} />
             <Route path="/quote" component={QuotePage} />
+            <Route path="/user" component={UserPage} />
             <Route path="/form-account" component={AccountFormPage}></Route>
             <Route path="/form-contact" component={ContactFormPage}></Route>
             <Route path="/form-department" component={DepartmentFormPage}></Route>
             <Route path="/form-prospect" component={ProspectFormPage}></Route>
-            <Route path="/form-user" component={UserFormPage}></Route>
             <Route path="/form-quote" component={QuoteFormPage}></Route>
+            <Route path="/form-user" component={UserFormPage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
+        </div>
         <Copyright />
       </main>
     </div>
-    </Router>
   );
 };
