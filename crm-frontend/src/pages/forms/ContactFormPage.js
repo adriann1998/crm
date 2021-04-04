@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Avatar, 
   Button, 
@@ -8,12 +8,15 @@ import {
   Typography,
   Container,
   IconButton,
-  Collapse
+  Collapse,
+  MenuItem,
+  Select,
+  InputLabel
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import PeopleIcon from '@material-ui/icons/People';
-import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useStyles, getData, postData, putData } from '../../utils/FormUtil';
 import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function ContactFormPage ( ) {
@@ -36,6 +39,18 @@ export default function ContactFormPage ( ) {
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+
+  const [accounts, setAccounts] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    getData('/accounts').then((data) => {
+      if (mounted) {
+        data === null ? alert("Err") : setAccounts(data);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,17 +190,21 @@ export default function ContactFormPage ( ) {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField
-                variant="outlined"
+              <InputLabel>Account</InputLabel>
+              <Select
                 required
                 fullWidth
-                id="accountId"
-                label="Account ID"
-                name="accountId"
-                defaultValue={editMode ? defaultValues.account._id : ''}
-                inputProps={{ maxLength: 24, minLength: 24 }}
+                labelId="accoundId"
+                id="accoundId"
+                defaultValue={editMode ? defaultValues.account._id : null}
                 onChange={(e) => setAccount(e.target.value)}
-              />
+              >
+              {accounts.map((acc) => {
+                return (
+                  <MenuItem value={acc._id}>{`${acc.accName}`}</MenuItem>
+                )
+              })}
+              </Select>
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField

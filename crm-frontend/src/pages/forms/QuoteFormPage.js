@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Avatar, 
   Button, 
@@ -8,12 +8,15 @@ import {
   Typography,
   Container,
   IconButton,
-  Collapse
+  Collapse,
+  MenuItem,
+  Select,
+  InputLabel
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useStyles, getData, postData, putData } from '../../utils/FormUtil';
 import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function QuoteFormPage ( ) {
@@ -31,6 +34,29 @@ export default function QuoteFormPage ( ) {
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+
+  const [prospects, setProspects] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    getData('/prospects').then((data) => {
+      if (mounted) {
+        data === null ? alert("Err") : setProspects(data);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    getData('/users').then((data) => {
+      if (mounted) {
+        data === null ? alert("Err") : setUsers(data);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,31 +139,38 @@ export default function QuoteFormPage ( ) {
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
+              <InputLabel>Prospect</InputLabel>
+              <Select
                 required
                 fullWidth
+                labelId="prospectId"
                 id="prospectId"
-                label="Prospect Id"
-                name="prospectid"
-                autoFocus
-                defaultValue={editMode ? (defaultValues.prospect ? defaultValues.prospect._id : "") : ""}
-                inputProps={{ maxLength: 24, minLength: 24 }}
+                defaultValue={editMode ? defaultValues.prospect._id : null}
                 onChange={(e) => setProspectId(e.target.value)}
-              />
+              >
+              {prospects.map((prospect) => {
+                return (
+                  <MenuItem value={prospect._id}>{`${prospect.prospectName}`}</MenuItem>
+                )
+              })}
+              </Select>
             </Grid>
             <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
+              <InputLabel>User</InputLabel>
+              <Select
                 required
                 fullWidth
-                id="User ID"
-                label="User ID"
-                name="userId"
-                defaultValue={editMode ? (defaultValues.user ? defaultValues.user._id : "") : ""}
-                inputProps={{ maxLength: 24, minLength: 24 }}
+                labelId="userId"
+                id="userId"
+                defaultValue={editMode ? defaultValues.user._id : null}
                 onChange={(e) => setUserId(e.target.value)}
-              />
+              >
+              {users.map((user, index) => {
+                return (
+                  <MenuItem key={index} value={user._id}>{`${user.name.firstName}${user.name.lastName ? '.'+user.name.lastName.substring(0,1) : ''} - ${user.NIK}`}</MenuItem>
+                )
+              })}
+              </Select>
             </Grid>
             <Grid item xs={12} sm={12}>
               <TextField
