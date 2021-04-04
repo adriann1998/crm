@@ -1,16 +1,16 @@
-import React from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import BusinessIcon from '@material-ui/icons/Business';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import PersonIcon from '@material-ui/icons/Person';
-import HomeWorkIcon from '@material-ui/icons/HomeWork';
-import { Link } from 'react-router-dom';
+import React from "react";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import DashboardIcon from "@material-ui/icons/Dashboard";
+import PeopleIcon from "@material-ui/icons/People";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import BusinessIcon from "@material-ui/icons/Business";
+import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
+import PersonIcon from "@material-ui/icons/Person";
+import HomeWorkIcon from "@material-ui/icons/HomeWork";
+import { Link } from "react-router-dom";
 
 export const mainListItems = (
   <div>
@@ -22,7 +22,7 @@ export const mainListItems = (
         <ListItemText primary="Dashboard" />
       </ListItem>
     </Link>
-    
+
     <Link to="/account">
       <ListItem button>
         <ListItemIcon>
@@ -40,7 +40,7 @@ export const mainListItems = (
         <ListItemText primary="Contact" />
       </ListItem>
     </Link>
-    
+
     <Link to="/department">
       <ListItem button>
         <ListItemIcon>
@@ -58,16 +58,16 @@ export const mainListItems = (
         <ListItemText primary="Prospect" />
       </ListItem>
     </Link>
-    
+
     <Link to="/quote">
       <ListItem button>
         <ListItemIcon>
-        <AssignmentIcon />
+          <AssignmentIcon />
         </ListItemIcon>
         <ListItemText primary="Quote" />
       </ListItem>
     </Link>
-    
+
     <Link to="/user">
       <ListItem button>
         <ListItemIcon>

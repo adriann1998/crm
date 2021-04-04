@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-import hash from '../utils/hash';
+const hash = require('./utils/hash');
 
 export default function login(req, res) {
     let userCredentials = req.body;
