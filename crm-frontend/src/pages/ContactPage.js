@@ -1,5 +1,5 @@
 import React from 'react';
-import Title from '../components/Title';
+import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
@@ -39,11 +39,14 @@ function ContactPage() {
   
   return (
     <React.Fragment>
-        <Title title="Contact Page" />
-        <Link to="/form/contact">
-          <AddButton />
-        </Link>
-        <Table columns={columns} baseURL={'/contacts'} />
+      <PageHeader 
+        title="Contact Page" 
+        subTitle="description goes here"
+      />
+      <Link to="/form/contact">
+        <AddButton />
+      </Link>
+      <Table columns={columns} baseURL={'/contacts'} />
     </React.Fragment>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import Title from '../components/Title';
+import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
@@ -41,11 +41,14 @@ function UserPage(  ) {
 
   return (
     <React.Fragment>
-        <Title title="User Page" />
-        <Link to="/form/user">
-          <AddButton />
-        </Link>
-        <Table columns={columns} baseURL={'/users'} />
+      <PageHeader 
+        title="User Page" 
+        subTitle="description goes here"
+      />
+      <Link to="/form/user">
+        <AddButton />
+      </Link>
+      <Table columns={columns} baseURL={'/users'} />
     </React.Fragment>
   );
 }

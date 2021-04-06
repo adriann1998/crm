@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Avatar, 
-  Button, 
+  Avatar,
   CssBaseline,
-  TextField,
   Grid,
   Typography,
   Container,
   IconButton,
-  Collapse,
-  MenuItem,
-  Select,
-  InputLabel
+  Collapse
 } from '@material-ui/core';
+import TextField from '../../components/formFields/TextField';
+import SelectField from '../../components/formFields/SelectField';
+import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useStyles, getData, postData, putData } from '../../utils/FormUtil';
+import { useFormStyles, getData, postData, putData, useForm } from '../../utils/FormUtil';
 import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function QuoteFormPage ( ) {
@@ -25,24 +23,31 @@ export default function QuoteFormPage ( ) {
   const defaultValues = location.state ? location.state.defaultValues : undefined;
   const editMode = defaultValues !== undefined;
   
-  const classes = useStyles();
+  const classes = useFormStyles();
   const history = useHistory();
 
-  const [prospectId, setProspectId] = useState(editMode ? (defaultValues.prospect ? defaultValues.prospect._id : "") : "");
-  const [userId, setUserId] = useState(editMode ? (defaultValues.user ? defaultValues.user._id : "") : "");
-  const [amountQuoted, setamountQuoted] = useState(editMode ? defaultValues.amountQuoted : 0);
+  const initialFormValues = {
+    prospect: editMode ? (defaultValues.prospect ? defaultValues.prospect._id : "") : "",
+    user: editMode ? (defaultValues.user ? defaultValues.user._id : "") : "",
+    amountQuoted: editMode ? defaultValues.amountQuoted : 0
+  };
+
+  const { formValues, handleInputChange } = useForm(initialFormValues);
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
-  const [prospects, setProspects] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [prospectsChoices, setProspectsChoices] = useState([]);
+  const [usersChoices, setUsersChoices] = useState([]);
 
   useEffect(() => {
     let mounted = true;
     getData('/prospects').then((data) => {
       if (mounted) {
-        data === null ? alert("Err") : setProspects(data);
+        if (data === null) {alert("Err")};
+        setProspectsChoices(data.map((prospect) => {
+          return {value: prospect._id, label: prospect.prospectName}
+        }));
       }
     });
     return () => (mounted = false);
@@ -52,7 +57,10 @@ export default function QuoteFormPage ( ) {
     let mounted = true;
     getData('/users').then((data) => {
       if (mounted) {
-        data === null ? alert("Err") : setUsers(data);
+        if (data === null) {alert("Err")};
+        setUsersChoices(data.map((user) => {
+          return {value: user._id, label: `${user.name.firstName}${user.name.lastName ? '.'+user.name.lastName.substring(0,1) : ''} - ${user.NIK}`}
+        }));
       }
     });
     return () => (mounted = false);
@@ -60,20 +68,15 @@ export default function QuoteFormPage ( ) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
-      prospect: prospectId,
-      user: userId,
-      amountQuoted: amountQuoted
-    };
     let response;
     let endpoint;
     if (editMode) {
       endpoint = `/quotes/${defaultValues._id}`;
-      response = await putData(endpoint, formData);
+      response = await putData(endpoint, formValues);
     }
     else {
       endpoint = '/quotes';
-      response = await postData(endpoint, formData);
+      response = await postData(endpoint, formValues);
     }
     if (response === null) {
       setSuccessOpen(false);
@@ -139,62 +142,41 @@ export default function QuoteFormPage ( ) {
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
-              <InputLabel>Prospect</InputLabel>
-              <Select
-                required
-                fullWidth
-                labelId="prospectId"
-                id="prospectId"
+              <SelectField
+                required={true}
+                label="Prospect"
+                name="prospect"
                 defaultValue={editMode ? defaultValues.prospect._id : null}
-                onChange={(e) => setProspectId(e.target.value)}
-              >
-              {prospects.map((prospect) => {
-                return (
-                  <MenuItem value={prospect._id}>{`${prospect.prospectName}`}</MenuItem>
-                )
-              })}
-              </Select>
+                onChange={handleInputChange}
+                items={prospectsChoices}
+              />
             </Grid>
             <Grid item xs={12} sm={12}>
-              <InputLabel>User</InputLabel>
-              <Select
-                required
-                fullWidth
-                labelId="userId"
-                id="userId"
+              <SelectField
+                required={true}
+                label="User"
+                name="user"
                 defaultValue={editMode ? defaultValues.user._id : null}
-                onChange={(e) => setUserId(e.target.value)}
-              >
-              {users.map((user, index) => {
-                return (
-                  <MenuItem key={index} value={user._id}>{`${user.name.firstName}${user.name.lastName ? '.'+user.name.lastName.substring(0,1) : ''} - ${user.NIK}`}</MenuItem>
-                )
-              })}
-              </Select>
+                onChange={handleInputChange}
+                items={usersChoices}
+              />
             </Grid>
             <Grid item xs={12} sm={12}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="Amount Quoted"
+                required={true}
                 label="Amount Quoted"
                 name="amountQuoted"
                 type="Number"
                 defaultValue={editMode ? defaultValues.amountQuoted : 0}
-                onChange={(e) => setamountQuoted(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
           </Grid>
           <Button
+            text="Submit"
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
-          >
-            Submit
-          </Button>
+          />
           <div style={{textAlign: 'center'}}>
             Or
             <br/>

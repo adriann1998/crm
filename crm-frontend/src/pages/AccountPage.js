@@ -1,5 +1,5 @@
 import React from 'react';
-import Title from '../components/Title';
+import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
@@ -27,7 +27,10 @@ function AccountPage( ) {
 
   return (
     <React.Fragment>
-        <Title title="Home Page" />
+        <PageHeader 
+          title="Account Page" 
+          subTitle="description goes here"
+        />
         <Link to="/form/account">
           <AddButton />
         </Link>

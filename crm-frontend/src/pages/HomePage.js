@@ -10,7 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import TablePagination from '@material-ui/core/TablePagination';
 import TableContainer from '@material-ui/core/TableContainer';
 import IconButton from "@material-ui/core/IconButton";
-import Title from "../components/Title";
+import PageHeader from '../components/PageHeader';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 // Icons
@@ -189,7 +189,10 @@ export default function HomePage ( ) {
 
   return (
     <React.Fragment>
-      <Title title="Contact Page" />
+      <PageHeader 
+        title="Home Page" 
+        subTitle="description goes here"
+      />
       <Link to="/form-account">
         <AddButton />
       </Link>

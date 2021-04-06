@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import {
   Avatar,
-  Button,
   CssBaseline,
-  TextField,
   Grid,
   Typography,
   Container,
   IconButton,
   Collapse
 } from '@material-ui/core';
+import TextField from '../../components/formFields/TextField';
+import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import BusinessIcon from '@material-ui/icons/Business';
-import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useFormStyles, postData, putData, useForm } from '../../utils/FormUtil';
 import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function AccountFormPage() {
@@ -22,30 +22,30 @@ export default function AccountFormPage() {
   const defaultValues = location.state ? location.state.defaultValues : undefined;
   const editMode = defaultValues !== undefined;
 
-  const classes = useStyles();
+  const classes = useFormStyles();
   const history = useHistory();
-
-  const [accName, setAccName] = useState(editMode ? defaultValues.accName : "");
-  const [accAlias, setAccAlias] = useState(editMode ? defaultValues.accAlias : "");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
+  const initialFormValues = {
+    accName: editMode ? defaultValues.accName : "",
+    accAlias: editMode ? defaultValues.accName : ""
+  };
+
+  const { formValues, handleInputChange } = useForm(initialFormValues);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
-      accName: accName,
-      accAlias: accAlias
-    };
     let response;
     let endpoint;
     if (editMode) {
       endpoint = `/accounts/${defaultValues._id}`;
-      response = await putData(endpoint, formData);
+      response = await putData(endpoint, formValues);
     }
     else {
       endpoint = '/accounts';
-      response = await postData(endpoint, formData);
+      response = await postData(endpoint, formValues);
     }
     if (response === null) {
       setSuccessOpen(false);
@@ -112,38 +112,27 @@ export default function AccountFormPage() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="accName"
+                required={true}
                 label="Account Name"
                 name="accName"
-                autoFocus
                 defaultValue={editMode ? defaultValues.accName : ''}
-                onChange={(e) => setAccName(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="accAlias"
                 label="Account Alias"
                 name="accAlias"
-                defaultValue={editMode ? defaultValues.accAlias : ''}
-                onChange={(e) => setAccAlias(e.target.value)}
+                defaultValue={editMode ? defaultValues.accName : ''}
+                onChange={handleInputChange}
               />
             </Grid>
           </Grid>
           <Button
+            text="Submit"
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
-          >
-            Submit
-            </Button>
+          />
           <div style={{ textAlign: 'center' }}>
             Or
               <br />

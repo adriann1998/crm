@@ -1,5 +1,5 @@
-import React from 'react'
-import Title from '../components/Title';
+import React from 'react';
+import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
@@ -23,7 +23,10 @@ function DepartmentPage() {
 
   return (
     <React.Fragment>
-      <Title title="Department Page" />
+      <PageHeader 
+        title="Department Page" 
+        subTitle="description goes here"
+      />
       <Link to="/form/department">
           <AddButton />
         </Link> 

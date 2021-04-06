@@ -1,109 +1,170 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Avatar,
-  Button,
   CssBaseline,
-  TextField,
   Grid,
   Typography,
   Container,
   IconButton,
   Collapse,
-  MenuItem,
-  Select,
-  InputLabel
-} from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import Alert from '@material-ui/lab/Alert';
-import CloseIcon from '@material-ui/icons/Close';
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
-import { useStyles, postData, putData } from '../../utils/FormUtil';
+} from "@material-ui/core";
+import TextField from "../../components/formFields/TextField";
+import SelectField from "../../components/formFields/SelectField";
+import DateField from "../../components/formFields/DateField.js";
+import Button from "../../components/Button";
+import PersonIcon from "@material-ui/icons/Person";
+import Alert from "@material-ui/lab/Alert";
+import CloseIcon from "@material-ui/icons/Close";
+import {
+  useFormStyles,
+  getData,
+  postData,
+  putData,
+  useForm,
+} from "../../utils/FormUtil";
 import { useHistory, useLocation, Link } from "react-router-dom";
 
-export default function UserFormPage() {
+const userPositionsChoices = [
+  { value: "am", label: "Account Manager" },
+  { value: "bm", label: "Business Manager" },
+  { value: "director", label: "Director" },
+];
 
+export default function UserFormPage() {
   const location = useLocation();
-  const defaultValues = location.state ? location.state.defaultValues : undefined;
+  const defaultValues = location.state
+    ? location.state.defaultValues
+    : undefined;
   const editMode = defaultValues !== undefined;
 
-  const classes = useStyles();
+  const classes = useFormStyles();
   const history = useHistory();
 
-  const [firstName, setFirstName] = useState(editMode ? defaultValues.name.firstName : "");
-  const [middleName, setMiddleName] = useState(editMode ? defaultValues.name.middleName : "");
-  const [lastName, setLastName] = useState(editMode ? defaultValues.name.lastName : "");
-  const [userEmail, setUserEmail] = useState(editMode ? defaultValues.userEmail : "");
-  const [password, setPassword] = useState(editMode ? defaultValues.password : "");
-  const [passwordConfirm, setPasswordConfirm] = useState(editMode ? defaultValues.password : "");
-  const [userDOB, setUserDOB] = useState(editMode ? defaultValues.userDOB : new Date('1970-01-01'));
-  const [NIK, setNIK] = useState(editMode ? defaultValues.NIK : "");
-  const [mobilePhone1, setMobilePhone1] = useState(editMode ? defaultValues.userPhone.mobile1 : "");
-  const [mobilePhone2, setMobilePhone2] = useState(editMode ? defaultValues.userPhone.mobile2 : "");
-  const [workPhone, setWorkPhone] = useState(editMode ? defaultValues.userPhone.work : "");
-  const [userPosition, setUserPosition] = useState(editMode ? defaultValues.userPosition : "am");
-  const [reportTo, setReportTo] = useState(editMode ? (defaultValues.reportTo ? defaultValues.reportTo._id : null) : null);
-  const [department, setDepartment] = useState(editMode ? defaultValues.department._id : '');
-  const [street, setStreet] = useState(editMode ? defaultValues.userAddress.street : '');
-  const [city, setCity] = useState(editMode ? defaultValues.userAddress.street : '');
-  const [state, setState] = useState(editMode ? defaultValues.userAddress.state : '');
-  const [postcode, setPoscode] = useState(editMode ? defaultValues.userAddress.postcode : 0);
+  const initialFormValues = {
+    firstName: editMode ? defaultValues.name.firstName : "",
+    middleName: editMode ? defaultValues.name.middleName : "",
+    lastName: editMode ? defaultValues.name.lastName : "",
+    userEmail: editMode ? defaultValues.userEmail : "",
+    password: editMode ? defaultValues.password : "",
+    passwordConfirm: editMode ? defaultValues.password : "",
+    userDOB: editMode ? defaultValues.userDOB : new Date("1970-01-01"),
+    NIK: editMode ? defaultValues.NIK : "",
+    mobilePhone1: editMode ? defaultValues.userPhone.mobile1 : "",
+    mobilePhone2: editMode ? defaultValues.userPhone.mobile2 : "",
+    workPhone: editMode ? defaultValues.userPhone.work : "",
+    userPosition: editMode ? defaultValues.userPosition : "am",
+    reportTo: editMode
+      ? defaultValues.reportTo
+        ? defaultValues.reportTo._id
+        : ""
+      : "",
+    department: editMode ? defaultValues.department._id : "",
+    street: editMode ? defaultValues.userAddress.street : "",
+    city: editMode ? defaultValues.userAddress.street : "",
+    state: editMode ? defaultValues.userAddress.state : "",
+    postcode: editMode ? defaultValues.userAddress.postcode : 0,
+  };
+
+  const { formValues, handleInputChange } = useForm(initialFormValues);
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
 
+  const [departmentsChoices, setDepartmentsChoices] = useState([]);
+  const [usersChoices, setUsersChoices] = useState([]);
+
   useEffect(() => {
-    setPasswordMatch(password === passwordConfirm);
-  }, [password, passwordConfirm])
+    let mounted = true;
+    getData("/departments").then((data) => {
+      if (mounted) {
+        if (data === null) {
+          alert("Err");
+        }
+        setDepartmentsChoices(
+          data.map((department) => {
+            return { value: department._id, label: department.departmentName };
+          })
+        );
+      }
+    });
+    return () => (mounted = false);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    getData("/users").then((data) => {
+      if (mounted) {
+        if (data === null) { alert("Err");}
+        const userFilter = (user) => {
+          if (editMode) { 
+            return formValues.userPosition === "am" ? user.userPosition !== "am" : user.userPosition === "director"; 
+          }
+          return true;
+        };
+        setUsersChoices(
+          data.filter(userFilter)
+              .map((user) => { 
+                return { 
+                  value: user._id, 
+                  label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
+                };
+              })
+        );
+      }
+    });
+    return () => (mounted = false);
+  }, [editMode, formValues.userPosition]);
+
+  useEffect(() => {
+    setPasswordMatch(formValues.password === formValues.passwordConfirm);
+  }, [formValues.password, formValues.passwordConfirm]);
 
   const handleSubmit = async (e) => {
     if (passwordMatch) {
       e.preventDefault();
       const formData = {
         name: {
-          firstName: firstName,
-          middleName: middleName ? middleName : undefined,
-          lastName: lastName ? lastName : undefined
+          firstName: formValues.firstName,
+          middleName: formValues.middleName ? formValues.middleName : "",
+          lastName: formValues.lastName ? formValues.lastName : "",
         },
-        userEmail: userEmail,
-        password: password,
-        userDOB: userDOB,
-        NIK: NIK,
+        userEmail: formValues.userEmail,
+        password: formValues.password,
+        userDOB: formValues.userDOB,
+        NIK: formValues.NIK,
         userPhone: {
-          mobile1: mobilePhone1,
-          mobile2: mobilePhone2 ? mobilePhone2 : undefined,
-          work: workPhone ? workPhone : undefined
+          mobile1: formValues.mobilePhone1,
+          mobile2: formValues.mobilePhone2,
+          work: formValues.workPhone,
         },
-        userPosition: userPosition,
-        reportTo: reportTo,
-        department: department,
+        userPosition: formValues.userPosition,
+        reportTo: formValues.reportTo,
+        department: formValues.department,
         userAddress: {
-          street: street,
-          city: city,
-          state: state,
-          postcode: postcode
-        }
+          street: formValues.street,
+          city: formValues.city,
+          state: formValues.state,
+          postcode: formValues.postcode,
+        },
       };
       let response;
       let endpoint;
       if (editMode) {
         endpoint = `/users/${defaultValues._id}`;
         response = await putData(endpoint, formData);
-      }
-      else {
-        endpoint = '/users';
+      } else {
+        endpoint = "/users";
         response = await postData(endpoint, formData);
       }
       if (response === null) {
         setSuccessOpen(false);
         setErrorOpen(true);
-      }
-      else {
+      } else {
         setErrorOpen(false);
         setSuccessOpen(true);
       }
-    };
+    }
   };
 
   const handleSuccessAlertClose = () => {
@@ -153,7 +214,7 @@ export default function UserFormPage() {
             severity="error"
           >
             Data Invalid!
-            </Alert>
+          </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
           {editMode ? "Edit User" : "New User"}
@@ -162,262 +223,182 @@ export default function UserFormPage() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="userEmail"
+                required={true}
                 label="Email"
                 name="userEmail"
-                autoFocus
                 type="email"
                 disabled={editMode}
                 defaultValue={editMode ? defaultValues.userEmail : ""}
-                onChange={(e) => setUserEmail(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="NIK"
+                required={true}
                 label="NIK"
                 name="NIK"
-                autoFocus
                 disabled={editMode}
                 defaultValue={editMode ? defaultValues.NIK : ""}
                 inputProps={{ maxLength: 11, minLength: 11 }}
-                onChange={(e) => setNIK(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
+                required={true}
                 error={!passwordMatch}
-                helperText={passwordMatch ? '' : "Passwords do not match"}
-                fullWidth
-                id="password"
+                helperText={passwordMatch ? "" : "Passwords do not match"}
                 label="Password"
                 name="password"
-                autoFocus
                 type="password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
+                required={true}
                 error={!passwordMatch}
-                helperText={passwordMatch ? '' : "Passwords do not match"}
-                id="passwordConfirm"
+                helperText={passwordMatch ? "" : "Passwords do not match"}
                 label="Password (Confirm)"
                 name="passwordConfirm"
-                autoFocus
                 type="password"
-                onChange={(e) => setPasswordConfirm(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
+                required={true}
                 label="First Name"
                 name="firstName"
-                autoFocus
                 defaultValue={editMode ? defaultValues.name.firstName : ""}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="middleName"
                 label="Middle Name"
                 name="middleName"
-                autoFocus
                 defaultValue={editMode ? defaultValues.name.middleName : ""}
-                onChange={(e) => setMiddleName(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="lastName"
                 label="Last Name"
                 name="lastName"
-                autoFocus
                 defaultValue={editMode ? defaultValues.name.lastName : ""}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                  disableToolbar
-                  required
-                  fullWidth
-                  format="dd/MM/yyyy"
-                  margin="normal"
-                  id="DOB"
-                  label="D.O.B"
-                  value={userDOB}
-                  onChange={(e) => setUserDOB(e.target.value)}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
-              </MuiPickersUtilsProvider>
+              <DateField 
+                required={true}
+                label="D.O.B"
+                name="userDOB"
+                value={formValues.userDOB}
+                onChange={handleInputChange}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="department"
-                label="Department ID"
+              <SelectField
+                required={true}
+                label="Department"
                 name="department"
-                autoFocus
                 defaultValue={editMode ? defaultValues.department._id : ""}
-                inputProps={{ maxLength: 24, minLength: 24 }}
-                onChange={(e) => setDepartment(e.target.value)}
+                onChange={handleInputChange}
+                items={departmentsChoices}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>Role</InputLabel>
-              <Select
-                required
-                fullWidth
-                labelId="userPosition"
-                id="userPosition"
-                defaultValue={editMode ? defaultValues.userPosition : userPosition}
-                onChange={(e) => setUserPosition(e.target.value)}
-              >
-                <MenuItem value={"am"}>Account Manager</MenuItem>
-                <MenuItem value={"bm"}>Business Manager</MenuItem>
-                <MenuItem value={"director"}>Director</MenuItem>
-              </Select>
+              <SelectField
+                required={true}
+                label="User Position"
+                name="userPosition"
+                defaultValue={formValues.userPosition}
+                onChange={handleInputChange}
+                items={userPositionsChoices}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                fullWidth
-                id="reportTo"
-                label="Report To (Enter User ID)"
+              <SelectField
+                label="Report To"
                 name="reportTo"
-                autoFocus
-                disabled={userPosition === 'director'}
-                defaultValue={editMode ? (defaultValues.reportTo ? defaultValues.reportTo._id : null) : null}
-                inputProps={{ maxLength: 24, minLength: 24 }}
-                onChange={(e) => setReportTo(e.target.value)}
+                disabled={formValues.userPosition === "director"}
+                defaultValue={formValues.reportTo}
+                onChange={handleInputChange}
+                items={usersChoices}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="mobile1"
+                required={true}
                 label="Mobile Phone 1"
-                name="mobile1"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userPhone.mobile1 : ''}
-                onChange={(e) => setMobilePhone1(e.target.value)}
+                name="mobilePhone1"
+                defaultValue={editMode ? defaultValues.userPhone.mobile1 : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="mobile2"
                 label="Mobile Phone 2"
-                name="moobile2"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userPhone.mobile2 : ''}
-                onChange={(e) => setMobilePhone2(e.target.value)}
+                name="mobilePhone2"
+                defaultValue={editMode ? defaultValues.userPhone.mobile2 : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="workPhone"
                 label="Work Phone"
                 name="workPhone"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userPhone.work : ''}
-                onChange={(e) => setWorkPhone(e.target.value)}
+                defaultValue={editMode ? defaultValues.userPhone.work : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="street"
+                required={true}
                 label="Street"
                 name="street"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userAddress.street : ''}
-                onChange={(e) => setStreet(e.target.value)}
+                defaultValue={editMode ? defaultValues.userAddress.street : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="city"
+                required={true}
                 label="City"
                 name="city"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userAddress.city : ''}
-                onChange={(e) => setCity(e.target.value)}
+                defaultValue={editMode ? defaultValues.userAddress.city : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="state"
+                required={true}
                 label="State"
                 name="state"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userAddress.state : ''}
-                onChange={(e) => setState(e.target.value)}
+                defaultValue={editMode ? defaultValues.userAddress.state : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="postcode"
+                required={true}
                 label="Postcode"
                 name="postcode"
-                autoFocus
-                defaultValue={editMode ? defaultValues.userAddress.postcode : ''}
-                onChange={(e) => setPoscode(e.target.value)}
+                defaultValue={
+                  editMode ? defaultValues.userAddress.postcode : ""
+                }
+                onChange={handleInputChange}
               />
             </Grid>
           </Grid>
           <Button
+            text="Submit"
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
-          >
-            Submit
-          </Button>
-          <div style={{ textAlign: 'center' }}>
+          />
+          <div style={{ textAlign: "center" }}>
             Or
             <br />
             <Link to="/user">Cancel</Link>

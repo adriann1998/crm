@@ -14,6 +14,7 @@ module.exports = {
     newProspectDetails._id = new mongoose.Types.ObjectId();
     let prospect = new Prospect(newProspectDetails);
     prospect.save(function (err) {
+      console.log(err)
       if (err) return res.status(500).json(err);
       res.json(prospect);
     });

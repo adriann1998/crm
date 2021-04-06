@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { 
-  Avatar, 
-  Button, 
+  Avatar,
   CssBaseline,
-  TextField,
   Grid,
   Typography,
   Container,
   IconButton,
   Collapse
 } from '@material-ui/core';
+import TextField from '../../components/formFields/TextField';
+import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
-import { useStyles, postData, putData } from '../../utils/FormUtil';
+import { useFormStyles, postData, putData, useForm } from '../../utils/FormUtil';
 import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function DepartmentFormPage ( ) {
@@ -22,30 +22,30 @@ export default function DepartmentFormPage ( ) {
   const defaultValues = location.state ? location.state.defaultValues : undefined;
   const editMode = defaultValues !== undefined;
   
-  const classes = useStyles();
+  const classes = useFormStyles();
   const history = useHistory();
-
-  const [departmentName, setDepartmentName] = useState(editMode ? defaultValues.departmentName : "");
-  const [directorId, setDirectorId] = useState(editMode ? (defaultValues.director ? defaultValues.director._id : "") : "");
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
+  const initialFormValues = {
+    departmentName: editMode ? defaultValues.departmentName : "",
+    director: editMode ? (defaultValues.director ? defaultValues.director._id : null) : null
+  };
+
+  const { formValues, handleInputChange } = useForm(initialFormValues);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
-      departmentName: departmentName,
-      director: directorId ? directorId : null
-    };
     let response;
     let endpoint;
     if (editMode) {
       endpoint = `/departments/${defaultValues._id}`;
-      response = await putData(endpoint, formData);
+      response = await putData(endpoint, formValues);
     }
     else {
       endpoint = '/departments';
-      response = await postData(endpoint, formData);
+      response = await postData(endpoint, formValues);
     }
     if (response === null) {
       setSuccessOpen(false);
@@ -112,38 +112,27 @@ export default function DepartmentFormPage ( ) {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="departmentName"
+                required={true}
                 label="Department Name"
                 name="departmentName"
-                autoFocus
                 defaultValue={editMode ? defaultValues.departmentName : ''}
-                onChange={(e) => setDepartmentName(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="Director ID"
                 label="Director ID"
                 name="directorId"
                 defaultValue={editMode ? (defaultValues.director ? defaultValues.director._id : '') : ''}
-                onChange={(e) => setDirectorId(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
           </Grid>
           <Button
+            text="Submit"
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
-          >
-            Submit
-          </Button>
+          />
           <div style={{textAlign: 'center'}}>
             Or
             <br/>

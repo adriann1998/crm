@@ -1,52 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Avatar, 
-  Button, 
+import React, { useState, useEffect } from "react";
+import {
+  Avatar,
   CssBaseline,
-  TextField,
   Grid,
   Typography,
   Container,
   IconButton,
   Collapse,
-  MenuItem,
-  Select,
-  InputLabel
-} from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import CloseIcon from '@material-ui/icons/Close';
-import PeopleIcon from '@material-ui/icons/People';
-import { useStyles, getData, postData, putData } from '../../utils/FormUtil';
+} from "@material-ui/core";
+import TextField from "../../components/formFields/TextField";
+import SelectField from "../../components/formFields/SelectField";
+import Button from "../../components/Button";
+import Alert from "@material-ui/lab/Alert";
+import CloseIcon from "@material-ui/icons/Close";
+import PeopleIcon from "@material-ui/icons/People";
+import {
+  useFormStyles,
+  getData,
+  postData,
+  putData,
+  useForm,
+} from "../../utils/FormUtil";
 import { useHistory, useLocation, Link } from "react-router-dom";
 
-export default function ContactFormPage ( ) {
-
+export default function ContactFormPage() {
   const location = useLocation();
   const defaultValues = location.state ? location.state.defaultValues : undefined;
   const editMode = defaultValues !== undefined;
-  
-  const classes = useStyles();
+
+  const classes = useFormStyles();
   const history = useHistory();
 
-  const [firstName, setfirstName] = useState(editMode ? defaultValues.name.firstName : "");
-  const [lastName, setLastName] = useState(editMode ? defaultValues.name.lastName : "");
-  const [account, setAccount] = useState(editMode ? defaultValues.account._id : "");
-  const [contactTitle, setContacTitle] = useState(editMode ? defaultValues.contactTitle : "");
-  const [contactEmail, setContactEmail] = useState(editMode ? defaultValues.contactEmail : "");
-  const [mobilePhone, setMobilePhone] = useState(editMode ? defaultValues.contactPhone.mobile : "");
-  const [workPhone, setWorkPhone] = useState(editMode ? defaultValues.contactPhone.work : "");
-  const [officePhone, setOfficePhone] = useState(editMode ? defaultValues.contactPhone.office : "");
+  const initialFormValues = {
+    firstName: editMode ? defaultValues.name.firstName : "",
+    lastName: editMode ? defaultValues.name.lastName : "",
+    account: editMode ? defaultValues.account._id : "",
+    contactTitle: editMode ? defaultValues.contactTitle : "",
+    contactEmail: editMode ? defaultValues.contactEmail : "",
+    mobilePhone: editMode ? defaultValues.contactPhone.mobile : "",
+    workPhone: editMode ? defaultValues.contactPhone.work : "",
+    officePhone: editMode ? defaultValues.contactPhone.office : "",
+  };
+
+  const { formValues, handleInputChange } = useForm(initialFormValues);
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
-  const [accounts, setAccounts] = useState([]);
+  const [accountsChoices, setAccountsChoices] = useState([]);
 
   useEffect(() => {
     let mounted = true;
-    getData('/accounts').then((data) => {
+    getData("/accounts").then((data) => {
       if (mounted) {
-        data === null ? alert("Err") : setAccounts(data);
+        if (data === null) {alert("Err");}
+        setAccountsChoices(data.map((acc) => {
+          return {value: acc._id, label: acc.accName}
+        }))
       }
     });
     return () => (mounted = false);
@@ -56,17 +66,17 @@ export default function ContactFormPage ( ) {
     e.preventDefault();
     const formData = {
       name: {
-        firstName: firstName,
-        lastName: lastName
+        firstName: formValues.firstName,
+        lastName: formValues.lastName,
       },
-      account: account,
-      contactTitle: contactTitle ? contactTitle : undefined,
-      contactEmail: contactEmail ? contactEmail : undefined,
+      account: formValues.account,
+      contactTitle: formValues.contactTitle ? formValues.contactTitle : "",
+      contactEmail: formValues.contactEmail ? formValues.contactEmail : "",
       contactPhone: {
-        mobile: mobilePhone,
-        work: workPhone ? workPhone : undefined,
-        office: officePhone ? officePhone : undefined
-      }
+        mobile: formValues.mobilePhone,
+        work: formValues.workPhone ? formValues.workPhone : "",
+        office: formValues.officePhone ? formValues.officePhone : "",
+      },
     };
     console.log(formData);
     let response;
@@ -74,16 +84,14 @@ export default function ContactFormPage ( ) {
     if (editMode) {
       endpoint = `/contacts/${defaultValues._id}`;
       response = await putData(endpoint, formData);
-    }
-    else {
-      endpoint = '/accounts';
+    } else {
+      endpoint = "/contacts";
       response = await postData(endpoint, formData);
     }
     if (response === null) {
       setSuccessOpen(false);
       setErrorOpen(true);
-    }
-    else {
+    } else {
       setErrorOpen(false);
       setSuccessOpen(true);
     }
@@ -122,20 +130,20 @@ export default function ContactFormPage ( ) {
         </Collapse>
         <Collapse in={errorOpen}>
           <Alert
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleErrorAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-              severity="error"
-            >
-              Data Invalid!
-            </Alert>
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleErrorAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="error"
+          >
+            Data Invalid!
+          </Alert>
         </Collapse>
         <Typography component="h1" variant="h5">
           {editMode ? "Edit Contact" : "New Contact"}
@@ -144,115 +152,82 @@ export default function ContactFormPage ( ) {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
+                required={true}
                 label="First Name"
                 name="firstName"
-                autoFocus
-                defaultValue={editMode ? defaultValues.name.firstName : ''}
-                onChange={(e) => setfirstName(e.target.value)}
+                defaultValue={editMode ? defaultValues.name.firstName : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="lastName"
                 label="Last Name"
                 name="lastName"
-                defaultValue={editMode ? defaultValues.name.lastName : ''}
-                onChange={(e) => setLastName(e.target.value)}
+                defaultValue={editMode ? defaultValues.name.lastName : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="contactTitle"
                 label="Contact Title"
                 name="contactTitle"
-                defaultValue={editMode ? defaultValues.contactTitle : ''}
-                onChange={(e) => setContacTitle(e.target.value)}
+                defaultValue={editMode ? defaultValues.contactTitle : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="contactEmail"
                 label="Contact Email"
                 name="contactEmail"
                 type="email"
-                defaultValue={editMode ? defaultValues.contactEmail : ''}
-                onChange={(e) => setContactEmail(e.target.value)}
+                defaultValue={editMode ? defaultValues.contactEmail : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <InputLabel>Account</InputLabel>
-              <Select
-                required
-                fullWidth
-                labelId="accoundId"
-                id="accoundId"
+              <SelectField
+                required={true}
+                label="Account"
+                name="account"
                 defaultValue={editMode ? defaultValues.account._id : null}
-                onChange={(e) => setAccount(e.target.value)}
-              >
-              {accounts.map((acc) => {
-                return (
-                  <MenuItem value={acc._id}>{`${acc.accName}`}</MenuItem>
-                )
-              })}
-              </Select>
+                onChange={handleInputChange}
+                items={accountsChoices}
+              />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="mobilePhone"
+                required={true}
                 label="Mobile PhoneNumber"
                 name="mobilePhone"
-                defaultValue={editMode ? defaultValues.contactPhone.mobile : ''}
-                onChange={(e) => setMobilePhone(e.target.value)}
+                defaultValue={editMode ? defaultValues.contactPhone.mobile : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="workPhone"
                 label="Work Phone Number"
                 name="workPhone"
-                defaultValue={editMode ? defaultValues.contactPhone.work : ''}
-                onChange={(e) => setWorkPhone(e.target.value)}
+                defaultValue={editMode ? defaultValues.contactPhone.work : ""}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="officePhone"
                 label="Office Phone"
                 name="officePhone"
-                defaultValue={editMode ? defaultValues.contactPhone.office : ''}
-                onChange={(e) => setOfficePhone(e.target.value)}
+                defaultValue={editMode ? defaultValues.contactPhone.office : ""}
+                onChange={handleInputChange}
               />
             </Grid>
           </Grid>
           <Button
+            text="Submit"
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
-          >
-            Submit
-          </Button>
-          <div style={{textAlign: 'center'}}>
+          />
+          <div style={{ textAlign: "center" }}>
             Or
-            <br/>
+            <br />
           <Link to="/contact">Cancel</Link>
           </div>
         </form>

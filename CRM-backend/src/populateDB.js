@@ -48,6 +48,13 @@ const states = ['VIC','SA','TAS','NSW','QLD','NT','WA'];
 const postcodes = ['3111','3123','3150','2311','4123','3000','3001','4322','4000','4111'];
 const prices = [1000000000,1200000000,1500000000,1750000000,1600000000,2000000000,2300000000,1700000000,1800000000];
 const roles = ['am', 'bm', 'director'];
+const payment = {   downPayment: { amount: 10000, time: 0 },
+                    onDelivery: { amount: 50000, time: 2 },
+                    userAcceptanceTest: { amount: 5000, time: 3 },
+                    afterUATGuarantee: { amount: 5000, time: 12 },
+                    monthlyInstallment: { amount: 700, period: 5, frequency: 12 },
+                    yearlyInstallment: { amount: 700, period: 60, frequency: 1 }, 
+}
 
 const getRandomFirstName = () => {return firstNames[Math.floor(Math.random() * firstNames.length)]};
 const getRandomLastName = () => {return lastNames[Math.floor(Math.random() * lastNames.length)]};
@@ -59,7 +66,7 @@ const getRandomCity = () => {return cities[Math.floor(Math.random() * cities.len
 const getRandomState = () => {return states[Math.floor(Math.random() * states.length)]};
 const getRandomPostcode = () => {return postcodes[Math.floor(Math.random() * postcodes.length)]};
 const getRandomPrice = () => {return prices[Math.floor(Math.random() * prices.length)]};
-const getRandomRole = () => {return roles[Math.floor(Math.random() * roles.length)]}
+const getRandomRole = () => {return roles[Math.floor(Math.random() * roles.length)]};
 
 const generateDepartmentsDummyData = () => {
     // list of departments
@@ -158,12 +165,12 @@ const generateProspectDummyData = () => {
         const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
         const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
         const prospects = [
-            {prospectName: 'Prospect X12', account: getRandomAccId(), prospectAmount: getRandomPrice(), endUser: getRandomEndUser(), GPM: 45, expectedDuration: 5, desc:""},
-            {prospectName: 'Prospect B13', account: getRandomAccId(), prospectAmount: getRandomPrice(), endUser: getRandomEndUser(), GPM: 35, expectedDuration: 4, desc:""},
-            {prospectName: 'Prospect N15', account: getRandomAccId(), prospectAmount: getRandomPrice(), endUser: getRandomEndUser(), GPM: 50, expectedDuration: 8, desc:""},
-            {prospectName: 'Prospect AX1', account: getRandomAccId(), prospectAmount: getRandomPrice(), endUser: getRandomEndUser(), GPM: 33, expectedDuration: 9, desc:""},
-            {prospectName: 'Prospect AX2', account: getRandomAccId(), prospectAmount: getRandomPrice(), endUser: getRandomEndUser(), GPM: 15, expectedDuration: 12, desc:""},
-            {prospectName: 'Prospect BCD', account: getRandomAccId(), prospectAmount: getRandomPrice(), endUser: getRandomEndUser(), GPM: 65, expectedDuration: 4, desc:""}
+            {prospectName: 'Prospect X12', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 45, expectedDuration: 5, desc:""},
+            {prospectName: 'Prospect B13', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 35, expectedDuration: 4, desc:""},
+            {prospectName: 'Prospect N15', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 50, expectedDuration: 8, desc:""},
+            {prospectName: 'Prospect AX1', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 33, expectedDuration: 9, desc:""},
+            {prospectName: 'Prospect AX2', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 15, expectedDuration: 12, desc:""},
+            {prospectName: 'Prospect BCD', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 65, expectedDuration: 4, desc:""}
         ];
         // drop table
         Prospect.deleteMany({}, (err, res) => {
@@ -188,15 +195,15 @@ const generateQuoteDummyData = () => {
             const getRandomUserId = () => {return users[Math.floor(Math.random() * users.length)]}
             const getRandomProspectId = () => {return prospects[Math.floor(Math.random() * prospects.length)]}
             const quotes = [
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice(), desc: getRandomDescription()}
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
+                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()}
             ];
             // drop table
             Quote.deleteMany({}, (err, res) => {

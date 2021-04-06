@@ -4,7 +4,7 @@ const FKHelper = require("./utils/foreignKeyUtil");
 
 const validatePhoneNumber = (ph) => {
   const regex = new RegExp("^\\+[0-9]+$");
-  return regex.test(ph);
+  return ph === "" ? true : regex.test(ph);
 };
 
 const validateName = (name) => {

@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Avatar, 
-  Button, 
+  Avatar,
   CssBaseline,
-  TextField,
   Grid,
   Typography,
   Container,
   IconButton,
   Collapse,
-  MenuItem,
-  Select,
-  InputLabel
+  TextField as MuiTextField
 } from '@material-ui/core';
+import TextField from '../../components/formFields/TextField';
+import SelectField from '../../components/formFields/SelectField';
+import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import { useStyles, getData, postData, putData } from '../../utils/FormUtil';
+import { useFormStyles, getData, postData, putData, useForm } from '../../utils/FormUtil';
 import { useHistory, useLocation, Link } from "react-router-dom";
 
 export default function ProspectFormPage ( ) {
@@ -24,28 +23,33 @@ export default function ProspectFormPage ( ) {
   const location = useLocation();
   const defaultValues = location.state ? location.state.defaultValues : undefined;
   const editMode = defaultValues !== undefined;
-  
-  const classes = useStyles();
+  const classes = useFormStyles();
   const history = useHistory();
 
-  const [prospectName, setProspectName] = useState(editMode ? defaultValues.prospectName : "");
-  const [account, setAccount] = useState(editMode ? defaultValues.account._id : "");
-  const [prospectAmount, setProspectAmount] = useState(editMode ? defaultValues.prospectAmount : 0);
-  const [endUser, setEndUser] = useState(editMode ? defaultValues.endUser : "");
-  const [GPM, setGPM] = useState(editMode ? defaultValues.GPM : 0);
-  const [expectedDuration, setExpectedDuration] = useState(editMode ? defaultValues.expectedDuration : 0);
-  const [desc, setDesc] = useState(editMode ? defaultValues.desc : "");
+  const initialFormValues = {
+    prospectName: editMode ? defaultValues.prospectName : "",
+    account: editMode ? defaultValues.account._id : "",
+    endUser: editMode ? defaultValues.endUser : "",
+    GPM: editMode ? defaultValues.GPM : 0,
+    expectedDuration: editMode ? defaultValues.expectedDuration : 0,
+    desc: editMode ? defaultValues.desc : ""
+  };
+
+  const { formValues, handleInputChange } = useForm(initialFormValues);
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
-  const [accounts, setAccounts] = useState([]);
+  const [accountsChoices, setAccountsChoices] = useState([]);
 
   useEffect(() => {
     let mounted = true;
     getData("/accounts").then((data) => {
       if (mounted) {
-        data === null ? alert("Err") : setAccounts(data);
+        if (data === null) {alert("Err");}
+        setAccountsChoices(data.map((acc) => {
+          return {value: acc._id, label: acc.accName}
+        }))
       }
     });
     return () => (mounted = false);
@@ -53,24 +57,15 @@ export default function ProspectFormPage ( ) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
-      prospectName: prospectName,
-      account: account,
-      prospectAmount: prospectAmount,
-      endUser: endUser,
-      GPM: GPM,
-      expectedDuration: expectedDuration,
-      desc: desc
-    };
     let response;
     let endpoint;
     if (editMode) {
       endpoint = `/prospects/${defaultValues._id}`;
-      response = await putData(endpoint, formData);
+      response = await putData(endpoint, formValues);
     }
     else {
       endpoint = '/prospects';
-      response = await postData(endpoint, formData);
+      response = await postData(endpoint, formValues);
     }
     if (response === null) {
       setSuccessOpen(false);
@@ -135,90 +130,55 @@ export default function ProspectFormPage ( ) {
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="prospectName"
+                required={true}
                 label="Prospect Name"
                 name="prospectName"
-                autoFocus
                 defaultValue={editMode ? defaultValues.prospectName : ""}
-                onChange={(e) => setProspectName(e.target.value)}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} variant="outlined">
+              <SelectField
+                required={true}
+                label="Account"
+                name="account"
+                defaultValue={editMode ? defaultValues.account._id : null}
+                onChange={handleInputChange}
+                items={accountsChoices}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <InputLabel>Account</InputLabel>
-              <Select
-                required
-                fullWidth
-                labelId="accoundId"
-                id="accoundId"
-                defaultValue={editMode ? defaultValues.account._id : null}
-                onChange={(e) => setAccount(e.target.value)}
-              >
-              {accounts.map((acc) => {
-                return (
-                  <MenuItem value={acc._id}>{`${acc.accName}`}</MenuItem>
-                )
-              })}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="endUser"
                 label="End User"
                 name="endUser"
-                autoFocus
                 defaultValue={editMode ? defaultValues.endUser : ""}
-                onChange={(e) => setEndUser(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="prospectAmount"
-                label="Prospect Amount"
-                name="prospectAmount"
-                type="Number"
-                inputProps={{ min: 0}}
-                defaultValue={editMode ? defaultValues.prospectAmount : 0}
-                onChange={(e) => setProspectAmount(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                variant="outlined"
-                fullWidth
-                id="GPM"
                 label="GPM"
                 name="GPM"
                 type="Number"
                 defaultValue={editMode ? defaultValues.GPM : 0}
                 inputProps={{ min: 0, max:100}}
-                onChange={(e) => setGPM(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                variant="outlined"
-                fullWidth
-                id="expectedDuration"
                 label="Expected Duration"
                 name="expectedDuration"
                 type="Number"
                 defaultValue={editMode ? defaultValues.GPM : 0}
                 inputProps={{ min: 0}}
-                onChange={(e) => setExpectedDuration(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
-              <TextField
+              <MuiTextField
                 variant="outlined"
                 fullWidth
                 id="desc"
@@ -228,19 +188,23 @@ export default function ProspectFormPage ( ) {
                 rows={4}
                 defaultValue={editMode ? defaultValues.desc : ''}
                 inputProps={{ maxLength: 500}}
-                onChange={(e) => setDesc(e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
+            <Grid item xs={12} sm={12} style={{border: '3 px solid #000000'}}></Grid>
+            <Grid item xs={12} sm={12}>
+              <h6><u>Payment Mehtod</u></h6>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <h6>Down Payment</h6>
+            </Grid>
+            
           </Grid>
           <Button
+            text="Submit"
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
-          >
-            Submit
-          </Button>
+          />
           <div style={{textAlign: 'center'}}>
             Or
             <br/>

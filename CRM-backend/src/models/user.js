@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const Department = require("../models/department");
+const User = require("../models/user");
 const FKHelper = require("./utils/foreignKeyUtil");
 
 const validatePhoneNumber = (ph) => {
   const regex = new RegExp("^\\+[0-9]+$");
-  return regex.test(ph);
+  return ph === "" ? true : regex.test(ph);
 };
 
 const validateUserPosition = (pos) => {
@@ -25,6 +26,9 @@ const validateEmail = (email) => {
 };
 
 const validateName = (name) => {
+  if (name === undefined || name === null || name === "") {
+    return true;
+  }
   const regex = new RegExp("^[a-zA-Z]+$");
   return regex.test(name);
 };
@@ -34,27 +38,23 @@ const validateNIK = (nik) => {
   return regex.test(nik);
 };
 
-const validateDepartmentFK = (id) => {
-  return FKHelper(Department, id);
-};
+// const validateDepartmentFK = (id) => {
+//   return FKHelper(Department, id);
+// };
 
-const validateUserFK = (id) => {
-  if (id === null || id === undefined) {
-    return true;
-  }
-  userSchema.findOne({ _id: id }, (err, result) => {
-    if (result) {
-      return result.userPosition === "director" || result.userPosition === "bm"
-        ? resolve(true)
-        : resolve(false);
-    } else
-      return reject(
-        new Error(
-          `FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`
-        )
-      );
-  });
-};
+// const validateUserFK = (id) => {
+//   if (id === null || id === undefined) {
+//     return true;
+//   }
+//   return new Promise((resolve, reject) => {
+//     User.findOne({ _id: id })
+//         .exec(function (err, user) {
+//           if (err) return reject(new Error(`Internal server error`));
+//           if (!user) return reject(new Error(`FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`));
+//           return user.userPosition === "director" || user.userPosition === "bm" ? resolve(true) : resolve(false);
+//         });
+//   });
+// };
 
 const userSchema = new mongoose.Schema(
   {
@@ -145,7 +145,7 @@ const userSchema = new mongoose.Schema(
     reportTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // default: null,
+      default: null,
       // validate: validateUserFK,
     },
     department: {
@@ -187,5 +187,10 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre('save', function (next) {
+  this.userPosition = this.userPosition.toLowerCase();
+  next();
+})
 
 module.exports = mongoose.model("User", userSchema);

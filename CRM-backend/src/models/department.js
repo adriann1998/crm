@@ -1,25 +1,19 @@
 const mongoose = require("mongoose");
-const User = require("./user");
+const User = require("../models/user");
 
-const validateDirector = (id) => {
-  if (id === null || id === undefined) {
-    return true;
-  }
-  return new Promise((resolve, reject) => {
-    User.findOne({ _id: id }, (err, result) => {
-      if (result) {
-        return result.userPosition === "director"
-          ? resolve(true)
-          : resolve(false);
-      } else
-        return reject(
-          new Error(
-            `FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`
-          )
-        );
-    });
-  });
-};
+// const validateDirector = (id) => {
+//   if (id === null || id === undefined) {
+//     return true;
+//   }
+//   return new Promise((resolve, reject) => {
+//     User.findOne({ _id: id })
+//       .exec(function (err, user) {
+//         if (err) return reject(new Error(`Internal server error`));
+//         if (!user) return reject(new Error(`FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`));
+//         return user.userPosition === 'director' ? resolve(true) : resolve(false);
+//       });
+//   });
+// };
 
 const departmentSchema = new mongoose.Schema(
   {
@@ -33,7 +27,7 @@ const departmentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
-      validate: validateDirector,
+      // validate: validateDirector,
     },
   },
   // Schema Options

@@ -1,6 +1,6 @@
 // components
 import React from 'react';
-import Title from '../components/Title';
+import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import accounting from 'accounting';
 import AddButton from '../components/AddButton';
@@ -38,7 +38,10 @@ function QuotePage( ) {
 
   return (
     <React.Fragment>
-      <Title title="Quote Page" />
+      <PageHeader 
+        title="Quote Page" 
+        subTitle="description goes here"
+      />
       <Link to="/form/quote">
         <AddButton />
       </Link>

@@ -1,7 +1,7 @@
 import React from 'react';
-import Title from '../components/Title';
+import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
-import accounting from 'accounting';
+// import accounting from 'accounting';
 import AddButton from '../components/AddButton';
 import { Link } from 'react-router-dom';
 
@@ -18,10 +18,6 @@ function ProspectPage(  ) {
       id: 'account', 
       label: 'Account',
       format: (account) => account ? account.accName : ''
-    }, { 
-      id: 'prospectAmount', 
-      label: 'Prospect Amount',
-      format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : undefined
     }, { 
       id: 'GPM', 
       label: 'GPM',
@@ -46,7 +42,10 @@ function ProspectPage(  ) {
 
   return (
     <React.Fragment>
-      <Title title="Prospect Page" />
+      <PageHeader 
+        title="Prospect Page" 
+        subTitle="description goes here"
+      />
       <Link to="/form/prospect">
           <AddButton />
         </Link>
