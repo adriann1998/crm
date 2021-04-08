@@ -26,6 +26,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import SearchIcon from '@material-ui/icons/Search';
 // utils
 import { getData, deleteData } from "../utils/FormUtil";
+import { stableSort, getComparator } from "../utils/ObjectUtil";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -46,31 +47,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+Object.containsValue = (obj, target) => {
+  for (const value of Object.values(obj)) {
+    if ((typeof value === 'object' || typeof value === 'string') && value !== null && value !== undefined) {
+      if (typeof value === 'object'){
+        if (Object.containsValue(value, target)){
+          return true;
+        }
+      }
+      else {
+        if (value.includes(target)) {
+          return true;
+        }
+      }
+    }
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+  return false;
+};
 
 export default function Table({ columns, baseURL }) {
 
@@ -153,9 +146,7 @@ export default function Table({ columns, baseURL }) {
           return items;
         }
         else {
-          // return items.filter(item => item.name.firstName.includes(target.value))
-          // return items.filter((item) => Object.values(item).indexOf(target.value) > -1)
-          return items
+          return items.filter((item) => Object.containsValue(item, e.target.value))
         }
       }
     })
