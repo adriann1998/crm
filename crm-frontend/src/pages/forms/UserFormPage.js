@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Avatar,
   CssBaseline,
   Grid,
-  Typography,
   Container,
   IconButton,
   Collapse,
@@ -12,17 +10,13 @@ import TextField from "../../components/formFields/TextField";
 import SelectField from "../../components/formFields/SelectField";
 import DateField from "../../components/formFields/DateField.js";
 import Button from "../../components/Button";
-import PersonIcon from "@material-ui/icons/Person";
 import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import {
   useFormStyles,
   getData,
-  postData,
-  putData,
   useForm,
 } from "../../utils/FormUtil";
-import { useHistory, useLocation, Link } from "react-router-dom";
 
 const userPositionsChoices = [
   { value: "am", label: "Account Manager" },
@@ -30,15 +24,10 @@ const userPositionsChoices = [
   { value: "director", label: "Director" },
 ];
 
-export default function UserFormPage() {
-  const location = useLocation();
-  const defaultValues = location.state
-    ? location.state.defaultValues
-    : undefined;
+export default function UserFormPage({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;
 
   const classes = useFormStyles();
-  const history = useHistory();
 
   const initialFormValues = {
     firstName: editMode ? defaultValues.name.firstName : "",
@@ -53,11 +42,7 @@ export default function UserFormPage() {
     mobilePhone2: editMode ? defaultValues.userPhone.mobile2 : "",
     workPhone: editMode ? defaultValues.userPhone.work : "",
     userPosition: editMode ? defaultValues.userPosition : "am",
-    reportTo: editMode
-      ? defaultValues.reportTo
-        ? defaultValues.reportTo._id
-        : ""
-      : "",
+    reportTo: editMode ? defaultValues.reportTo ? defaultValues.reportTo._id : "" : "",
     department: editMode ? defaultValues.department._id : "",
     street: editMode ? defaultValues.userAddress.street : "",
     city: editMode ? defaultValues.userAddress.street : "",
@@ -67,7 +52,6 @@ export default function UserFormPage() {
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
 
-  const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
 
@@ -148,27 +132,13 @@ export default function UserFormPage() {
           postcode: formValues.postcode,
         },
       };
-      let response;
-      let endpoint;
-      if (editMode) {
-        endpoint = `/users/${defaultValues._id}`;
-        response = await putData(endpoint, formData);
-      } else {
-        endpoint = "/users";
-        response = await postData(endpoint, formData);
-      }
+      const response = await addOrEdit(formData, defaultValues, editMode);
       if (response === null) {
-        setSuccessOpen(false);
         setErrorOpen(true);
       } else {
         setErrorOpen(false);
-        setSuccessOpen(true);
       }
     }
-  };
-
-  const handleSuccessAlertClose = () => {
-    history.push("/user");
   };
 
   const handleErrorAlertClose = () => {
@@ -179,26 +149,6 @@ export default function UserFormPage() {
     <Container component="main" maxWidth="md">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <PersonIcon />
-        </Avatar>
-        <Collapse in={successOpen}>
-          <Alert
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleSuccessAlertClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            severity="success"
-          >
-            Form Submitted !
-          </Alert>
-        </Collapse>
         <Collapse in={errorOpen}>
           <Alert
             action={
@@ -216,9 +166,6 @@ export default function UserFormPage() {
             Data Invalid!
           </Alert>
         </Collapse>
-        <Typography component="h1" variant="h5">
-          {editMode ? "Edit User" : "New User"}
-        </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -324,6 +271,7 @@ export default function UserFormPage() {
                 label="Report To"
                 name="reportTo"
                 disabled={formValues.userPosition === "director"}
+                required={formValues.userPosition !== "director"}
                 defaultValue={formValues.reportTo}
                 onChange={handleInputChange}
                 items={usersChoices}
@@ -398,11 +346,6 @@ export default function UserFormPage() {
             type="submit"
             className={classes.submit}
           />
-          <div style={{ textAlign: "center" }}>
-            Or
-            <br />
-            <Link to="/user">Cancel</Link>
-          </div>
         </form>
       </div>
     </Container>

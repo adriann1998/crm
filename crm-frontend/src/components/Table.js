@@ -14,20 +14,20 @@ import {
   InputAdornment
 } from "@material-ui/core";
 import TextField from './formFields/TextField';
-import Button from "@material-ui/core/Button";
+import Button from './Button';
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import PopupDialog from "./PopupDialog";
 // Icons
 import EditIcon from "@material-ui/icons/EditOutlined";
+import AddIcon from "@material-ui/icons/Add";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import SearchIcon from '@material-ui/icons/Search';
 // utils
-import { getData, deleteData } from "../utils/FormUtil";
+import { getData, deleteData, putData, postData } from "../utils/FormUtil";
 import { stableSort, getComparator } from "../utils/ObjectUtil";
-import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,6 +44,10 @@ const useStyles = makeStyles(theme => ({
   inputSearch: {
     margin: theme.spacing(2,2,2,2),
     width: "75%",
+  },
+  newButton: {
+    margin: theme.spacing(3,2,3,2),
+    float: "right",
   }
 }));
 
@@ -56,7 +60,9 @@ Object.containsValue = (obj, target) => {
         }
       }
       else {
-        if (value.includes(target)) {
+        const v = value.toLowerCase();
+        const t = target.toLowerCase();
+        if (v.includes(t)) {
           return true;
         }
       }
@@ -65,15 +71,16 @@ Object.containsValue = (obj, target) => {
   return false;
 };
 
-export default function Table({ columns, baseURL }) {
+export default function Table({ columns, baseURL, Form, TableIcon }) {
 
   const classes = useStyles();
-  const history = useHistory();
 
   const [records, setRecords] = useState([]);
+  const [formDefaultValues, setFormDefaultValues] = useState(undefined);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [deletePopup, setDeletePopup] = useState(false);
+  const [formPopup, setFormPopup] = useState(false);
   const [deleteRowId, setDeleteRowId] = useState("");
   const [order, setOrder] = useState("");
   const [orderBy, setOrderBy] = useState(""); 
@@ -103,8 +110,8 @@ export default function Table({ columns, baseURL }) {
     return () => (mounted = false);
   }, [baseURL]);
 
-  const handleClickDeleteIcon = (_id) => {
-    setDeleteDialog(true);
+  const handleDeleteRow = (_id) => {
+    setDeletePopup(true);
     setDeleteRowId(_id);
   };
 
@@ -120,16 +127,19 @@ export default function Table({ columns, baseURL }) {
     return handleCloseDeleteDialog();
   };
 
+  const handleFormPopupClose = () => {
+    setFormPopup(false);
+    setFormDefaultValues(undefined);
+  }
+
   const handleCloseDeleteDialog = () => {
-    setDeleteDialog(false);
+    setDeletePopup(false);
     setDeleteRowId("");
   };
 
-  const handleClickEditIcon = (_id) => {
-    const urlParam = baseURL.substring(1, baseURL.length - 1);
-    history.push(`/form/${urlParam}`, {
-      defaultValues: records.find((r) => r._id === _id),
-    });
+  const handleEditRow = (record) => {
+    setFormDefaultValues(record);
+    setFormPopup(true);
   };
 
   const handleSortRequest = (cellId) => {
@@ -152,27 +162,58 @@ export default function Table({ columns, baseURL }) {
     })
   }
 
+  const addOrEdit = async (formValues, defaultValues, editMode) => {
+    let response;
+    let endpoint;
+    if (editMode) {
+      endpoint = `${baseURL}/${defaultValues._id}`;
+      response = await putData(endpoint, formValues);
+    }
+    else {
+      endpoint = baseURL;
+      response = await postData(endpoint, formValues);
+    }
+    if (response !== null) {
+      if (editMode) {
+        let newRecords = records;
+        const index = records.findIndex(r => r._id === response._id);
+        newRecords[index] = response;
+        setRecords(newRecords);
+      }
+      else{
+        records.push(response);
+      }
+      setFormPopup(false);
+      setFormDefaultValues(undefined);
+    }
+    return response;
+  }
+
   const DeleteDialog = () => {
     return (
       <Dialog
-        open={deleteDialog}
+        open={deletePopup}
         onClose={handleCloseDeleteDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{`Delete?`}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+        <DialogContent dividers>
             Row cannot be reverted once deleted
-          </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteRowConfirm} color="primary" autoFocus>
-            OK
-          </Button>
+          <Button 
+            onClick={handleCloseDeleteDialog} 
+            color="inheret"
+            text="Cancel"
+            size="small"
+          />
+          <Button 
+            onClick={handleDeleteRowConfirm} 
+            color="primary"
+            text="OK"
+            size="small"
+          />
         </DialogActions>
       </Dialog>
     );
@@ -180,7 +221,6 @@ export default function Table({ columns, baseURL }) {
 
   return (
     <React.Fragment>
-      <DeleteDialog />
       <Paper className={classes.root}>
           <TextField
             label="Search..."
@@ -193,6 +233,14 @@ export default function Table({ columns, baseURL }) {
                 </InputAdornment>
               )
             }}
+          />
+          <Button
+            onClick={() => {setFormPopup(true)}} 
+            variant="outlined"
+            color="primary"
+            startIcon={<AddIcon/>}
+            text="Add New"
+            className={classes.newButton}
           />
         <TableContainer className={classes.container}>
           <MaterialUITable stickyHeader aria-label="sticky table">
@@ -224,14 +272,14 @@ export default function Table({ columns, baseURL }) {
                       <TableCell className={classes.selectTableCell}>
                         <IconButton
                           aria-label="edit"
-                          onClick={() => handleClickEditIcon(row._id)}
+                          onClick={() => handleEditRow(row)}
                         >
                           <EditIcon />
                         </IconButton>
                         <IconButton
                           aria-label="delete"
                           onClick={() => {
-                            handleClickDeleteIcon(row._id);
+                            handleDeleteRow(row._id);
                           }}
                         >
                           <DeleteOutlineIcon />
@@ -261,6 +309,23 @@ export default function Table({ columns, baseURL }) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+      <DeleteDialog />
+      <PopupDialog
+        title={
+          <div>
+            <TableIcon style={{marginRight: 20}}/>
+              {baseURL[1].toUpperCase()}{baseURL.substring(2,baseURL.length-1)}
+          </div>
+        }
+        maxWidth="md"
+        openPopup={formPopup}
+        handleClose={handleFormPopupClose}
+      >
+        <Form
+          addOrEdit={addOrEdit}
+          defaultValues={formDefaultValues}
+        />
+      </PopupDialog>
     </React.Fragment>
   );
 }

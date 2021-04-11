@@ -1,8 +1,8 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
-import AddButton from '../components/AddButton';
-import { Link } from 'react-router-dom';
+import DepartmentFormPage from './forms/DepartmentFormPage';
+import { DepartmentIcon } from '../components/Icons';
 
 function DepartmentPage() {
 
@@ -26,11 +26,14 @@ function DepartmentPage() {
       <PageHeader 
         title="Department Page" 
         subTitle="description goes here"
+        Icon={DepartmentIcon}
       />
-      <Link to="/form/department">
-          <AddButton />
-        </Link> 
-      <Table columns={columns} baseURL={'/departments'}/>
+      <Table 
+        columns={columns} 
+        baseURL={'/departments'}
+        Form={DepartmentFormPage}
+        TableIcon={DepartmentIcon}
+      />
     </React.Fragment>
   );
 }

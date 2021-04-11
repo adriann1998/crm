@@ -1,8 +1,8 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
-import AddButton from '../components/AddButton';
-import { Link } from 'react-router-dom';
+import ContactFormPage from './forms/ContactFormPage';
+import { ContactIcon } from '../components/Icons';
 
 function ContactPage() {
 
@@ -42,11 +42,14 @@ function ContactPage() {
       <PageHeader 
         title="Contact Page" 
         subTitle="description goes here"
+        Icon={ContactIcon}
       />
-      <Link to="/form/contact">
-        <AddButton />
-      </Link>
-      <Table columns={columns} baseURL={'/contacts'} />
+      <Table 
+        columns={columns} 
+        baseURL={'/contacts'} 
+        Form={ContactFormPage}
+        TableIcon={ContactIcon}
+      />
     </React.Fragment>
   );
 }

@@ -16,7 +16,10 @@ module.exports = {
     prospect.save(function (err) {
       console.log(err)
       if (err) return res.status(500).json(err);
-      res.json(prospect);
+      prospect.populate('account', 'accName accAlias', function(err){
+        if (err) return res.status(500).json(err);
+        res.json(prospect);
+      });
     });
   },
   getOne: function (req, res) {
@@ -29,13 +32,13 @@ module.exports = {
       });
   },
   updateOne: function (req, res) {
-    Prospect.findOneAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      function (err, prospect) {
+    Prospect.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
-        res.json(prospect);
+        prospect.populate('account', 'accName accAlias', function(err){
+          if (err) return res.status(500).json(err);
+          res.json(prospect);
+        });
       }
     );
   },

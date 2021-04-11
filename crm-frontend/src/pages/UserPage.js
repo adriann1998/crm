@@ -1,8 +1,8 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
-import AddButton from '../components/AddButton';
-import { Link } from 'react-router-dom';
+import UserFormPage from './forms/UserFormPage';
+import { UserIcon } from '../components/Icons';
 
 function UserPage(  ) {
 
@@ -44,11 +44,14 @@ function UserPage(  ) {
       <PageHeader 
         title="User Page" 
         subTitle="description goes here"
+        Icon={UserIcon}
       />
-      <Link to="/form/user">
-        <AddButton />
-      </Link>
-      <Table columns={columns} baseURL={'/users'} />
+      <Table 
+        columns={columns} 
+        baseURL={'/users'} 
+        Form={UserFormPage}
+        TableIcon={UserIcon}
+      />
     </React.Fragment>
   );
 }

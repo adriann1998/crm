@@ -24,10 +24,7 @@ module.exports = {
     });
   },
   updateOne: function (req, res) {
-    Account.findOneAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      function (err, account) {
+    Account.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, account) {
         if (err) return res.status(400).json(err);
         if (!account) return res.status(404).json();
         res.json(account);

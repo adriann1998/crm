@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Avatar,
   CssBaseline,
   Grid,
-  Typography,
   Container,
   IconButton,
   Collapse,
@@ -14,17 +12,11 @@ import SelectField from '../../components/formFields/SelectField';
 import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import { useFormStyles, getData, postData, putData, useForm } from '../../utils/FormUtil';
-import { useHistory, useLocation, Link } from "react-router-dom";
+import { useFormStyles, getData, useForm } from '../../utils/FormUtil';
 
-export default function ProspectFormPage ( ) {
-
-  const location = useLocation();
-  const defaultValues = location.state ? location.state.defaultValues : undefined;
+export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;
   const classes = useFormStyles();
-  const history = useHistory();
 
   const initialFormValues = {
     prospectName: editMode ? defaultValues.prospectName : "",
@@ -37,7 +29,6 @@ export default function ProspectFormPage ( ) {
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
 
-  const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const [accountsChoices, setAccountsChoices] = useState([]);
@@ -57,28 +48,13 @@ export default function ProspectFormPage ( ) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let response;
-    let endpoint;
-    if (editMode) {
-      endpoint = `/prospects/${defaultValues._id}`;
-      response = await putData(endpoint, formValues);
-    }
-    else {
-      endpoint = '/prospects';
-      response = await postData(endpoint, formValues);
-    }
+    const response = await addOrEdit(formValues, defaultValues, editMode);
     if (response === null) {
-      setSuccessOpen(false);
       setErrorOpen(true);
     }
     else {
       setErrorOpen(false);
-      setSuccessOpen(true);
     }
-  };
-
-  const handleSuccessAlertClose = () => {
-    history.push("/prospect");
   };
 
   const handleErrorAlertClose = () => {
@@ -89,25 +65,6 @@ export default function ProspectFormPage ( ) {
     <Container component="main" maxWidth="md">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <AttachMoneyIcon />
-        </Avatar>
-        <Collapse in={successOpen}>
-          <Alert
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleSuccessAlertClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            Form Submitted !
-          </Alert>
-        </Collapse>
         <Collapse in={errorOpen}>
           <Alert
               action={
@@ -125,9 +82,6 @@ export default function ProspectFormPage ( ) {
               Data Invalid!
             </Alert>
         </Collapse>
-        <Typography component="h1" variant="h5">
-          New Prospect
-        </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -205,11 +159,6 @@ export default function ProspectFormPage ( ) {
             type="submit"
             className={classes.submit}
           />
-          <div style={{textAlign: 'center'}}>
-            Or
-            <br/>
-          <Link to="/prospect">Cancel</Link>
-          </div>
         </form>
       </div>
     </Container>

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Avatar,
   CssBaseline,
   Grid,
-  Typography,
   Container,
   IconButton,
   Collapse,
@@ -13,23 +11,16 @@ import SelectField from "../../components/formFields/SelectField";
 import Button from "../../components/Button";
 import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
-import PeopleIcon from "@material-ui/icons/People";
 import {
   useFormStyles,
   getData,
-  postData,
-  putData,
   useForm,
 } from "../../utils/FormUtil";
-import { useHistory, useLocation, Link } from "react-router-dom";
 
-export default function ContactFormPage() {
-  const location = useLocation();
-  const defaultValues = location.state ? location.state.defaultValues : undefined;
+export default function ContactFormPage({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;
 
   const classes = useFormStyles();
-  const history = useHistory();
 
   const initialFormValues = {
     firstName: editMode ? defaultValues.name.firstName : "",
@@ -43,8 +34,7 @@ export default function ContactFormPage() {
   };
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
-
-  const [successOpen, setSuccessOpen] = useState(false);
+  
   const [errorOpen, setErrorOpen] = useState(false);
 
   const [accountsChoices, setAccountsChoices] = useState([]);
@@ -78,27 +68,12 @@ export default function ContactFormPage() {
         office: formValues.officePhone ? formValues.officePhone : "",
       },
     };
-    console.log(formData);
-    let response;
-    let endpoint;
-    if (editMode) {
-      endpoint = `/contacts/${defaultValues._id}`;
-      response = await putData(endpoint, formData);
-    } else {
-      endpoint = "/contacts";
-      response = await postData(endpoint, formData);
-    }
+    const response = await addOrEdit(formData, defaultValues, editMode);
     if (response === null) {
-      setSuccessOpen(false);
       setErrorOpen(true);
     } else {
       setErrorOpen(false);
-      setSuccessOpen(true);
     }
-  };
-
-  const handleSuccessAlertClose = () => {
-    history.push("/contact");
   };
 
   const handleErrorAlertClose = () => {
@@ -109,25 +84,6 @@ export default function ContactFormPage() {
     <Container component="main" maxWidth="md">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <PeopleIcon />
-        </Avatar>
-        <Collapse in={successOpen}>
-          <Alert
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleSuccessAlertClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            Form Submitted !
-          </Alert>
-        </Collapse>
         <Collapse in={errorOpen}>
           <Alert
             action={
@@ -145,9 +101,6 @@ export default function ContactFormPage() {
             Data Invalid!
           </Alert>
         </Collapse>
-        <Typography component="h1" variant="h5">
-          {editMode ? "Edit Contact" : "New Contact"}
-        </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -225,11 +178,6 @@ export default function ContactFormPage() {
             type="submit"
             className={classes.submit}
           />
-          <div style={{ textAlign: "center" }}>
-            Or
-            <br />
-          <Link to="/contact">Cancel</Link>
-          </div>
         </form>
       </div>
     </Container>

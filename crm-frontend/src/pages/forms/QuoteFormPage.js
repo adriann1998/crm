@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Avatar,
   CssBaseline,
   Grid,
-  Typography,
   Container,
   IconButton,
   Collapse
@@ -13,18 +11,12 @@ import SelectField from '../../components/formFields/SelectField';
 import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useFormStyles, getData, postData, putData, useForm } from '../../utils/FormUtil';
-import { useHistory, useLocation, Link } from "react-router-dom";
+import { useFormStyles, getData, useForm } from '../../utils/FormUtil';
 
-export default function QuoteFormPage ( ) {
-
-  const location = useLocation();
-  const defaultValues = location.state ? location.state.defaultValues : undefined;
+export default function QuoteFormPage ({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;
   
   const classes = useFormStyles();
-  const history = useHistory();
 
   const initialFormValues = {
     prospect: editMode ? (defaultValues.prospect ? defaultValues.prospect._id : "") : "",
@@ -34,7 +26,6 @@ export default function QuoteFormPage ( ) {
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
 
-  const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const [prospectsChoices, setProspectsChoices] = useState([]);
@@ -68,28 +59,13 @@ export default function QuoteFormPage ( ) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let response;
-    let endpoint;
-    if (editMode) {
-      endpoint = `/quotes/${defaultValues._id}`;
-      response = await putData(endpoint, formValues);
-    }
-    else {
-      endpoint = '/quotes';
-      response = await postData(endpoint, formValues);
-    }
+    const response = await addOrEdit(formValues, defaultValues, editMode);
     if (response === null) {
-      setSuccessOpen(false);
       setErrorOpen(true);
     }
     else {
       setErrorOpen(false);
-      setSuccessOpen(true);
     }
-  };
-
-  const handleSuccessAlertClose = () => {
-    history.push("/quote");
   };
 
   const handleErrorAlertClose = () => {
@@ -100,25 +76,6 @@ export default function QuoteFormPage ( ) {
     <Container component="main" maxWidth="md">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <AssignmentIcon />
-        </Avatar>
-        <Collapse in={successOpen}>
-          <Alert
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleSuccessAlertClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            Form Submitted !
-          </Alert>
-        </Collapse>
         <Collapse in={errorOpen}>
           <Alert
               action={
@@ -136,9 +93,6 @@ export default function QuoteFormPage ( ) {
               Data Invalid!
             </Alert>
         </Collapse>
-        <Typography component="h1" variant="h5">
-          New Quote
-        </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
@@ -177,11 +131,6 @@ export default function QuoteFormPage ( ) {
             type="submit"
             className={classes.submit}
           />
-          <div style={{textAlign: 'center'}}>
-            Or
-            <br/>
-          <Link to="/quote">Cancel</Link>
-          </div>
         </form>
       </div>
     </Container>

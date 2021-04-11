@@ -1,6 +1,5 @@
 import React from "react";
 import { Paper, Card, Typography, makeStyles } from "@material-ui/core";
-import PeopleIcon from "@material-ui/icons/People";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,16 +26,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function PageHeader( { title, subTitle} ) {
-
-  const icon = <PeopleIcon fontSize="large"/>;
+export default function PageHeader( { title, subTitle, Icon} ) {
+  
   const classes = useStyles();
 
   return (
     <Paper elevation={0} square className={classes.root}>
       <div className={classes.pageHeader}>
         <Card className={classes.pageIcon}>
-          {icon}
+          <Icon/>
         </Card>
         <div className={classes.pageTitle}>
           <Typography 

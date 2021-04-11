@@ -7,6 +7,7 @@ export default function TextField( props ) {
 
   return (
     <MuiTextField
+      fullWidth
       variant="outlined"
       label={label}
       name={name}

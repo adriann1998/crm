@@ -1,9 +1,9 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
+import ProspectFormPage from './forms/ProspectFormPage';
 // import accounting from 'accounting';
-import AddButton from '../components/AddButton';
-import { Link } from 'react-router-dom';
+import { ProspectIcon } from '../components/Icons';
 
 function ProspectPage(  ) {
 
@@ -45,11 +45,14 @@ function ProspectPage(  ) {
       <PageHeader 
         title="Prospect Page" 
         subTitle="description goes here"
+        Icon={ProspectIcon}
       />
-      <Link to="/form/prospect">
-          <AddButton />
-        </Link>
-      <Table columns={columns} baseURL={'/prospects'}/>
+      <Table 
+        columns={columns}
+        baseURL={'/prospects'}
+        Form={ProspectFormPage}
+        TableIcon={ProspectIcon}
+      />
     </React.Fragment>
   );
 }

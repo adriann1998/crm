@@ -4,7 +4,7 @@ module.exports = {
   getAll: function (req, res) {
     Quote.find({})
       .populate("prospect", "prospectName")
-      .populate("user", ["userEmail", "name"])
+      .populate("user", "userEmail name")
       .exec(function (err, quotes) {
         if (err) return res.status(404).json(err);
         res.json(quotes);
@@ -16,13 +16,18 @@ module.exports = {
     let quote = new Quote(newQuoteDetails);
     quote.save(function (err) {
       if (err) return res.status(500).json(err);
-      res.json(quote);
+      quote.populate("prospect", "prospectName")
+           .populate("user", "userEmail name")
+           .execPopulate(function(err){
+              if (err) return res.status(500).json(err);
+              res.json(quote);
+            });
     });
   },
   getOne: function (req, res) {
     Quote.findOne({ _id: req.params.id })
       .populate("prospect", "prospectName")
-      .populate("user", ["userEmail", "name"])
+      .populate("user", "userEmail name")
       .exec(function (err, quote) {
         if (err) return res.status(400).json(err);
         if (!quote) return res.status(404).json();
@@ -30,13 +35,15 @@ module.exports = {
       });
   },
   updateOne: function (req, res) {
-    Quote.findOneAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      function (err, quote) {
+    Quote.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, quote) {
         if (err) return res.status(400).json(err);
         if (!quote) return res.status(404).json();
-        res.json(quote);
+        quote.populate("user", "userEmail name")
+            .populate("prospect", "prospectName")
+            .execPopulate(function(err){
+              if (err) return res.status(500).json(err);
+              res.json(quote);
+            });
       }
     );
   },

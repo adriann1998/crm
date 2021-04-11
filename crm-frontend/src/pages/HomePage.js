@@ -11,8 +11,6 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableContainer from '@material-ui/core/TableContainer';
 import IconButton from "@material-ui/core/IconButton";
 import PageHeader from '../components/PageHeader';
-import AddButton from '../components/AddButton';
-import { Link } from 'react-router-dom';
 // Icons
 import EditIcon from "@material-ui/icons/EditOutlined";
 import DoneIcon from "@material-ui/icons/DoneAllTwoTone";
@@ -193,9 +191,6 @@ export default function HomePage ( ) {
         title="Home Page" 
         subTitle="description goes here"
       />
-      <Link to="/form-account">
-        <AddButton />
-      </Link>
       <Paper className={classes.root}>
         <TableContainer className={classes.container}>
           <Table className={classes.table} stickyHeader aria-label="sticky table">

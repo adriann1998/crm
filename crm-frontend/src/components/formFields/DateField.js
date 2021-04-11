@@ -15,7 +15,11 @@ export default function DateField ( {label, name, required, value, onChange} ) {
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <KeyboardDatePicker disableToolbar variant="inline" inputVariant="outlined"
+      <KeyboardDatePicker 
+        disableToolbar 
+        fullWidth
+        variant="inline" 
+        inputVariant="outlined"
         margin="normal"
         formate="dd/MMM/yyyy"
         label={label}

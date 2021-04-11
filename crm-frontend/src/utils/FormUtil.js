@@ -56,7 +56,7 @@ export function useForm(initialValues) {
 
 export const useFormStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    margin: theme.spacing(0),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

@@ -1,8 +1,8 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
-import AddButton from '../components/AddButton';
-import { Link } from 'react-router-dom';
+import AccountFormPage from './forms/AccountFormPage';
+import { AccountIcon } from '../components/Icons';
 
 function AccountPage( ) {
 
@@ -30,11 +30,14 @@ function AccountPage( ) {
         <PageHeader 
           title="Account Page" 
           subTitle="description goes here"
+          Icon={AccountIcon}
         />
-        <Link to="/form/account">
-          <AddButton />
-        </Link>
-        <Table columns={columns} baseURL={'/accounts'} />
+        <Table 
+          columns={columns} 
+          baseURL={'/accounts'} 
+          Form={AccountFormPage}
+          TableIcon={AccountIcon}
+        />
     </React.Fragment>
   );
 }

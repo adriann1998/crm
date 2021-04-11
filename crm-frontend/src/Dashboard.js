@@ -199,18 +199,18 @@ export default function Dashboard() {
         <div style={{width: '98%', margin:"auto"}}>
           <Switch>
             <Route path="/" exact component={HomePage}  />
-            <Route path="/account" component={AccountPage} />
-            <Route path="/contact" component={ContactPage} />
-            <Route path="/department" component={DepartmentPage} />
-            <Route path="/prospect" component={ProspectPage} />
-            <Route path="/quote" component={QuotePage} />
-            <Route path="/user" component={UserPage} />
-            <Route path="/form/account" component={AccountFormPage}></Route>
-            <Route path="/form/contact" component={ContactFormPage}></Route>
-            <Route path="/form/department" component={DepartmentFormPage}></Route>
-            <Route path="/form/prospect" component={ProspectFormPage}></Route>
-            <Route path="/form/quote" component={QuoteFormPage}></Route>
-            <Route path="/form/user" component={UserFormPage}></Route>
+            <Route path="/accounts" component={AccountPage} />
+            <Route path="/contacts" component={ContactPage} />
+            <Route path="/departments" component={DepartmentPage} />
+            <Route path="/prospects" component={ProspectPage} />
+            <Route path="/quotes" component={QuotePage} />
+            <Route path="/users" component={UserPage} />
+            <Route path="/form/accounts" component={AccountFormPage}></Route>
+            <Route path="/form/contacts" component={ContactFormPage}></Route>
+            <Route path="/form/departments" component={DepartmentFormPage}></Route>
+            <Route path="/form/prospects" component={ProspectFormPage}></Route>
+            <Route path="/form/quotes" component={QuoteFormPage}></Route>
+            <Route path="/form/users" component={UserFormPage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
         </div>

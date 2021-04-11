@@ -15,7 +15,10 @@ module.exports = {
     let contact = new Contact(newContactDetails);
     contact.save(function (err) {
       if (err) return res.status(500).json(err);
-      res.json(contact);
+      contact.populate('account', 'accName accAlias', function(err){
+        if (err) return res.status(500).json(err);
+        res.json(contact);
+      });
     });
   },
   getOne: function (req, res) {
@@ -28,13 +31,13 @@ module.exports = {
       });
   },
   updateOne: function (req, res) {
-    Contact.findOneAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      function (err, contact) {
+    Contact.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, contact) {
         if (err) return res.status(400).json(err);
         if (!contact) return res.status(404).json();
-        res.json(contact);
+        contact.populate('account', 'accName accAlias', function(err){
+          if (err) return res.status(500).json(err);
+          res.json(contact);
+        });
       }
     );
   },
