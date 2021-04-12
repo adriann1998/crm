@@ -3,6 +3,7 @@ import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import DepartmentFormPage from './forms/DepartmentFormPage';
 import { DepartmentIcon } from '../components/Icons';
+import pageDescriptions from '../components/pageDescriptions';
 
 function DepartmentPage() {
 
@@ -25,7 +26,7 @@ function DepartmentPage() {
     <React.Fragment>
       <PageHeader 
         title="Department Page" 
-        subTitle="description goes here"
+        subTitle={pageDescriptions.departments}
         Icon={DepartmentIcon}
       />
       <Table 

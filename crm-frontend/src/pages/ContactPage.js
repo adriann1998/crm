@@ -3,6 +3,7 @@ import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import ContactFormPage from './forms/ContactFormPage';
 import { ContactIcon } from '../components/Icons';
+import pageDescriptions from '../components/pageDescriptions';
 
 function ContactPage() {
 
@@ -41,7 +42,7 @@ function ContactPage() {
     <React.Fragment>
       <PageHeader 
         title="Contact Page" 
-        subTitle="description goes here"
+        subTitle={pageDescriptions.contacts}
         Icon={ContactIcon}
       />
       <Table 

@@ -6,10 +6,11 @@ import {
     FormControl
 } from '@material-ui/core'
 
-export default function SelectField( {label, name, defaultValue, onChange, items, ...other} ) {
+export default function SelectField( {label, name, defaultValue, onChange, items, size, ...other} ) {
   return (
     <FormControl
       fullWidth
+      size={size || "small"}
       variant="outlined"
       {...other}
     >

@@ -3,6 +3,7 @@ import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import UserFormPage from './forms/UserFormPage';
 import { UserIcon } from '../components/Icons';
+import pageDescriptions from '../components/pageDescriptions';
 
 function UserPage(  ) {
 
@@ -43,7 +44,7 @@ function UserPage(  ) {
     <React.Fragment>
       <PageHeader 
         title="User Page" 
-        subTitle="description goes here"
+        subTitle={pageDescriptions.users}
         Icon={UserIcon}
       />
       <Table 

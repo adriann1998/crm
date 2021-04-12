@@ -13,47 +13,6 @@ const paymentFieldOption = {
   min: 0,
 };
 
-const paymentSchema = {
-  downPayment: {
-    amount: paymentFieldOption,
-    time: paymentFieldOption
-  },
-  onDelivery: {
-    amount: paymentFieldOption,
-    time: paymentFieldOption,
-    default: {
-      amount: 0,
-      time: 0
-    }
-  },
-  userAcceptanceTest: {
-    amount: paymentFieldOption,
-    time: paymentFieldOption,
-    default: {
-      amount: 0,
-      time: 0
-    }
-  },
-  afterUATGuarantee: {
-    amount: paymentFieldOption,
-    time: paymentFieldOption,
-    default: {
-      amount: 0,
-      time: 0
-    }
-  },
-  monthlyInstallment: {
-    amount: paymentFieldOption,
-    period: paymentFieldOption,
-    frequency: paymentFieldOption,
-  },
-  yearlyInstallment: {
-    amount: paymentFieldOption,
-    period: paymentFieldOption,
-    frequency: paymentFieldOption,
-  },
-};
-
 const prospectSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -80,12 +39,37 @@ const prospectSchema = new mongoose.Schema(
       min: 0,
       max: 100,
     },
-    expectedDuration: {
-      type: Number,
-      min: 0,
+    expectedStartDate: {
+      type: Date,
+      required: true,
     },
     payment: {
-      type: paymentSchema 
+      downPayment: {
+        amount: paymentFieldOption,
+        paymentTime: paymentFieldOption
+      },
+      onDelivery: {
+        amount: paymentFieldOption,
+        paymentTime: paymentFieldOption,
+      },
+      userAcceptanceTest: {
+        amount: paymentFieldOption,
+        paymentTime: paymentFieldOption,
+      },
+      afterUATGuarantee: {
+        amount: paymentFieldOption,
+        paymentTime: paymentFieldOption,
+      },
+      monthlyInstallment: {
+        amount: paymentFieldOption,
+        period: paymentFieldOption,
+        frequency: paymentFieldOption,
+      },
+      yearlyInstallment: {
+        amount: paymentFieldOption,
+        period: paymentFieldOption,
+        frequency: paymentFieldOption,
+      },
     },
     desc: {
       type: String,
@@ -124,32 +108,6 @@ prospectSchema.pre('save', function(next){
   total += YI ? YI.amount*YI.period : 0;
   this.prospectAmount = total;
   next();
-});
-
-prospectSchema.pre('validate', function(next) {
-  let total = 0;
-  if (this.payment) {
-    const DP = this.payment.downPayment;
-    const COD = this.payment.onDelivery;
-    const UAT = this.payment.userAcceptanceTest;
-    const AUG = this.payment.afterUATGuarantee;
-    const MI = this.payment.monthlyInstallment;
-    const YI = this.payment.yearlyInstallment;
-    // one off payments
-    total += DP ? DP.amount : 0;
-    total += COD ? COD.amount : 0;
-    total += UAT ? UAT.amount : 0;
-    total += AUG ? AUG.amount : 0;
-    // installment payments
-    total += MI ? MI.amount*MI.period : 0;
-    total += YI ? YI.amount*YI.period : 0;
-  }
-  if (this.prospectAmount === total) {
-    this.prospectAmount = total;
-    next(new Error('Total Payment does not equal to prospect amount'));
-  } else {
-    next();
-  }
 });
 
 module.exports = mongoose.model("Prospect", prospectSchema);

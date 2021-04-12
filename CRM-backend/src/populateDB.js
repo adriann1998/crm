@@ -67,6 +67,46 @@ const getRandomState = () => {return states[Math.floor(Math.random() * states.le
 const getRandomPostcode = () => {return postcodes[Math.floor(Math.random() * postcodes.length)]};
 const getRandomPrice = () => {return prices[Math.floor(Math.random() * prices.length)]};
 const getRandomRole = () => {return roles[Math.floor(Math.random() * roles.length)]};
+const getRandom = (min, max) => { return Math.random() * (max - min) + min; }
+const getRandomPayment = () => {
+    const paymentDetails = 
+    {
+        downPayment: {
+            amount: Math.floor(getRandom(500,700))*1000000,
+            paymentTime: 1
+        },
+        onDelivery: {
+            amount: Math.floor(getRandom(100,200))*1000000,
+            paymentTime: 2
+        },
+        userAcceptanceTest: {
+            amount: Math.floor(getRandom(10,50))*1000000,
+            paymentTime: 3
+        },
+        afterUATGuarantee: {
+            amount: Math.floor(getRandom(50,100))*1000000,
+            paymentTime: 12
+        },
+        monthlyInstallment: {
+            amount: 700000,
+            period: 60,
+            frequency: 1
+        },
+        yearlyInstallment: {
+            amount: 7000000,
+            period: 5,
+            frequency: 12
+        }
+    }
+    let total = 0;
+    total += parseFloat(paymentDetails.downPayment.amount);
+    total += parseFloat(paymentDetails.onDelivery.amount);
+    total += parseFloat(paymentDetails.userAcceptanceTest.amount);
+    total += parseFloat(paymentDetails.afterUATGuarantee.amount);
+    total += parseFloat(paymentDetails.yearlyInstallment.amount) * parseFloat(paymentDetails.yearlyInstallment.period);
+    total += parseFloat(paymentDetails.monthlyInstallment.amount) * parseFloat(paymentDetails.monthlyInstallment.period);
+    return [paymentDetails, total]
+}
 
 const generateDepartmentsDummyData = () => {
     // list of departments
@@ -164,13 +204,16 @@ const generateProspectDummyData = () => {
         const endUser = [undefined,"XL", "Axita", "Telstra", "Alibaba"]
         const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
         const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
+        const payment = getRandomPayment();
+        const paymentDetails = payment[0];
+        const prospectAmount = payment[1];
         const prospects = [
-            {prospectName: 'Prospect X12', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 45, expectedDuration: 5, desc:""},
-            {prospectName: 'Prospect B13', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 35, expectedDuration: 4, desc:""},
-            {prospectName: 'Prospect N15', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 50, expectedDuration: 8, desc:""},
-            {prospectName: 'Prospect AX1', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 33, expectedDuration: 9, desc:""},
-            {prospectName: 'Prospect AX2', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 15, expectedDuration: 12, desc:""},
-            {prospectName: 'Prospect BCD', account: getRandomAccId(), payment: payment, endUser: getRandomEndUser(), GPM: 65, expectedDuration: 4, desc:""}
+            {prospectName: 'Prospect X12', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 45, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
+            {prospectName: 'Prospect B13', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 35, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
+            {prospectName: 'Prospect N15', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 50, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
+            {prospectName: 'Prospect AX1', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 33, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
+            {prospectName: 'Prospect AX2', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 15, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
+            {prospectName: 'Prospect BCD', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 65, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails}
         ];
         // drop table
         Prospect.deleteMany({}, (err, res) => {

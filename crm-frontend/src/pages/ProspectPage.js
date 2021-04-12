@@ -2,8 +2,9 @@ import React from 'react';
 import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import ProspectFormPage from './forms/ProspectFormPage';
-// import accounting from 'accounting';
+import accounting from 'accounting';
 import { ProspectIcon } from '../components/Icons';
+import pageDescriptions from '../components/pageDescriptions';
 
 function ProspectPage(  ) {
 
@@ -17,18 +18,24 @@ function ProspectPage(  ) {
     }, { 
       id: 'account', 
       label: 'Account',
-      format: (account) => account ? account.accName : ''
+      format: (account) => account ? account.accName : '-'
+    }, 
+    { 
+      id: 'prospectAmount', 
+      label: 'Amount',
+      format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : '-'
     }, { 
       id: 'GPM', 
       label: 'GPM',
-      format: (n) => n ? n.toString() + '%' : undefined
+      format: (n) => n ? n.toString() + '%' : '-'
     }, { 
       id: 'endUser', 
-      label: 'End User'
+      label: 'End User',
+      format: (endUser) => endUser ? endUser : '-'
     }, { 
-      id: 'expectedDuration', 
-      label: 'Expected Duration',
-      format: (n) => n ? `${n} months` : ''
+      id: 'expectedStartDate', 
+      label: 'Expected Start Date',
+      format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'createdAt', 
       label: 'Created At',
@@ -44,7 +51,7 @@ function ProspectPage(  ) {
     <React.Fragment>
       <PageHeader 
         title="Prospect Page" 
-        subTitle="description goes here"
+        subTitle={pageDescriptions.prospects}
         Icon={ProspectIcon}
       />
       <Table 

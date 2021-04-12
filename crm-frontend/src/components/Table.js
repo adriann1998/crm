@@ -224,6 +224,7 @@ export default function Table({ columns, baseURL, Form, TableIcon }) {
       <Paper className={classes.root}>
           <TextField
             label="Search..."
+            size="normal"
             className={classes.inputSearch}
             onChange={handleSearchRequest}
             InputProps={{

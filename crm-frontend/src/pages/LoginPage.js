@@ -22,9 +22,10 @@ import { useStyles, validateForm, loginUser } from '../utils/LoginUtil';
 
 export default function Login ( {setToken} ) {
 
-  const [userEmail, setUserEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = React.useState("");
+  const [userEmail, setUserEmail] = useState(localStorage.userEmail ? localStorage.userEmail : "");
+  const [password, setPassword] = useState(localStorage.password ? localStorage.password : "");
+  const [rememberMe, setRememberMe] = useState(localStorage.userEmail && localStorage.password ? true: false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const classes = useStyles();
 
@@ -36,6 +37,14 @@ export default function Login ( {setToken} ) {
     });
     if (token.token) {
       setToken(token);
+      if (rememberMe) {
+        localStorage.userEmail = userEmail;
+        localStorage.password = password;
+      }
+      else {
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("password");
+      }
       setErrorMessage("");
     } 
     else {
@@ -43,6 +52,10 @@ export default function Login ( {setToken} ) {
       setPassword("");
     }
   };
+
+  const handleRememberMe = () => {
+    setRememberMe(!rememberMe);
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -63,12 +76,10 @@ export default function Login ( {setToken} ) {
             margin="normal"
             required
             fullWidth
-            id="email"
             label="Email Address"
-            name="email"
-            autoComplete="email"
             type="email"
             autoFocus
+            value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
           />
           <TextField
@@ -76,17 +87,20 @@ export default function Login ( {setToken} ) {
             margin="normal"
             required
             fullWidth
-            name="password"
             label="Password"
             type="password"
-            id="password"
-            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={
+              <Checkbox 
+                value="remember"
+                color="primary" 
+                checked={rememberMe}
+              />}
             label="Remember me"
+            onChange={handleRememberMe}
           />
           <Button
             type="submit"

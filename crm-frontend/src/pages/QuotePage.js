@@ -5,7 +5,7 @@ import Table from '../components/Table';
 import QuoteFormPage from './forms/QuoteFormPage';
 import accounting from 'accounting';
 import { QuoteIcon } from '../components/Icons';
-
+import pageDescriptions from '../components/pageDescriptions';
 
 function QuotePage( ) {
 
@@ -40,7 +40,7 @@ function QuotePage( ) {
     <React.Fragment>
       <PageHeader 
         title="Quote Page" 
-        subTitle="description goes here"
+        subTitle={pageDescriptions.quotes}
         Icon={QuoteIcon}
       />
       <Table 

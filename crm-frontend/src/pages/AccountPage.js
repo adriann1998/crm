@@ -3,6 +3,7 @@ import PageHeader from '../components/PageHeader';
 import Table from '../components/Table';
 import AccountFormPage from './forms/AccountFormPage';
 import { AccountIcon } from '../components/Icons';
+import pageDescriptions from '../components/pageDescriptions';
 
 function AccountPage( ) {
 
@@ -29,7 +30,7 @@ function AccountPage( ) {
     <React.Fragment>
         <PageHeader 
           title="Account Page" 
-          subTitle="description goes here"
+          subTitle={pageDescriptions.accounts}
           Icon={AccountIcon}
         />
         <Table 
