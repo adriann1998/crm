@@ -40,6 +40,7 @@ import DepartmentFormPage from './pages/forms/DepartmentFormPage';
 import ProspectFormPage from './pages/forms/ProspectFormPage';
 import UserFormPage from './pages/forms/UserFormPage';
 import QuoteFormPage from './pages/forms/QuoteFormPage';
+import RevenuePage from './pages/datas/RevenuePage';
 
 const drawerWidth = 210;
 const useStyles = makeStyles((theme) => ({
@@ -211,6 +212,7 @@ export default function Dashboard() {
             <Route path="/form/prospects" component={ProspectFormPage}></Route>
             <Route path="/form/quotes" component={QuoteFormPage}></Route>
             <Route path="/form/users" component={UserFormPage}></Route>
+            <Route path="/revenues" component={RevenuePage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
         </div>

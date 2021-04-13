@@ -48,13 +48,6 @@ const states = ['VIC','SA','TAS','NSW','QLD','NT','WA'];
 const postcodes = ['3111','3123','3150','2311','4123','3000','3001','4322','4000','4111'];
 const prices = [1000000000,1200000000,1500000000,1750000000,1600000000,2000000000,2300000000,1700000000,1800000000];
 const roles = ['am', 'bm', 'director'];
-const payment = {   downPayment: { amount: 10000, time: 0 },
-                    onDelivery: { amount: 50000, time: 2 },
-                    userAcceptanceTest: { amount: 5000, time: 3 },
-                    afterUATGuarantee: { amount: 5000, time: 12 },
-                    monthlyInstallment: { amount: 700, period: 5, frequency: 12 },
-                    yearlyInstallment: { amount: 700, period: 60, frequency: 1 }, 
-}
 
 const getRandomFirstName = () => {return firstNames[Math.floor(Math.random() * firstNames.length)]};
 const getRandomLastName = () => {return lastNames[Math.floor(Math.random() * lastNames.length)]};
@@ -67,24 +60,36 @@ const getRandomState = () => {return states[Math.floor(Math.random() * states.le
 const getRandomPostcode = () => {return postcodes[Math.floor(Math.random() * postcodes.length)]};
 const getRandomPrice = () => {return prices[Math.floor(Math.random() * prices.length)]};
 const getRandomRole = () => {return roles[Math.floor(Math.random() * roles.length)]};
-const getRandom = (min, max) => { return Math.random() * (max - min) + min; }
+const getRandomNumber = (min, max) => { return Math.random() * (max - min) + min; };
+const getRandomDate = (date1, date2) => {
+    function randomValueBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+    var date1 = date1 || '01-01-1970'
+    var date2 = date2 || new Date().toLocaleDateString()
+    date1 = new Date(date1).getTime();
+    date2 = new Date(date2).getTime();
+    return date1>date2 ? 
+        new Date(randomValueBetween(date2,date1)).toLocaleString('en-GB').substring(0,10) : 
+        new Date(randomValueBetween(date1, date2)).toLocaleString('en-GB').substring(0,10)  
+};
 const getRandomPayment = () => {
     const paymentDetails = 
     {
         downPayment: {
-            amount: Math.floor(getRandom(500,700))*1000000,
-            paymentTime: 1
+            amount: Math.floor(getRandomNumber(10,15))*1000000,
+            paymentTime: 0
         },
         onDelivery: {
-            amount: Math.floor(getRandom(100,200))*1000000,
-            paymentTime: 2
+            amount: Math.floor(getRandomNumber(50,55))*1000000,
+            paymentTime: Math.round(getRandomNumber(1,3))
         },
         userAcceptanceTest: {
-            amount: Math.floor(getRandom(10,50))*1000000,
-            paymentTime: 3
+            amount: Math.floor(getRandomNumber(1,5))*1000000,
+            paymentTime: Math.round(getRandomNumber(3,4))
         },
         afterUATGuarantee: {
-            amount: Math.floor(getRandom(50,100))*1000000,
+            amount: Math.floor(getRandomNumber(1,5))*1000000,
             paymentTime: 12
         },
         monthlyInstallment: {
@@ -204,17 +209,19 @@ const generateProspectDummyData = () => {
         const endUser = [undefined,"XL", "Axita", "Telstra", "Alibaba"]
         const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
         const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
-        const payment = getRandomPayment();
-        const paymentDetails = payment[0];
-        const prospectAmount = payment[1];
-        const prospects = [
-            {prospectName: 'Prospect X12', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 45, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
-            {prospectName: 'Prospect B13', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 35, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
-            {prospectName: 'Prospect N15', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 50, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
-            {prospectName: 'Prospect AX1', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 33, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
-            {prospectName: 'Prospect AX2', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 15, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails},
-            {prospectName: 'Prospect BCD', account: getRandomAccId(), prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 65, expectedStartDate: "2021-04-09", desc:"", payment: paymentDetails}
-        ];
+        let prospects = [];
+        for (let i=0; i<40; i++) {
+            const payment = getRandomPayment();
+            const paymentDetails = payment[0];
+            const prospectAmount = payment[1];
+            let randomDate = getRandomDate('01/01/2021','12/31/2024').split('/');
+            randomDate = `${randomDate[2]}-${randomDate[1]}-${randomDate[0]}`
+            const newProspect = {
+                                prospectName: `prospect ${i}`, account: getRandomAccId(), prospectAmount: prospectAmount,
+                                endUser: getRandomEndUser(), GPM: 45, expectedStartDate: randomDate, desc:"", payment: paymentDetails
+                                };
+            prospects.push(newProspect);
+        };
         // drop table
         Prospect.deleteMany({}, (err, res) => {
             if (err) { console.log(err); return };

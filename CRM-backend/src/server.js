@@ -15,7 +15,7 @@ import login from "./routers/login";
 const cors = require("cors");
 
 const app = express();
-app.listen(8080);
+app.listen(8080, () => {console.log("Server is running at port 8080")});
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

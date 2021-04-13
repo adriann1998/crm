@@ -12,11 +12,8 @@ import DateField from "../../components/formFields/DateField.js";
 import Button from "../../components/Button";
 import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
-import {
-  useFormStyles,
-  getData,
-  useForm,
-} from "../../utils/FormUtil";
+import { useFormStyles, useForm } from "../../utils/FormUtil";
+import { getData } from "../../utils/CRUDUtil";
 
 const userPositionsChoices = [
   { value: "am", label: "Account Manager" },

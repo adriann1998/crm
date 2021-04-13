@@ -13,7 +13,8 @@ import DateField from '../../components/formFields/DateField';
 import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
-import { useFormStyles, getData, useForm } from '../../utils/FormUtil';
+import { useFormStyles, useForm } from '../../utils/FormUtil';
+import { getData } from '../../utils/CRUDUtil';
 
 export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;

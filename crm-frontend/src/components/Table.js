@@ -26,7 +26,7 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import SearchIcon from '@material-ui/icons/Search';
 // utils
-import { getData, deleteData, putData, postData } from "../utils/FormUtil";
+import { getData, deleteData, putData, postData } from "../utils/CRUDUtil";
 import { stableSort, getComparator } from "../utils/ObjectUtil";
 
 const useStyles = makeStyles(theme => ({
@@ -104,7 +104,7 @@ export default function Table({ columns, baseURL, Form, TableIcon }) {
     let mounted = true;
     getData(baseURL).then((data) => {
       if (mounted) {
-        data === null ? alert("Err") : setRecords(data);
+        data === null ? console.log("Err") : setRecords(data);
       }
     });
     return () => (mounted = false);
