@@ -6,7 +6,7 @@ import {
   IconButton,
   Collapse
 } from '@material-ui/core';
-import TextField from '../../components/formFields/TextField';
+import TextField from '../../components/inputFields/TextField';
 import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';

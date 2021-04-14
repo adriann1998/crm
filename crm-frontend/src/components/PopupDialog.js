@@ -23,8 +23,9 @@ export default function PopupDialog({ title, children, openPopup, handleClose, m
 
   return (
     <Dialog 
+      fullWidth
       open={openPopup}
-      maxWidth={maxWidth} 
+      maxWidth={maxWidth || "md"}
       classes={{paper: classes.dialogWrapper}}
     >
       <DialogTitle>

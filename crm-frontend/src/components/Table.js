@@ -13,7 +13,7 @@ import {
   IconButton,
   InputAdornment
 } from "@material-ui/core";
-import TextField from './formFields/TextField';
+import TextField from './inputFields/TextField';
 import Button from './Button';
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -224,7 +224,7 @@ export default function Table({ columns, baseURL, Form, TableIcon }) {
       <Paper className={classes.root}>
           <TextField
             label="Search..."
-            size="normal"
+            size="medium"
             className={classes.inputSearch}
             onChange={handleSearchRequest}
             InputProps={{

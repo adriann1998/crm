@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Quote = require("../models/quote");
+import { fileSizeFormatter } from "./utils/file";
+
 module.exports = {
   getAll: function (req, res) {
     Quote.find({})
@@ -10,8 +12,15 @@ module.exports = {
         res.json(quotes);
       });
   },
-  createOne: function (req, res) {
+  createOne: async function (req, res) {
     let newQuoteDetails = req.body;
+    console.log(req.body.files[0])
+    newQuoteDetails.files = req.body.files.map((f) => ({
+      fileName: f.originalname,
+      filePath: f.path,
+      fileType: f.mimetype,
+      fileSize: fileSizeFormatter(f.size, 2)
+    }));
     newQuoteDetails._id = new mongoose.Types.ObjectId();
     let quote = new Quote(newQuoteDetails);
     quote.save(function (err) {
@@ -35,7 +44,15 @@ module.exports = {
       });
   },
   updateOne: function (req, res) {
-    Quote.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, quote) {
+    let updateDetails = req.body;
+    console.log(req.body.files)
+    updateDetails.files = req.body.files.map((f) => ({
+      fileName: f.originalname,
+      filePath: f.path,
+      fileType: f.mimetype,
+      fileSize: fileSizeFormatter(f.size, 2)
+    }));
+    Quote.findOneAndUpdate({ _id: req.params.id }, updateDetails, {new: true, useFindAndUpdate: false}, function (err, quote) {
         if (err) return res.status(400).json(err);
         if (!quote) return res.status(404).json();
         quote.populate("user", "userEmail name")

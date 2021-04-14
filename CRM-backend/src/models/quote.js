@@ -34,6 +34,7 @@ const quoteSchema = new mongoose.Schema(
     descriptions: {
       type: String,
     },
+    files: [Object]
   },
   // Schema Options
   {

@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export function getRevenue(prospects) {
+export function getRevenue(prospects, frequency) {
   let revenue = {};
   for (const index in prospects) {
     const prospect = prospects[index];
@@ -11,27 +11,32 @@ export function getRevenue(prospects) {
     const AUG = payment.afterUATGuarantee;
     const MI = payment.monthlyInstallment;
     const YI = payment.yearlyInstallment;
-    let date = moment(prospect.expectedStartDate).format("MMM-YYYY");
+    let date = moment(prospect.expectedStartDate);
+    frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
     if (DP.amount !== 0) {
-      date = moment(date).add(DP.paymentTime, "months").format("MMM-YYYY");
+      date = moment(date).add(DP.paymentTime, "months");
+      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
       date in revenue
         ? (revenue[date] += DP.amount)
         : (revenue[date] = DP.amount);
     }
     if (OD.amount !== 0) {
-      date = date = moment(date).add(OD.paymentTime, "months").format("MMM-YYYY");
+      date = date = moment(date).add(OD.paymentTime, "months");
+      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
       date in revenue
         ? (revenue[date] += OD.amount)
         : (revenue[date] = OD.amount);
     }
     if (UAT.amount !== 0) {
-      date = moment(date).add(UAT.paymentTime, "months").format("MMM-YYYY");
+      date = moment(date).add(UAT.paymentTime, "months");
+      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
       date in revenue
         ? (revenue[date] += UAT.amount)
         : (revenue[date] = UAT.amount);
     }
     if (AUG.amount !== 0) {
-      date = moment(date).add(AUG.paymentTime, "months").format("MMM-YYYY");
+      date = moment(date).add(AUG.paymentTime, "months");
+      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
       date in revenue
         ? (revenue[date] += AUG.amount)
         : (revenue[date] = AUG.amount);
@@ -39,7 +44,8 @@ export function getRevenue(prospects) {
     let copiedDate = moment(date).format("MMM-YYYY");
     if (MI.amount !== 0) {
       for (let i = 0; i < MI.period; i++) {
-        date = moment(date).add(MI.frequency, "months").format("MMM-YYYY");
+        date = moment(date).add(MI.frequency, "months");
+        frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
         date in revenue
           ? (revenue[date] += MI.amount)
           : (revenue[date] = MI.amount);
@@ -47,7 +53,8 @@ export function getRevenue(prospects) {
     }
     if (YI.amount !== 0) {
       for (let i = 0; i < YI.period; i++) {
-        date = moment(copiedDate).add(YI.frequency, "months").format("MMM-YYYY");
+        date = moment(copiedDate).add(YI.frequency, "months");
+        frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
         date in revenue
           ? (revenue[date] += YI.amount)
           : (revenue[date] = YI.amount);
@@ -68,13 +75,12 @@ export function getRevenue(prospects) {
     Nov: 11,
     Dec: 12,
   };
-  console.log(revenue)
   revenue = Object.keys(revenue).map((key) => [key, revenue[key]]);
   revenue.sort(function (a, b) {
     let aa = a[0].split("-");
     let bb = b[0].split("-");
     return aa[1] - bb[1] || MONTHS[aa[0]] - MONTHS[bb[0]];
   });
-  revenue = revenue.map((rev) => ({ date: rev[0], amount: rev[1] }));
+  revenue = revenue.map((rev) => ({ date: rev[0], revenue: rev[1] }));
   return revenue;
 };

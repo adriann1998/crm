@@ -11,8 +11,9 @@ const departments = require("./routers/department");
 const prospects = require("./routers/prospect");
 const quotes = require("./routers/quote");
 const users = require("./routers/user");
-import login from "./routers/login";
 const cors = require("cors");
+import login from "./routers/login";
+import { upload } from "./routers/utils/file";
 
 const app = express();
 app.listen(8080, () => {console.log("Server is running at port 8080")});
@@ -21,16 +22,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-mongoose.connect(
-  "mongodb://localhost:27017/CRM",
-  { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true },
-  function (err) {
-    if (err) {
-      return console.log("Mongoose - connection error:", err);
-    }
-    console.log("Connected to database Successfully");
-  }
-);
+// connect to DB
+require('./database')();
 
 /* ----------------------------------
 Endpoints Configuration
@@ -69,9 +62,9 @@ app.delete("/prospects/:id", prospects.deleteOne);
 
 //Quote RESTFul endpoionts
 app.get("/quotes", quotes.getAll);
-app.post("/quotes", quotes.createOne);
+app.post("/quotes", upload.array('files'), quotes.createOne);
 app.get("/quotes/:id", quotes.getOne);
-app.put("/quotes/:id", quotes.updateOne);
+app.put("/quotes/:id", upload.array('files'), quotes.updateOne);
 app.delete("/quotes/:id", quotes.deleteOne);
 
 //User RESTFul endpoionts
