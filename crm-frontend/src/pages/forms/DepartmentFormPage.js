@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CssBaseline,
   Grid,
@@ -7,27 +7,49 @@ import {
   Collapse
 } from '@material-ui/core';
 import TextField from '../../components/inputFields/TextField';
+import SelectField from '../../components/inputFields/SelectField';
 import Button from "../../components/Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
+import { getData } from "../../utils/CRUDUtil";
 
 export default function DepartmentFormPage ({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;
   
   const classes = useFormStyles();
 
+  const [directorChoices, setDirectorChoices] = useState([]);
   const [errorOpen, setErrorOpen] = useState(false);
 
   const initialFormValues = {
     departmentName: editMode ? defaultValues.departmentName : "",
-    director: editMode ? (defaultValues.director ? defaultValues.director._id : null) : null
+    director: editMode ? (defaultValues.director ? defaultValues.director._id : "") : ""
   };
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
 
+  const filterDirector = (dir) => (dir.userPosition === 'director')
+
+  useEffect(() => {
+    let mounted = true;
+    getData("/users").then((data) => {
+      if (mounted) {
+        if (data === null) {alert("Err");}
+        data = data.filter(filterDirector)
+                   .map((user) => ({
+                      value: user._id,
+                      label: `${user.name.firstName}${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`,
+                   }));
+        setDirectorChoices(data);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formValues)
     const response = await addOrEdit(formValues, defaultValues, editMode);
     if (response === null) {
       setErrorOpen(true);
@@ -69,16 +91,18 @@ export default function DepartmentFormPage ({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Department Name"
                 name="departmentName"
-                defaultValue={editMode ? defaultValues.departmentName : ''}
+                defaultValue={formValues.departmentName}
                 onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
-              <TextField
-                label="Director ID"
-                name="directorId"
-                defaultValue={editMode ? (defaultValues.director ? defaultValues.director._id : '') : ''}
+              <SelectField
+                required={true}
+                label="Director"
+                name="director"
+                defaultValue={formValues.director}
                 onChange={handleInputChange}
+                items={directorChoices}
               />
             </Grid>
           </Grid>

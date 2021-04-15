@@ -38,12 +38,10 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
     let mounted = true;
     getData("/prospects").then((data) => {
       if (mounted) {
-        if (data === null) {
-          alert("Err");
-        }
-        setProspectsChoices(data.map((prospect) => {
-            return { value: prospect._id, label: prospect.prospectName };
-        }));
+        if (data === null) return alert("Err");
+        data = data.map((prospect) => ({ value: prospect._id, label: prospect.prospectName }));
+        data.push({ value: '', label: 'No Prospect'})
+        setProspectsChoices(data);
       }
     });
     return () => (mounted = false);
@@ -53,17 +51,13 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
     let mounted = true;
     getData("/users").then((data) => {
       if (mounted) {
-        if (data === null) {
-          alert("Err");
-        }
-        setUsersChoices(
-          data.map((user) => {
-            return {
-              value: user._id,
-              label: `${user.name.firstName}${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`,
-            };
-          })
-        );
+        if (data === null) return alert("Err");
+        data = data.map((user) => ({
+            value: user._id,
+            label: `${user.name.firstName}${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`,
+        }));
+        data.push({ value: '', label: 'No User'})
+        setUsersChoices(data);
       }
     });
     return () => (mounted = false);
@@ -71,18 +65,13 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // let formData = new FormData();
-    // formData.append('prospect', formValues.prospect);
-    // formData.append('user', formValues.user);
-    // formData.append('amountQuoted', formValues.amountQuoted);
-    // formData.append('files', files);
-    const formData = {
-      prospect: formValues.prospect,
-      user: formValues.user,
-      amountQuoted: formValues.amountQuoted,
-      files: files
-    }
-    console.log(files)
+    let formData = new FormData();
+    formData.append('prospect', formValues.prospect);
+    formData.append('user', formValues.user);
+    formData.append('amountQuoted', formValues.amountQuoted);
+    files.forEach(file => {
+      formData.append('files', file)
+    })
     const response = await addOrEdit(formData, defaultValues, editMode);
     if (response === null) {
       setErrorOpen(true);
@@ -96,14 +85,14 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
   };
 
   const handleFileChange = (files) => {
-    setFiles(files);
-    console.log(files)
+    let newFile = [];
+    files.forEach((f) => newFile.push(f))
+    setFiles(newFile);
   }
 
-  // testing
-  useEffect(() => {
-    console.log(files)
-  }, [files])
+  const handleInputFileChange = (e) => {
+    setFiles(e.target.files);
+  }
 
   return (
     <Container component="main" maxWidth="md">
@@ -133,7 +122,7 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Prospect"
                 name="prospect"
-                defaultValue={editMode ? defaultValues.prospect._id : null}
+                defaultValue={formValues.prospect}
                 onChange={handleInputChange}
                 items={prospectsChoices}
               />
@@ -143,7 +132,7 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="User"
                 name="user"
-                defaultValue={editMode ? defaultValues.user._id : null}
+                defaultValue={formValues.user}
                 onChange={handleInputChange}
                 items={usersChoices}
               />
@@ -160,13 +149,18 @@ export default function QuoteFormPage({ addOrEdit, defaultValues }) {
             </Grid>
             <Grid item xs={12} sm={12}>
               <DropzoneArea
-                name="attachments"
+                name="files"
                 acceptedFiles={["image/jpeg", "image/png", "image/bmp", "application/pdf"]}
                 filesLimit={3}
                 maxFileSize={5000000}
                 onChange={handleFileChange}
               />
             </Grid>
+            <input 
+              type="file" 
+              multiple
+              onChange={handleInputFileChange}
+            />
           </Grid>
           <Button text="Submit" type="submit" className={classes.submit} />
         </form>

@@ -105,7 +105,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="First Name"
                 name="firstName"
-                defaultValue={editMode ? defaultValues.name.firstName : ""}
+                defaultValue={formValues.firstName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -113,7 +113,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Last Name"
                 name="lastName"
-                defaultValue={editMode ? defaultValues.name.lastName : ""}
+                defaultValue={formValues.lastName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -121,7 +121,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Contact Title"
                 name="contactTitle"
-                defaultValue={editMode ? defaultValues.contactTitle : ""}
+                defaultValue={formValues.contactTitle}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -130,7 +130,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
                 label="Contact Email"
                 name="contactEmail"
                 type="email"
-                defaultValue={editMode ? defaultValues.contactEmail : ""}
+                defaultValue={formValues.contactEmail}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -139,7 +139,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Account"
                 name="account"
-                defaultValue={editMode ? defaultValues.account._id : null}
+                defaultValue={formValues.account}
                 onChange={handleInputChange}
                 items={accountsChoices}
               />
@@ -149,7 +149,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Mobile PhoneNumber"
                 name="mobilePhone"
-                defaultValue={editMode ? defaultValues.contactPhone.mobile : ""}
+                defaultValue={formValues.mobilePhone}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -157,7 +157,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Work Phone Number"
                 name="workPhone"
-                defaultValue={editMode ? defaultValues.contactPhone.work : ""}
+                defaultValue={formValues.workPhone}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -165,7 +165,7 @@ export default function ContactFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Office Phone"
                 name="officePhone"
-                defaultValue={editMode ? defaultValues.contactPhone.office : ""}
+                defaultValue={formValues.officePhone}
                 onChange={handleInputChange}
               />
             </Grid>

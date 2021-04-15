@@ -1,24 +1,25 @@
-const mongoose = require("mongoose");
 const multer = require('multer');
-const File = require('../../models/file');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads');
+        cb(null, './uploads');
     },
     filename: (req, file, cb) => {
-        cb(null, new Date().toISOString().replace(/:/g, '-') + ' ' + file.originalname);
+        cb(null, new Date().getTime() + '-' + file.originalname);
     }
 });
 const filefilter = (req, file, cb) => {
-    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' 
-        || file.mimetype === 'image/jpeg' || file.mimetype === 'application/pdf'){
+    if (file.mimetype === 'image/png' || 
+        file.mimetype === 'image/jpg' || 
+        file.mimetype === 'image/jpeg' || 
+        file.mimetype === 'application/pdf'){
             cb(null, true);
         }else {
             cb(null, false);
         }
 }
 const upload = multer({storage: storage, fileFilter: filefilter});
+// const upload = multer({ dest: 'uploads/' });
 
 const fileSizeFormatter = (bytes, decimal) => {
     if(bytes === 0){

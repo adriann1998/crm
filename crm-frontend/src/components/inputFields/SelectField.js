@@ -16,13 +16,13 @@ export default function SelectField( {label, name, defaultValue, onChange, items
     >
     <InputLabel>{label}</InputLabel>
       <MuiSelect
-        fullwidth
+        fullWidth
         name={name}
         defaultValue={defaultValue}
         onChange={onChange}
       >
-        {items.map((item) => {
-          return <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>;
+        {items.map((item, index) => {
+          return <MenuItem key={index} value={item.value}>{item.label}</MenuItem>;
         })}
       </MuiSelect>
     </FormControl>

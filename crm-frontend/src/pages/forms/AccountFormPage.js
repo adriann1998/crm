@@ -70,7 +70,7 @@ export default function AccountFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Account Name"
                 name="accName"
-                defaultValue={editMode ? defaultValues.accName : ''}
+                defaultValue={formValues.accName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -78,7 +78,7 @@ export default function AccountFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Account Alias"
                 name="accAlias"
-                defaultValue={editMode ? defaultValues.accName : ''}
+                defaultValue={formValues.accAlias}
                 onChange={handleInputChange}
               />
             </Grid>

@@ -56,9 +56,8 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
     getData("/accounts").then((data) => {
       if (mounted) {
         if (data === null) {alert("Err");}
-        setAccountsChoices(data.map((acc) => {
-          return {value: acc._id, label: acc.accName}
-        }))
+        data = data.map((acc) => ({ value: acc._id, label: acc.accName })); 
+        setAccountsChoices(data);
       }
     });
     return () => (mounted = false);
@@ -155,7 +154,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Prospect Name"
                 name="prospectName"
-                defaultValue={editMode ? defaultValues.prospectName : ""}
+                defaultValue={formValues.prospectName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -164,7 +163,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Account"
                 name="account"
-                defaultValue={editMode ? defaultValues.account._id : ''}
+                defaultValue={formValues.account}
                 onChange={handleInputChange}
                 items={accountsChoices}
               />
@@ -173,7 +172,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
               <TextField
                 label="End User"
                 name="endUser"
-                defaultValue={editMode ? defaultValues.endUser : ""}
+                defaultValue={formValues.endUser}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -182,7 +181,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="GPM"
                 name="GPM"
                 type="Number"
-                defaultValue={editMode ? defaultValues.GPM : 0}
+                defaultValue={formValues.GPM}
                 inputProps={{ min: 0, max:100}}
                 onChange={handleInputChange}
               />
@@ -202,7 +201,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 name="desc"
                 multiline
                 rows={4}
-                defaultValue={editMode ? defaultValues.desc : ''}
+                defaultValue={formValues.desc}
                 inputProps={{ maxLength: 500}}
                 onChange={handleInputChange}
               />
@@ -216,7 +215,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Down Payment (Amount)"
                 name="downPaymentAmount"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.downPayment.amount : 0}
+                defaultValue={formValues.downPaymentAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
               />
@@ -226,7 +225,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Down Payment (Time)"
                 name="downPaymentTime"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.downPayment.paymentTime : 0}
+                defaultValue={formValues.downPaymentTime}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -239,7 +238,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Goods Delivered (Amount)"
                 name="onDeliveryAmount"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.onDelivery.amount : 0}
+                defaultValue={formValues.onDeliveryAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
               />
@@ -249,7 +248,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Goods Delivered (Time)"
                 name="onDeliveryTime"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.onDelivery.paymentTime : 0}
+                defaultValue={formValues.onDeliveryTime}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -262,7 +261,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="User Acceptance (Amount)"
                 name="userAcceptanceAmount"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.userAcceptanceTest.amount : 0}
+                defaultValue={formValues.userAcceptanceAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
               />
@@ -272,7 +271,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="User Acceptance (Time)"
                 name="userAcceptanceTime"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.userAcceptanceTest.paymentTime : 0}
+                defaultValue={formValues.userAcceptanceTime}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -285,7 +284,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="After UAT (Amount)"
                 name="afterUATAmount"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.afterUATGuarantee.amount : 0}
+                defaultValue={formValues.afterUATAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
               />
@@ -295,7 +294,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="After UAT (Time)"
                 name="afterUATTime"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.afterUATGuarantee.paymentTime : 0}
+                defaultValue={formValues.afterUATTime}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -308,7 +307,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Yearly Installment (Amount)"
                 name="yearlyInstallmentAmount"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.yearlyInstallment.amount : 0}
+                defaultValue={formValues.yearlyInstallmentAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
               />
@@ -318,7 +317,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Yearly Installment (Period)"
                 name="yearlyInstallmentPeriod"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.yearlyInstallment.period : 0}
+                defaultValue={formValues.yearlyInstallmentPeriod}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -331,7 +330,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Yearly Installment (Frequency)"
                 name="yearlyInstallmentFrequency"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.yearlyInstallment.frequency : 0}
+                defaultValue={formValues.yearlyInstallmentFrequency}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -345,7 +344,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Monthly Installment (Amount)"
                 name="monthlyInstallmentAmount"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.monthlyInstallment.amount : 0}
+                defaultValue={formValues.monthlyInstallmentAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
               />
@@ -355,7 +354,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Monthly Installment (Period)"
                 name="monthlyInstallmentPeriod"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.monthlyInstallment.period : 0}
+                defaultValue={formValues.monthlyInstallmentPeriod}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{
@@ -368,7 +367,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 label="Monthly Installment (Frequency)"
                 name="monthlyInstallmentFrequency"
                 type="Number"
-                defaultValue={editMode ? defaultValues.payment.monthlyInstallment.frequency : 0}
+                defaultValue={formValues.afterUATAmount}
                 inputProps={{ min: 0}}
                 onChange={handleInputChange}
                 InputProps={{

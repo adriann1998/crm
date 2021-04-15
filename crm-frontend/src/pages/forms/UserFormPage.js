@@ -62,11 +62,8 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
         if (data === null) {
           alert("Err");
         }
-        setDepartmentsChoices(
-          data.map((department) => {
-            return { value: department._id, label: department.departmentName };
-          })
-        );
+        data = data.map((department) => ({ value: department._id, label: department.departmentName }))
+        setDepartmentsChoices(data);
       }
     });
     return () => (mounted = false);
@@ -74,24 +71,21 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
 
   useEffect(() => {
     let mounted = true;
+    const userFilter = (user) => {
+      if (editMode) { 
+        return formValues.userPosition === "am" ? user.userPosition !== "am" : user.userPosition === "director"; 
+      }
+      return true;
+    };
     getData("/users").then((data) => {
       if (mounted) {
         if (data === null) { alert("Err");}
-        const userFilter = (user) => {
-          if (editMode) { 
-            return formValues.userPosition === "am" ? user.userPosition !== "am" : user.userPosition === "director"; 
-          }
-          return true;
-        };
-        setUsersChoices(
-          data.filter(userFilter)
-              .map((user) => { 
-                return { 
-                  value: user._id, 
-                  label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
-                };
-              })
-        );
+        data = data.filter(userFilter)
+                   .map((user) => ({ 
+                        value: user._id, 
+                        label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
+                    }))
+        setUsersChoices(data);
       }
     });
     return () => (mounted = false);
@@ -172,7 +166,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 name="userEmail"
                 type="email"
                 disabled={editMode}
-                defaultValue={editMode ? defaultValues.userEmail : ""}
+                defaultValue={formValues.userEmail}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -182,7 +176,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 label="NIK"
                 name="NIK"
                 disabled={editMode}
-                defaultValue={editMode ? defaultValues.NIK : ""}
+                defaultValue={formValues.NIK}
                 inputProps={{ maxLength: 11, minLength: 11 }}
                 onChange={handleInputChange}
               />
@@ -214,7 +208,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="First Name"
                 name="firstName"
-                defaultValue={editMode ? defaultValues.name.firstName : ""}
+                defaultValue={formValues.firstName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -222,7 +216,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Middle Name"
                 name="middleName"
-                defaultValue={editMode ? defaultValues.name.middleName : ""}
+                defaultValue={formValues.middleName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -230,7 +224,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Last Name"
                 name="lastName"
-                defaultValue={editMode ? defaultValues.name.lastName : ""}
+                defaultValue={formValues.lastName}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -248,7 +242,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Department"
                 name="department"
-                defaultValue={editMode ? defaultValues.department._id : ""}
+                defaultValue={formValues.department}
                 onChange={handleInputChange}
                 items={departmentsChoices}
               />
@@ -279,7 +273,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Mobile Phone 1"
                 name="mobilePhone1"
-                defaultValue={editMode ? defaultValues.userPhone.mobile1 : ""}
+                defaultValue={formValues.mobilePhone1}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -287,7 +281,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Mobile Phone 2"
                 name="mobilePhone2"
-                defaultValue={editMode ? defaultValues.userPhone.mobile2 : ""}
+                defaultValue={formValues.mobilePhone2}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -295,7 +289,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
               <TextField
                 label="Work Phone"
                 name="workPhone"
-                defaultValue={editMode ? defaultValues.userPhone.work : ""}
+                defaultValue={formValues.workPhone}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -304,7 +298,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Street"
                 name="street"
-                defaultValue={editMode ? defaultValues.userAddress.street : ""}
+                defaultValue={formValues.street}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -313,7 +307,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="City"
                 name="city"
-                defaultValue={editMode ? defaultValues.userAddress.city : ""}
+                defaultValue={formValues.city}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -322,7 +316,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="State"
                 name="state"
-                defaultValue={editMode ? defaultValues.userAddress.state : ""}
+                defaultValue={formValues.state}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -331,9 +325,7 @@ export default function UserFormPage({ addOrEdit, defaultValues }) {
                 required={true}
                 label="Postcode"
                 name="postcode"
-                defaultValue={
-                  editMode ? defaultValues.userAddress.postcode : ""
-                }
+                defaultValue={formValues.postode}
                 onChange={handleInputChange}
               />
             </Grid>

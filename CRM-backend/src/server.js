@@ -1,7 +1,6 @@
 // Import middleware
 const bodyParser = require("body-parser");
 const express = require("express");
-const mongoose = require("mongoose");
 const morgan = require("morgan");
 
 // Import router callback functions
@@ -19,7 +18,7 @@ const app = express();
 app.listen(8080, () => {console.log("Server is running at port 8080")});
 app.use(morgan("common"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // connect to DB
@@ -62,7 +61,7 @@ app.delete("/prospects/:id", prospects.deleteOne);
 
 //Quote RESTFul endpoionts
 app.get("/quotes", quotes.getAll);
-app.post("/quotes", upload.array('files'), quotes.createOne);
+app.post("/quotes", upload.any('files'), quotes.createOne);
 app.get("/quotes/:id", quotes.getOne);
 app.put("/quotes/:id", upload.array('files'), quotes.updateOne);
 app.delete("/quotes/:id", quotes.deleteOne);
