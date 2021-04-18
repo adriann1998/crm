@@ -15,6 +15,7 @@ import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
 import { getData } from '../../utils/CRUDUtil';
+import accounting from 'accounting';
 
 export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
   const editMode = defaultValues !== undefined;
@@ -208,7 +209,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
             </Grid>
             <Grid item xs={12} sm={12} style={{border: '3 px solid #000000'}}></Grid>
             <Grid item xs={12} sm={12}>
-              <h6><u>Payment Mehtod ${prospectAmount}</u></h6>
+              <h6><u>Payment Mehtod</u></h6>
             </Grid>
             <Grid item xs={12} sm={3}>
               <TextField
@@ -376,6 +377,9 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
                 }}
               />
             </Grid>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <h3>Total: {accounting.formatMoney(prospectAmount, "Rp", 2, ",", ".")}</h3>
           </Grid>
           <Button
             text="Submit"

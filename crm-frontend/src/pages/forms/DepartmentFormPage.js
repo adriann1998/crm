@@ -49,7 +49,6 @@ export default function DepartmentFormPage ({ addOrEdit, defaultValues }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formValues)
     const response = await addOrEdit(formValues, defaultValues, editMode);
     if (response === null) {
       setErrorOpen(true);

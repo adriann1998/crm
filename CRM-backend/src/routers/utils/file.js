@@ -2,7 +2,7 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, './uploads');
+        cb(null, './public/uploads');
     },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + '-' + file.originalname);
@@ -19,7 +19,6 @@ const filefilter = (req, file, cb) => {
         }
 }
 const upload = multer({storage: storage, fileFilter: filefilter});
-// const upload = multer({ dest: 'uploads/' });
 
 const fileSizeFormatter = (bytes, decimal) => {
     if(bytes === 0){
@@ -31,23 +30,13 @@ const fileSizeFormatter = (bytes, decimal) => {
     return parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + ' ' + sizes[index];
 }
 
-// const createFiles = async (files, next) => {
-//     let filesArray = [];
-//     files.forEach(f => {
-//         const newFile = new File ({
-//             _id: new mongoose.Types.ObjectId(),
-//             fileName: f.originalname,
-//             filePath: f.path,
-//             fileType: f.mimetype,
-//             fileSize: fileSizeFormatter(f.size, 2)
-//         });
-//         filesArray.push(newFile);
-//     });
-//     let createdFiles;
-//     filesArray.forEach(f => {
-//         f.save()
-//     })
-//     return createdFiles;
-// }
+const toFileObjects = (files) => {
+    return files.map((f) => ({
+        fileName: f.originalname,
+        filePath: f.path.replace('public\\',''),
+        fileType: f.mimetype,
+        fileSize: fileSizeFormatter(f.size, 2)
+    }))
+}
 
-module.exports = {upload, fileSizeFormatter}
+module.exports = {upload, toFileObjects}

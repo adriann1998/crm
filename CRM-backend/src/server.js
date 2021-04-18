@@ -2,6 +2,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const morgan = require("morgan");
+const path = require("path");
 
 // Import router callback functions
 const accounts = require("./routers/account");
@@ -14,15 +15,25 @@ const cors = require("cors");
 import login from "./routers/login";
 import { upload } from "./routers/utils/file";
 
+
+/* ----------------------------------
+Express Server Configuration
+---------------------------------- */
 const app = express();
-app.listen(8080, () => {console.log("Server is running at port 8080")});
+const PORT = 8080;
+app.listen(PORT, () => {console.log(`Server is running at port ${PORT}`)});
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.static('public'))
 
-// connect to DB
+
+/* ----------------------------------
+Database Configuration
+---------------------------------- */
 require('./database')();
+
 
 /* ----------------------------------
 Endpoints Configuration

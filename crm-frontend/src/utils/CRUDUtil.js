@@ -8,7 +8,7 @@ export const postData = async (endpoint, formData) => {
   const instanceOfFormData = formData instanceof FormData;
   const options = {
     method: "POST",
-    headers: instanceOfFormData ? {} : {'Content-Type': "application/json"},
+    headers: instanceOfFormData ? {} : {"Content-Type": "application/json"},
     body: instanceOfFormData ? formData : JSON.stringify(formData),
   };
   return fetch(endpoint, options)
@@ -17,12 +17,11 @@ export const postData = async (endpoint, formData) => {
 };
 
 export const putData = async (endpoint, formData) => {
+  const instanceOfFormData = formData instanceof FormData;
   const options = {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
+    headers: instanceOfFormData ? {} :{"Content-Type": "application/json"},
+    body: instanceOfFormData ? formData : JSON.stringify(formData),
   };
   return fetch(endpoint, options)
           .then((response) => (response.status < 400 ? response.json() : null))

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Quote = require("../models/quote");
-import { fileSizeFormatter } from "./utils/file";
+import { toFileObjects } from "./utils/file";
 
 module.exports = {
   getAll: function (req, res) {
@@ -21,12 +21,7 @@ module.exports = {
   createOne: async function (req, res) {
     try{
       let newQuoteDetails = req.body;
-      newQuoteDetails.files = req.files.map((f) => ({
-        fileName: f.originalname,
-        filePath: f.path,
-        fileType: f.mimetype,
-        fileSize: fileSizeFormatter(f.size, 2)
-      }));
+      newQuoteDetails.files = toFileObjects(req.files);
       newQuoteDetails._id = new mongoose.Types.ObjectId();
       let quote = new Quote(newQuoteDetails);
       quote.save(function (err) {
@@ -63,12 +58,7 @@ module.exports = {
   updateOne: function (req, res) {
     try{
       let updateDetails = req.body;
-      updateDetails.files = req.files.map((f) => ({
-        fileName: f.originalname,
-        filePath: f.path,
-        fileType: f.mimetype,
-        fileSize: fileSizeFormatter(f.size, 2)
-      }));
+      updateDetails.files = toFileObjects(req.files);
       Quote.findOneAndUpdate({ _id: req.params.id }, updateDetails, {new: true, useFindAndUpdate: false}, function (err, quote) {
           if (err) return res.status(400).json(err);
           if (!quote) return res.status(404).json();
