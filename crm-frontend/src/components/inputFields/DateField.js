@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function DateField({ label, name, value, onChange, size, ...other }) {
+export default function DateField({ label, name, value, onChange, size, format, ...other }) {
 
   const classes = useStyles();
 
@@ -32,7 +32,7 @@ export default function DateField({ label, name, value, onChange, size, ...other
         variant="inline"
         inputVariant="outlined"
         margin="normal"
-        formate="dd/MMM/yyyy"
+        format={format || "dd MMM yyyy"}
         label={label}
         name={name}
         value={value}

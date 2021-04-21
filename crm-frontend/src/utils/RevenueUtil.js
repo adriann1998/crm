@@ -12,31 +12,31 @@ export function getRevenue(prospects, frequency) {
     const MI = payment.monthlyInstallment;
     const YI = payment.yearlyInstallment;
     let date = moment(prospect.expectedStartDate);
-    frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+    date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
     if (DP.amount !== 0) {
       date = moment(date).add(DP.paymentTime, "months");
-      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+      date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
       date in revenue
         ? (revenue[date] += DP.amount)
         : (revenue[date] = DP.amount);
     }
     if (OD.amount !== 0) {
       date = date = moment(date).add(OD.paymentTime, "months");
-      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+      date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
       date in revenue
         ? (revenue[date] += OD.amount)
         : (revenue[date] = OD.amount);
     }
     if (UAT.amount !== 0) {
       date = moment(date).add(UAT.paymentTime, "months");
-      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+      date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
       date in revenue
         ? (revenue[date] += UAT.amount)
         : (revenue[date] = UAT.amount);
     }
     if (AUG.amount !== 0) {
       date = moment(date).add(AUG.paymentTime, "months");
-      frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+      date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
       date in revenue
         ? (revenue[date] += AUG.amount)
         : (revenue[date] = AUG.amount);
@@ -45,7 +45,7 @@ export function getRevenue(prospects, frequency) {
     if (MI.amount !== 0) {
       for (let i = 0; i < MI.period; i++) {
         date = moment(date).add(MI.frequency, "months");
-        frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+        date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
         date in revenue
           ? (revenue[date] += MI.amount)
           : (revenue[date] = MI.amount);
@@ -54,7 +54,7 @@ export function getRevenue(prospects, frequency) {
     if (YI.amount !== 0) {
       for (let i = 0; i < YI.period; i++) {
         date = moment(copiedDate).add(YI.frequency, "months");
-        frequency === 'monthly' ? date = date.format("MMM-YYYY") : date = date.format("YYYY");
+        date = frequency === 'monthly' ? date.format("MMM-YYYY") : date.format("YYYY");
         date in revenue
           ? (revenue[date] += YI.amount)
           : (revenue[date] = YI.amount);

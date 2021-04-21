@@ -1,5 +1,5 @@
-export const getData = (uri) => {
-  return fetch(uri)
+export const getData = (endpoint) => {
+  return fetch(endpoint)
     .then((response) => (response.status < 400 ? response.json() : null))
     .catch((err) => console.log(err));
 };
