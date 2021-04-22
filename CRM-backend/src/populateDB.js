@@ -210,11 +210,11 @@ const generateProspectDummyData = () => {
         const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
         const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
         let prospects = [];
-        for (let i=0; i<40; i++) {
+        for (let i=0; i<100; i++) {
             const payment = getRandomPayment();
             const paymentDetails = payment[0];
             const prospectAmount = payment[1];
-            let randomDate = getRandomDate('01/01/2021','12/31/2024').split('/');
+            let randomDate = getRandomDate('01/01/2021','12/31/2028').split('/');
             randomDate = `${randomDate[2]}-${randomDate[1]}-${randomDate[0]}`
             const newProspect = {
                                 prospectName: `prospect ${i}`, account: getRandomAccId(), prospectAmount: prospectAmount,

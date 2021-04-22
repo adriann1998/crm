@@ -19,44 +19,70 @@ import { getRevenue } from "../../utils/RevenueUtil";
 import moment from "moment";
 
 export default function RevenuePage() {
+  const [originalMonthlyGraphData, setOriginalMonthlyGraphData] = useState([]);
+  const [originalYearlyGraphData, setOriginalYearlyGraphData] = useState([]);
   const [monthlyGraphData, setMonthlyGraphData] = useState([]);
   const [yearlyGraphData, setYearlyGraphData] = useState([]);
+
+  const [originalAccMonthlyGraphData, setOriginalAccMonthlyGraphData] = useState([]);
+  const [originalAccYearlyGraphData, setOriginalAccYearlyGraphData] = useState([]);
+  const [accMonthlyGraphData, setAccMonthlyGraphData] = useState([]);
+  const [accYearlyGraphData, setAccYearlyGraphData] = useState([]);
+
   const [prospectCount, setProspectCount] = useState([]);
   const [isMonthly, setIsMonthly] = useState(true);
   const [filterStartDate, setFilterStartDate] = useState(new Date());
   const [filterEndDate, setFilterEndDate] = useState("Mar-2021");
-  const [loadingData, setLoadingData] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [isAccumulate, setIsAccumulate] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-    setLoadingData(true);
+    setIsLoadingData(true);
     getData("/prospects").then((data) => {
       if (mounted) {
         if (data === null) {
           console.log("Err");
         }
-        const monthlyRevenue = getRevenue(data, {frequency: 'monthly'});
-        const yearlyRevenue = getRevenue(data, {frequency: 'yearly'});
-        setMonthlyGraphData(monthlyRevenue);
-        setYearlyGraphData(yearlyRevenue);
-        setFilterStartDate(monthlyRevenue[0].date);
-        setFilterEndDate(monthlyRevenue[monthlyRevenue.length - 1].date);
+        let revenue, accumulatedRevenue;
+        [revenue, accumulatedRevenue] = getRevenue(data, {frequency: 'monthly'});
+        setOriginalMonthlyGraphData(revenue);
+        setMonthlyGraphData(revenue);
+        setOriginalAccMonthlyGraphData(accumulatedRevenue);
+        setAccMonthlyGraphData(accumulatedRevenue);
+        setFilterStartDate(revenue[0].date);
+        setFilterEndDate(revenue[revenue.length - 1].date);
+
+        [revenue, accumulatedRevenue] = getRevenue(data, {frequency: 'yearly'});
+        setOriginalYearlyGraphData(revenue);
+        setYearlyGraphData(revenue);
+        setOriginalAccYearlyGraphData(accumulatedRevenue);
+        setAccYearlyGraphData(accumulatedRevenue);
+      
         setProspectCount(data.length);
-        setLoadingData(false);
+        setIsLoadingData(false);
       }
     });
   }, []);
 
   useEffect(() => {
-    if (!loadingData){
-      setMonthlyGraphData(monthlyGraphData => monthlyGraphData.filter((rev) =>
+    if (!isLoadingData){
+      setMonthlyGraphData(originalMonthlyGraphData.filter((rev) =>
         moment(rev.date, 'MMM-yyyy').isBetween(filterStartDate, filterEndDate, undefined, '[]')
       ));
-      setYearlyGraphData(yearlyGraphData => yearlyGraphData.filter((rev) =>
+      setAccMonthlyGraphData(originalAccMonthlyGraphData.filter((rev) =>
+        moment(rev.date, 'MMM-yyyy').isBetween(filterStartDate, filterEndDate, undefined, '[]')
+      ));
+      setYearlyGraphData(originalYearlyGraphData.filter((rev) =>
         moment(rev.date, 'yyyy').isBetween(filterStartDate, filterEndDate, undefined, '[]')
       ));
+      setAccYearlyGraphData(originalAccYearlyGraphData.filter((rev) =>
+        moment(rev.date, 'MMM-yyyy').isBetween(filterStartDate, filterEndDate, undefined, '[]')
+      ));
     }
-  }, [filterStartDate, filterEndDate, loadingData]);
+  }, [originalMonthlyGraphData, originalYearlyGraphData, 
+    originalAccMonthlyGraphData, originalAccYearlyGraphData,
+    filterStartDate, filterEndDate, isLoadingData]);
 
   const handleStartDateChange = (e) => {
     setFilterStartDate(e.target.value);
@@ -66,30 +92,28 @@ export default function RevenuePage() {
     setFilterEndDate(e.target.value);
   };
 
-  const yAxisFormater = (n) => (n / 1000000).toString() + "M";
+  const yAxisFormater = (n) => (n / 1000000000).toFixed(2).toString() + "B";
   const toolTipFormatter = (n) => accounting.formatMoney(n, "Rp", 2, ",", ".");
 
-  return (
-    <React.Fragment>
-      <PageHeader
-        title="Revenue"
-        subTitle={`Total prospect: ${prospectCount}`}
-        Icon={EqualizerIcon}
-      />
+  const FreqFilterButtonGroup = () => {
+    return (
       <ButtonGroup>
         <Button
+          variant={isMonthly ? "contained" : "outlined"}
           text="Monthly"
-          onClick={() => {
-            setIsMonthly(true);
-          }}
+          onClick={() => setIsMonthly(true)}
         />
         <Button
+        variant={!isMonthly ? "contained" : "outlined"}
           text="Yearly"
-          onClick={() => {
-            setIsMonthly(false);
-          }}
+          onClick={() => setIsMonthly(false)}
         />
       </ButtonGroup>
+    )
+  }
+
+  const DateFilterButtonGroup = () => {
+    return (
       <ButtonGroup>
         <DateField
           views={isMonthly ? ["year", "month"] : ["year"]}
@@ -104,11 +128,36 @@ export default function RevenuePage() {
           onChange={handleEndDateChange}
         />
       </ButtonGroup>
+    )
+  }
+
+  const AccumulateFilterButton = () => {
+    return (
+      <Button
+        variant={isAccumulate ? "contained" : "outlined"}
+        text="Accumulate"
+        onClick={() => setIsAccumulate(!isAccumulate)}
+      />
+    )
+  }
+
+  return (
+    <React.Fragment>
+      <PageHeader
+        title="Revenue"
+        subTitle={`Total prospect: ${prospectCount}`}
+        Icon={EqualizerIcon}
+      />
+      <FreqFilterButtonGroup />
+      <DateFilterButtonGroup />
+      <AccumulateFilterButton />
       <ResponsiveContainer width="100%" height="100%" aspect={3}>
         <BarChart
           width={150}
           height={40}
-          data={isMonthly ? monthlyGraphData : yearlyGraphData}
+          data={isAccumulate 
+            ? isMonthly ? accMonthlyGraphData : accYearlyGraphData
+            : isMonthly ? monthlyGraphData : yearlyGraphData}
         >
           <Tooltip formatter={toolTipFormatter} />
           <Bar dataKey="revenue" fill="#8884d8" />
