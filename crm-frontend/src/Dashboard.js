@@ -1,5 +1,5 @@
 // import components
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import {
   CssBaseline,
@@ -20,8 +20,7 @@ import Copyright from './components/Copyright';
 import { mainListItems, secondaryListItems } from './components/NavigationList';
 import {
   Route,
-  Switch,
-  useLocation
+  Switch
 } from 'react-router-dom';
 import { logout } from './utils/DashboardUtil';
 
@@ -126,10 +125,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
 
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const [pageTitle, setPageTitle] = React.useState("Dashboard");
-
-  const location = useLocation();
+  const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -138,22 +134,6 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  React.useEffect(() => {
-    let newTitle = "Dashboard";
-
-    switch(location.pathname) {
-      case "/account": newTitle = "Acount"; break;
-      case "/contact": newTitle = "Contact"; break;
-      case "/department": newTitle = "Departement"; break;
-      case "/prospect": newTitle = "Prospect"; break;
-      case "/quote": newTitle = "Quote"; break;
-      case "/user": newTitle = "User"; break;
-      default: newTitle = "Dashboard";
-
-    };
-    setPageTitle(newTitle);
-  }, [location]);
 
   return (
     <div className={classes.root}>
@@ -170,7 +150,7 @@ export default function Dashboard() {
           <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {pageTitle}
+            Compnet
           </Typography>
           <IconButton color="inherit" onClick={logout}>
             <Badge color="secondary">

@@ -218,7 +218,7 @@ const generateProspectDummyData = () => {
             randomDate = `${randomDate[2]}-${randomDate[1]}-${randomDate[0]}`
             const newProspect = {
                                 prospectName: `prospect ${i}`, account: getRandomAccId(), prospectAmount: prospectAmount,
-                                endUser: getRandomEndUser(), GPM: 45, expectedStartDate: randomDate, desc:"", payment: paymentDetails
+                                endUser: getRandomEndUser(), GPM: 45, expectedSODate: randomDate, desc:"", payment: paymentDetails
                                 };
             prospects.push(newProspect);
         };

@@ -27,7 +27,10 @@ const mapToFileObject = async (files) => {
   ));
 };
 
-export default function QuoteFormPage({ addOrEdit, defaultValues }) {
+export default function QuoteFormPage( props ) {
+  
+  const { addOrEdit, defaultValues } = props;
+  
   const editMode = defaultValues !== undefined;
 
   const classes = useFormStyles();

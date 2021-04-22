@@ -21,7 +21,10 @@ const userPositionsChoices = [
   { value: "director", label: "Director" },
 ];
 
-export default function UserFormPage({ addOrEdit, defaultValues }) {
+export default function UserFormPage( props ) {
+
+  const { addOrEdit, defaultValues } = props;
+
   const editMode = defaultValues !== undefined;
 
   const classes = useFormStyles();

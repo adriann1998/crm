@@ -39,7 +39,7 @@ const prospectSchema = new mongoose.Schema(
       min: 0,
       max: 100,
     },
-    expectedStartDate: {
+    expectedSODate: {
       type: Date,
       required: true,
     },

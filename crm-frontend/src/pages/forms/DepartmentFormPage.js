@@ -14,7 +14,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
 import { getData } from "../../utils/CRUDUtil";
 
-export default function DepartmentFormPage ({ addOrEdit, defaultValues }) {
+export default function DepartmentFormPage ( props ) {
+
+  const { addOrEdit, defaultValues } = props;
+
   const editMode = defaultValues !== undefined;
   
   const classes = useFormStyles();

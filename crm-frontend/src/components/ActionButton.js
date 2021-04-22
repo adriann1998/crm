@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function ActionButton({ color, children, onClick }) {
+export default function ActionButton( props ) {
+
+  const { color, children, onClick } = props;
 
   const classes = useStyles()
 

@@ -6,7 +6,10 @@ import {
     FormControl
 } from '@material-ui/core'
 
-export default function SelectField( {label, name, defaultValue, onChange, items, size, ...other} ) {
+export default function SelectField( props ) {
+
+  const {label, name, defaultValue, onChange, items, size, ...other} = props;
+
   return (
     <FormControl
       fullWidth

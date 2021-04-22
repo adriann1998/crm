@@ -12,7 +12,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function DateField({ label, name, value, onChange, size, format, ...other }) {
+export default function DateField(props) {
+
+  const { label, name, value, onChange, size, format, ...other } = props;
 
   const classes = useStyles();
 

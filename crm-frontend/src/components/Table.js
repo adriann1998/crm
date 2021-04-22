@@ -71,7 +71,9 @@ Object.containsValue = (obj, target) => {
   return false;
 };
 
-export default function Table({ columns, baseURL, Form, TableIcon }) {
+export default function Table( props ) {
+
+  const { columns, baseURL, Form, TableIcon } = props;
 
   const classes = useStyles();
 

@@ -33,8 +33,8 @@ function ProspectPage(  ) {
       label: 'End User',
       format: (endUser) => endUser ? endUser : '-'
     }, { 
-      id: 'expectedStartDate', 
-      label: 'Expected Start Date',
+      id: 'expectedSODate', 
+      label: 'Expected SO Date',
       format: (date) => new Date(date).toString().substring(4, 15)
     }, { 
       id: 'createdAt', 

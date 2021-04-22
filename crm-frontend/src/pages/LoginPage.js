@@ -10,7 +10,8 @@ import {
     Link,
     Grid,
     Typography,
-    Container
+    Container,
+    makeStyles
 } from '@material-ui/core';
 import { Alert } from 'react-bootstrap';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -18,7 +19,28 @@ import Copyright from '../components/Copyright';
 
 // utils
 import PropTypes from 'prop-types';
-import { useStyles, validateForm, loginUser } from '../utils/LoginUtil';
+import { validateForm, loginUser } from '../utils/LoginUtil';
+
+
+export const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
 export default function Login ( {setToken} ) {
 

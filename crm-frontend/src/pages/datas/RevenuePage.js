@@ -25,33 +25,38 @@ export default function RevenuePage() {
   const [isMonthly, setIsMonthly] = useState(true);
   const [filterStartDate, setFilterStartDate] = useState(new Date());
   const [filterEndDate, setFilterEndDate] = useState("Mar-2021");
+  const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
     let mounted = true;
+    setLoadingData(true);
     getData("/prospects").then((data) => {
       if (mounted) {
         if (data === null) {
           console.log("Err");
         }
-        const monthlyRevenue = getRevenue(data, 'monthly');
-        const yearlyRevenue = getRevenue(data, 'yearly');
+        const monthlyRevenue = getRevenue(data, {frequency: 'monthly'});
+        const yearlyRevenue = getRevenue(data, {frequency: 'yearly'});
         setMonthlyGraphData(monthlyRevenue);
         setYearlyGraphData(yearlyRevenue);
         setFilterStartDate(monthlyRevenue[0].date);
         setFilterEndDate(monthlyRevenue[monthlyRevenue.length - 1].date);
         setProspectCount(data.length);
+        setLoadingData(false);
       }
     });
   }, []);
 
   useEffect(() => {
-    setMonthlyGraphData(monthlyGraphData.filter((rev) =>
-      moment(rev.date).isBetween(filterStartDate, filterEndDate)
-    ));
-    setYearlyGraphData(yearlyGraphData.filter((rev) =>
-      moment(rev.date).isBetween(filterStartDate, filterEndDate)
-    ));
-  }, [filterStartDate, filterEndDate]);
+    if (!loadingData){
+      setMonthlyGraphData(monthlyGraphData => monthlyGraphData.filter((rev) =>
+        moment(rev.date, 'MMM-yyyy').isBetween(filterStartDate, filterEndDate, undefined, '[]')
+      ));
+      setYearlyGraphData(yearlyGraphData => yearlyGraphData.filter((rev) =>
+        moment(rev.date, 'yyyy').isBetween(filterStartDate, filterEndDate, undefined, '[]')
+      ));
+    }
+  }, [filterStartDate, filterEndDate, loadingData]);
 
   const handleStartDateChange = (e) => {
     setFilterStartDate(e.target.value);

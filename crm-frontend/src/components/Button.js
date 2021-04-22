@@ -1,7 +1,9 @@
 import React from "react";
 import { Button as MuiButton } from "@material-ui/core";
 
-export default function Button( { variant, color, size, text, onClick, ...other} ) {
+export default function Button( props ) {
+
+  const { variant, color, size, text, onClick, ...other} = props;
 
   return (
     <MuiButton

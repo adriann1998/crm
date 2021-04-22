@@ -7,13 +7,15 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function ButtonGroup({ size, children, variant, color, ...other }) {
+export default function ButtonGroup( props ) {
+
+  const { size, children, variant, color, ...other } = props;
 
   const classes = useStyles();
 
   return (
     <MuiButtonGroup
-      size={size || ""}
+      size={size || "small"}
       variant={variant || "contained"}
       color={color || "primary"}
       aria-label="contained primary button group"

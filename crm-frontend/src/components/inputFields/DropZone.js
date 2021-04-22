@@ -1,7 +1,9 @@
 import React from "react";
 import { DropzoneArea as MuiDropzoneArea } from "material-ui-dropzone";
 
-export default function DropZone({ name, acceptedFiles, filesLimit, onChange, maxFileSize, ...other }) {
+export default function DropZone( props ) {
+
+  const { name, acceptedFiles, filesLimit, onChange, maxFileSize, ...other } = props;
 
   const convertToDefaultEventPara = (name, value) => ({
     target: {

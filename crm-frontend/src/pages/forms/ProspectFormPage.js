@@ -17,7 +17,10 @@ import { useFormStyles, useForm } from '../../utils/FormUtil';
 import { getData } from '../../utils/CRUDUtil';
 import accounting from 'accounting';
 
-export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
+export default function ProspectFormPage ( props ) {
+
+  const { addOrEdit, defaultValues } = props;
+  
   const editMode = defaultValues !== undefined;
   const classes = useFormStyles();
 
@@ -28,7 +31,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
     account: editMode ? defaultValues.account._id : "",
     endUser: editMode ? defaultValues.endUser : "",
     GPM: editMode ? defaultValues.GPM : 0,
-    expectedStartDate: editMode ? defaultValues.expectedStartDate : new Date(),
+    expectedSODate: editMode ? defaultValues.expectedSODate : new Date(),
     desc: editMode ? defaultValues.desc : "",
     downPaymentAmount: editMode ? defaultValues.payment.downPayment.amount : 0,
     downPaymentTime: editMode ? defaultValues.payment.downPayment.paymentTime : 0,
@@ -83,7 +86,7 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
       endUser: formValues.endUser,
       prospectAmount: prospectAmount,
       GPM: formValues.GPM,
-      expectedStartDate: formValues.expectedStartDate,
+      expectedSODate: formValues.expectedSODate,
       desc: formValues.desc,
       payment: {
         downPayment: {
@@ -190,9 +193,9 @@ export default function ProspectFormPage ({ addOrEdit, defaultValues }) {
             <Grid item xs={12} sm={4}>
               <DateField 
                 required={true}
-                label="Expected Start Date"
-                name="expectedStartDate"
-                value={formValues.expectedStartDate}
+                label="Expected SO Date"
+                name="expectedSODate"
+                value={formValues.expectedSODate}
                 onChange={handleInputChange}
               />
             </Grid>

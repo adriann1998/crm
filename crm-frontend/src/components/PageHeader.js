@@ -26,7 +26,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function PageHeader( { title, subTitle, Icon} ) {
+export default function PageHeader( props ) {
+
+  const { title, subTitle, Icon} = props;
   
   const classes = useStyles();
 

@@ -12,7 +12,9 @@ import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
 
-export default function AccountFormPage({ addOrEdit, defaultValues }) {
+export default function AccountFormPage( props ) {
+
+  const { addOrEdit, defaultValues } = props;
 
   const editMode = defaultValues !== undefined;
 

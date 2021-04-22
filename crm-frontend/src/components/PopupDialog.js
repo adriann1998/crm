@@ -17,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function PopupDialog({ title, children, openPopup, handleClose, maxWidth, titleIcon }) {
+export default function PopupDialog(props) {
+
+  const { title, children, openPopup, handleClose, maxWidth } = props;
 
   const classes = useStyles();
 
