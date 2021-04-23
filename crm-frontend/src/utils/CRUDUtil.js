@@ -1,5 +1,6 @@
 export const getData = (endpoint) => {
   return fetch(endpoint)
+    .then(response => {response.status === 403 ? alert("Token expired") : console.log("a"); return response})
     .then((response) => (response.status < 400 ? response.json() : null))
     .catch((err) => console.log(err));
 };

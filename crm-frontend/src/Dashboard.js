@@ -25,7 +25,7 @@ import {
 import { logout } from './utils/DashboardUtil';
 
 // import Pages
-import HomePage from './pages/HomePage';
+import HomePage from './pages/primary/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import AccountPage from './pages/primary/AccountPage';
 import ContactPage from './pages/primary/ContactPage';

@@ -12,7 +12,7 @@ const prospects = require("./routers/prospect");
 const quotes = require("./routers/quote");
 const users = require("./routers/user");
 const cors = require("cors");
-import login from "./routers/login";
+import { login, authenticateToken } from "./routers/login";
 import { upload } from "./routers/utils/file";
 
 
@@ -43,7 +43,7 @@ Endpoints Configuration
 app.post("/login", login);
 
 //Account RESTFul endpoionts
-app.get("/accounts", accounts.getAll);
+app.get("/accounts", authenticateToken, accounts.getAll);
 app.post("/accounts", accounts.createOne);
 app.get("/accounts/:id", accounts.getOne);
 app.put("/accounts/:id", accounts.updateOne);

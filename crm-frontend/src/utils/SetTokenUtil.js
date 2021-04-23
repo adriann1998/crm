@@ -10,8 +10,9 @@ function useToken() {
     const [token, setToken] = useState(getToken());
 
     const saveToken = (userToken) => {
-        sessionStorage.setItem('token', JSON.stringify(userToken));
+        // sessionStorage.setItem('token', JSON.stringify(userToken));
         setToken(userToken.token);
+        document.cookie = `token=${userToken.token}`
     };
 
     return {

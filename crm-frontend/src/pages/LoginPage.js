@@ -53,12 +53,12 @@ export default function Login ( {setToken} ) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
+    const response = await loginUser({
       userEmail,
       password
     });
-    if (token.token) {
-      setToken(token);
+    if (response.token) {
+      setToken(response);
       if (rememberMe) {
         localStorage.userEmail = userEmail;
         localStorage.password = password;
