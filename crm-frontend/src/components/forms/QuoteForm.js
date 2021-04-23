@@ -6,10 +6,10 @@ import {
   IconButton,
   Collapse,
 } from "@material-ui/core";
-import TextField from "../../components/inputFields/TextField";
-import SelectField from "../../components/inputFields/SelectField";
-import DropzoneArea from "../../components/inputFields/DropZone";
-import Button from "../../components/Button";
+import TextField from "../inputFields/TextField";
+import SelectField from "../inputFields/SelectField";
+import DropzoneArea from "../inputFields/DropZone";
+import Button from "../Button";
 import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import { useFormStyles, useForm } from "../../utils/FormUtil";
@@ -27,7 +27,7 @@ const mapToFileObject = async (files) => {
   ));
 };
 
-export default function QuoteFormPage( props ) {
+export default function QuoteForm( props ) {
   
   const { addOrEdit, defaultValues } = props;
   

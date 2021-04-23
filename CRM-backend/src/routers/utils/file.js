@@ -5,7 +5,9 @@ const storage = multer.diskStorage({
         cb(null, './public/uploads');
     },
     filename: (req, file, cb) => {
-        cb(null, new Date().getTime() + '-' + file.originalname);
+        const fileName = file.originalname.split('.');
+        const mimeExtension = fileName[fileName.length-1]
+        cb(null, new Date().getTime() + '.' + mimeExtension);
     }
 });
 const filefilter = (req, file, cb) => {

@@ -1,9 +1,9 @@
 import React from 'react';
-import PageHeader from '../components/PageHeader';
-import Table from '../components/Table';
-import UserFormPage from './forms/UserFormPage';
-import { UserIcon } from '../components/Icons';
-import pageDescriptions from '../components/pageDescriptions';
+import PageHeader from '../../components/PageHeader';
+import Table from '../../components/Table';
+import UserForm from '../../components/forms/UserForm';
+import { UserIcon } from '../../components/Icons';
+import pageDescriptions from '../../components/pageDescriptions';
 
 function UserPage(  ) {
 
@@ -50,7 +50,7 @@ function UserPage(  ) {
       <Table 
         columns={columns} 
         baseURL={'/users'} 
-        Form={UserFormPage}
+        Form={UserForm}
         TableIcon={UserIcon}
       />
     </React.Fragment>

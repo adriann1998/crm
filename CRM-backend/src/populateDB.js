@@ -9,19 +9,20 @@ const Department = require('./models/department');
 const Prospect = require('./models/prospect');
 const Quote = require('./models/quote');
 const User = require('./models/user');
+const department = require('./models/department');
 
 // Connection URL
 const dbName = 'CRM';
 const url = "mongodb://localhost:27017/" + dbName;
 
 //Connect to mongoDB server
-mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true},
+mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
     function (err, client) {
         if (err) {
             console.log("Err  ", err);
         } else {
             console.log("-------Connected successfully to server---------");
-            generateDepartmentsDummyData(); // generates deparments, then users
+            generateDepartmentsDummyData(); // generates deparments, then users, then insertDirector
             generateAccountsDummyData();    // generates accounts, then prospects, then contacts, then quotes
         }
 });
@@ -210,7 +211,7 @@ const generateProspectDummyData = () => {
         const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
         const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
         let prospects = [];
-        for (let i=0; i<100; i++) {
+        for (let i=0; i<80; i++) {
             const payment = getRandomPayment();
             const paymentDetails = payment[0];
             const prospectAmount = payment[1];
@@ -244,17 +245,16 @@ const generateQuoteDummyData = () => {
             const getRandomDescription = () => {return descriptions[Math.floor(Math.random() * descriptions.length)]}
             const getRandomUserId = () => {return users[Math.floor(Math.random() * users.length)]}
             const getRandomProspectId = () => {return prospects[Math.floor(Math.random() * prospects.length)]}
-            const quotes = [
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()},
-                {prospect: getRandomProspectId(), user: getRandomUserId(), amountQuoted: getRandomPrice() ,desc: getRandomDescription()}
-            ];
+            let quotes = []
+            for (let i = 0; i <140; i++) {
+                const newQuote = {
+                    prospect: getRandomProspectId(), 
+                    user: getRandomUserId(), 
+                    amountQuoted: getRandomPrice() ,
+                    desc: getRandomDescription()
+                };
+                quotes.push(newQuote)
+            }
             // drop table
             Quote.deleteMany({}, (err, res) => {
                 if (err) { console.log(err); return };
@@ -298,7 +298,24 @@ const generateUserDummyData = () => {
             User.insertMany(users, (err, res) => {
                 if (err) { console.log(err); return };
                 console.log("Inserted USERS");
+                insertDirectorDummyData();
             });
         });
     })
+}
+
+const insertDirectorDummyData = () => {
+    User.find({userPosition: { $eq: 'director' }}, (err, users) => {
+        Department.find({}, (err, departments) => {
+            let i = 0;
+            departments.forEach(department => {
+                const theFilter = {_id: department._id};
+                const theUpdate = {$set: {director: users[i]._id}}
+                Department.findOneAndUpdate(theFilter, theUpdate, (err, department) => {
+                    if (err) { console.log(err)}
+                })
+                i++;
+            })
+        });
+    });
 }

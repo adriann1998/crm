@@ -1,9 +1,9 @@
 import React from 'react';
-import PageHeader from '../components/PageHeader';
-import Table from '../components/Table';
-import AccountFormPage from './forms/AccountFormPage';
-import { AccountIcon } from '../components/Icons';
-import pageDescriptions from '../components/pageDescriptions';
+import PageHeader from '../../components/PageHeader';
+import Table from '../../components/Table';
+import AccountForm from '../../components/forms/AccountForm';
+import { AccountIcon } from '../../components/Icons';
+import pageDescriptions from '../../components/pageDescriptions';
 
 function AccountPage( ) {
 
@@ -36,7 +36,7 @@ function AccountPage( ) {
         <Table 
           columns={columns} 
           baseURL={'/accounts'} 
-          Form={AccountFormPage}
+          Form={AccountForm}
           TableIcon={AccountIcon}
         />
     </React.Fragment>

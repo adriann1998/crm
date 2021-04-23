@@ -6,13 +6,13 @@ import {
   IconButton,
   Collapse
 } from '@material-ui/core';
-import TextField from '../../components/inputFields/TextField';
-import Button from "../../components/Button";
+import TextField from '../inputFields/TextField';
+import Button from "../Button";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
 
-export default function AccountFormPage( props ) {
+export default function AccountForm( props ) {
 
   const { addOrEdit, defaultValues } = props;
 

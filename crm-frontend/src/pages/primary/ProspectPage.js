@@ -1,10 +1,10 @@
 import React from 'react';
-import PageHeader from '../components/PageHeader';
-import Table from '../components/Table';
-import ProspectFormPage from './forms/ProspectFormPage';
+import PageHeader from '../../components/PageHeader';
+import Table from '../../components/Table';
+import ProspectForm from '../../components/forms/ProspectForm';
 import accounting from 'accounting';
-import { ProspectIcon } from '../components/Icons';
-import pageDescriptions from '../components/pageDescriptions';
+import { ProspectIcon } from '../../components/Icons';
+import pageDescriptions from '../../components/pageDescriptions';
 
 function ProspectPage(  ) {
 
@@ -57,7 +57,7 @@ function ProspectPage(  ) {
       <Table 
         columns={columns}
         baseURL={'/prospects'}
-        Form={ProspectFormPage}
+        Form={ProspectForm}
         TableIcon={ProspectIcon}
       />
     </React.Fragment>

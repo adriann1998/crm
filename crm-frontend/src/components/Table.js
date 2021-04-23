@@ -31,7 +31,7 @@ import { stableSort, getComparator } from "../utils/ObjectUtil";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(0),
     width: "100%",
     '& thead th': {
       color: theme.palette.primary.contrastText,
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   container: {
-    maxHeight: 1000,
+    maxHeight: 500,
   },
   inputSearch: {
     margin: theme.spacing(2,2,2,2),
@@ -73,11 +73,11 @@ Object.containsValue = (obj, target) => {
 
 export default function Table( props ) {
 
-  const { columns, baseURL, Form, TableIcon } = props;
+  const { columns, rowFilter, baseURL, Form, TableIcon, simple, size } = props;
 
   const classes = useStyles();
 
-  const [records, setRecords] = useState([]);
+  const [rows, setRows] = useState([]);
   const [formDefaultValues, setFormDefaultValues] = useState(undefined);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -97,8 +97,8 @@ export default function Table( props ) {
     setPage(0);
   };
 
-  const recordsAfterPaginAndSorting = () => {
-    return stableSort(filterFn.fn(records), getComparator(order, orderBy))
+  const rowsAfterPaginAndSorting = () => {
+    return stableSort(filterFn.fn(rows), getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }
 
@@ -106,11 +106,13 @@ export default function Table( props ) {
     let mounted = true;
     getData(baseURL).then((data) => {
       if (mounted) {
-        data === null ? console.log("Err") : setRecords(data);
+        data === null 
+        ? console.log("Err") 
+        : setRows(data.filter(rowFilter ? rowFilter : (n => n)));
       }
     });
     return () => (mounted = false);
-  }, [baseURL]);
+  }, [baseURL, rowFilter]);
 
   const handleDeleteRow = (_id) => {
     setDeletePopup(true);
@@ -122,8 +124,8 @@ export default function Table( props ) {
       if (data === null) {
         alert("Delete failed");
       } else {
-        let newRows = records.filter((row) => row._id !== deleteRowId);
-        setRecords(newRows);
+        let newRows = rows.filter((row) => row._id !== deleteRowId);
+        setRows(newRows);
       }
     });
     return handleCloseDeleteDialog();
@@ -139,8 +141,8 @@ export default function Table( props ) {
     setDeleteRowId("");
   };
 
-  const handleEditRow = (record) => {
-    setFormDefaultValues(record);
+  const handleEditRow = (row) => {
+    setFormDefaultValues(row);
     setFormPopup(true);
   };
 
@@ -151,10 +153,9 @@ export default function Table( props ) {
   }
 
   const handleSearchRequest = (e) => {
-    let target = e.target;
     setFilterFn({
       fn: items => {
-        if (target.value === ''){
+        if (e.target.value === ''){
           return items;
         }
         else {
@@ -177,13 +178,13 @@ export default function Table( props ) {
     }
     if (response !== null) {
       if (editMode) {
-        let newRecords = records;
-        const index = records.findIndex(r => r._id === response._id);
-        newRecords[index] = response;
-        setRecords(newRecords);
+        let newRows = rows;
+        const index = rows.findIndex(r => r._id === response._id);
+        newRows[index] = response;
+        setRows(newRows);
       }
       else{
-        records.push(response);
+        rows.push(response);
       }
       setFormPopup(false);
       setFormDefaultValues(undefined);
@@ -221,35 +222,41 @@ export default function Table( props ) {
     );
   };
 
+  const TableHeader = () => (
+    <React.Fragment>
+      <TextField
+        label="Search..."
+        size="medium"
+        className={classes.inputSearch}
+        onChange={handleSearchRequest}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon/>
+            </InputAdornment>
+          )
+        }}
+      />
+      <Button
+        onClick={() => {setFormPopup(true)}} 
+        variant="outlined"
+        color="primary"
+        startIcon={<AddIcon/>}
+        text="Add New"
+        className={classes.newButton}
+      />
+    </React.Fragment>
+  )
+
   return (
     <React.Fragment>
       <Paper className={classes.root}>
-          <TextField
-            label="Search..."
-            size="medium"
-            className={classes.inputSearch}
-            onChange={handleSearchRequest}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon/>
-                </InputAdornment>
-              )
-            }}
-          />
-          <Button
-            onClick={() => {setFormPopup(true)}} 
-            variant="outlined"
-            color="primary"
-            startIcon={<AddIcon/>}
-            text="Add New"
-            className={classes.newButton}
-          />
+        {!simple && <TableHeader />}
         <TableContainer className={classes.container}>
-          <MaterialUITable stickyHeader aria-label="sticky table">
+          <MaterialUITable stickyHeader aria-label="sticky table" size={size || "medium"}>
             <TableHead className={classes.tableHead}>
               <TableRow>
-                <TableCell align="left" width="150" />
+                {!simple && <TableCell align="left" width="150" />}
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
@@ -269,25 +276,27 @@ export default function Table( props ) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {recordsAfterPaginAndSorting().map((row) => {
+              {rowsAfterPaginAndSorting().map((row) => {
                   return (
                     <TableRow key={row._id} hover role="checkbox" tabIndex={-1}>
-                      <TableCell className={classes.selectTableCell}>
-                        <IconButton
-                          aria-label="edit"
-                          onClick={() => handleEditRow(row)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => {
-                            handleDeleteRow(row._id);
-                          }}
-                        >
-                          <DeleteOutlineIcon />
-                        </IconButton>
-                      </TableCell>
+                      {!simple && 
+                        <TableCell className={classes.selectTableCell}>
+                          <IconButton
+                            aria-label="edit"
+                            onClick={() => handleEditRow(row)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => {
+                              handleDeleteRow(row._id);
+                            }}
+                          >
+                            <DeleteOutlineIcon />
+                          </IconButton>
+                        </TableCell>
+                      }
                       {columns.map((column, index) => {
                         const value = row[column.id];
                         return (
@@ -305,7 +314,7 @@ export default function Table( props ) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={records.length}
+          count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -313,22 +322,24 @@ export default function Table( props ) {
         />
       </Paper>
       <DeleteDialog />
-      <PopupDialog
-        title={
-          <div>
-            <TableIcon style={{marginRight: 20}}/>
-              {baseURL[1].toUpperCase()}{baseURL.substring(2,baseURL.length-1)}
-          </div>
-        }
-        maxWidth="md"
-        openPopup={formPopup}
-        handleClose={handleFormPopupClose}
-      >
-        <Form
-          addOrEdit={addOrEdit}
-          defaultValues={formDefaultValues}
-        />
-      </PopupDialog>
+      {!simple && 
+        <PopupDialog
+          title={
+            <div>
+              <TableIcon style={{marginRight: 20}}/>
+                {baseURL[1].toUpperCase()}{baseURL.substring(2,baseURL.length-1)}
+            </div>
+          }
+          maxWidth="md"
+          openPopup={formPopup}
+          handleClose={handleFormPopupClose}
+        >
+          <Form
+            addOrEdit={addOrEdit}
+            defaultValues={formDefaultValues}
+          />
+        </PopupDialog>
+      }
     </React.Fragment>
   );
 }

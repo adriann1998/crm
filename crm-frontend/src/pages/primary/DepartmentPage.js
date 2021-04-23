@@ -1,9 +1,9 @@
 import React from 'react';
-import PageHeader from '../components/PageHeader';
-import Table from '../components/Table';
-import DepartmentFormPage from './forms/DepartmentFormPage';
-import { DepartmentIcon } from '../components/Icons';
-import pageDescriptions from '../components/pageDescriptions';
+import PageHeader from '../../components/PageHeader';
+import Table from '../../components/Table';
+import DepartmentForm from '../../components/forms/DepartmentForm';
+import { DepartmentIcon } from '../../components/Icons';
+import pageDescriptions from '../../components/pageDescriptions';
 
 function DepartmentPage() {
 
@@ -32,7 +32,7 @@ function DepartmentPage() {
       <Table 
         columns={columns} 
         baseURL={'/departments'}
-        Form={DepartmentFormPage}
+        Form={DepartmentForm}
         TableIcon={DepartmentIcon}
       />
     </React.Fragment>

@@ -2,7 +2,7 @@ import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
+// import ListSubheader from "@material-ui/core/ListSubheader";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import PeopleIcon from "@material-ui/icons/People";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -11,9 +11,11 @@ import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import PersonIcon from "@material-ui/icons/Person";
 import HomeWorkIcon from "@material-ui/icons/HomeWork";
 import EqualizerIcon from '@material-ui/icons/Equalizer';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import TextsmsIcon from '@material-ui/icons/Textsms';
 import { Link } from "react-router-dom";
 
-export const mainListItems = (
+export const primaryList = (
   <div>
     <Link to="/">
       <ListItem button>
@@ -80,9 +82,8 @@ export const mainListItems = (
   </div>
 );
 
-export const secondaryListItems = (
+export const secondaryList = (
   <div>
-    <ListSubheader inset>Data Visualiztion</ListSubheader>
     <Link to="/revenues">
       <ListItem button>
         <ListItemIcon>
@@ -91,5 +92,26 @@ export const secondaryListItems = (
         <ListItemText primary="Revenue" />
       </ListItem>
     </Link>
+    <Link to="/sales">
+      <ListItem button>
+        <ListItemIcon>
+          <TrendingUpIcon />
+        </ListItemIcon>
+        <ListItemText primary="Sales" />
+      </ListItem>
+    </Link>
   </div>
 );
+
+export const tertiaryList = (
+  <div>
+    <Link to="/chat">
+      <ListItem button>
+        <ListItemIcon>
+          <TextsmsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Chat" />
+      </ListItem>
+    </Link>
+  </div>
+)

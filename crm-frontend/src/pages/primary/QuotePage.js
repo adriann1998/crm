@@ -1,11 +1,11 @@
 // components
 import React from 'react';
-import PageHeader from '../components/PageHeader';
-import Table from '../components/Table';
-import QuoteFormPage from './forms/QuoteFormPage';
+import PageHeader from '../../components/PageHeader';
+import Table from '../../components/Table';
+import QuoteForm from '../../components/forms/QuoteForm';
 import accounting from 'accounting';
-import { QuoteIcon } from '../components/Icons';
-import pageDescriptions from '../components/pageDescriptions';
+import { QuoteIcon } from '../../components/Icons';
+import pageDescriptions from '../../components/pageDescriptions';
 
 function QuotePage( ) {
 
@@ -28,11 +28,7 @@ function QuotePage( ) {
     }, { 
       id: 'createdAt', 
       label: 'Created At',
-      format: (date) => new Date(date).toString().substring(4, 15)
-    }, { 
-      id: 'updatedAt', 
-      label: 'Updated At',
-      format: (date) => new Date(date).toString().substring(4, 15)
+      format: (date) => new Date(date).toString().substring(4, 25)
     }
   ];
 
@@ -46,7 +42,7 @@ function QuotePage( ) {
       <Table 
         columns={columns} 
         baseURL={'/quotes'} 
-        Form={QuoteFormPage}
+        Form={QuoteForm}
         TableIcon={QuoteIcon}
       />
     </React.Fragment>

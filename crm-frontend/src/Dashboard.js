@@ -17,7 +17,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Copyright from './components/Copyright';
-import { mainListItems, secondaryListItems } from './components/NavigationList';
+import { primaryList, secondaryList, tertiaryList } from './components/NavigationList';
 import {
   Route,
   Switch
@@ -25,21 +25,17 @@ import {
 import { logout } from './utils/DashboardUtil';
 
 // import Pages
-import AccountPage from './pages/AccountPage';
-import ContactPage from './pages/ContactPage';
-import DepartmentPage from './pages/DepartmentPage';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
-import ProspectPage from './pages/ProspectPage';
-import QuotePage from './pages/QuotePage';
-import UserPage from './pages/UserPage';
-import AccountFormPage from './pages/forms/AccountFormPage';
-import ContactFormPage from './pages/forms/ContactFormPage';
-import DepartmentFormPage from './pages/forms/DepartmentFormPage';
-import ProspectFormPage from './pages/forms/ProspectFormPage';
-import UserFormPage from './pages/forms/UserFormPage';
-import QuoteFormPage from './pages/forms/QuoteFormPage';
-import RevenuePage from './pages/datas/RevenuePage';
+import AccountPage from './pages/primary/AccountPage';
+import ContactPage from './pages/primary/ContactPage';
+import DepartmentPage from './pages/primary/DepartmentPage';
+import ProspectPage from './pages/primary/ProspectPage';
+import QuotePage from './pages/primary/QuotePage';
+import UserPage from './pages/primary/UserPage';
+import RevenuePage from './pages/secondary/RevenuePage';
+import SalesPage from './pages/secondary/SalesPage';
+import ChatPage from './pages/tertiary/ChatPage';
 
 const drawerWidth = 210;
 const useStyles = makeStyles((theme) => ({
@@ -172,9 +168,11 @@ export default function Dashboard() {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <List>{primaryList}</List>
         <Divider />
-        <List>{secondaryListItems}</List>
+        <List>{secondaryList}</List>
+        <Divider />
+        <List>{tertiaryList}</List>
       </Drawer>
       <main className={classes.content}>
         <div style={{width: '98%', margin:"auto"}}>
@@ -186,13 +184,9 @@ export default function Dashboard() {
             <Route path="/prospects" component={ProspectPage} />
             <Route path="/quotes" component={QuotePage} />
             <Route path="/users" component={UserPage} />
-            <Route path="/form/accounts" component={AccountFormPage}></Route>
-            <Route path="/form/contacts" component={ContactFormPage}></Route>
-            <Route path="/form/departments" component={DepartmentFormPage}></Route>
-            <Route path="/form/prospects" component={ProspectFormPage}></Route>
-            <Route path="/form/quotes" component={QuoteFormPage}></Route>
-            <Route path="/form/users" component={UserFormPage}></Route>
             <Route path="/revenues" component={RevenuePage}></Route>
+            <Route path="/sales" component={SalesPage}></Route>
+            <Route path="/chat" component={ChatPage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
         </div>

@@ -7,17 +7,18 @@ import {
   Collapse,
   InputAdornment
 } from '@material-ui/core';
-import TextField from '../../components/inputFields/TextField';
-import SelectField from '../../components/inputFields/SelectField';
-import DateField from '../../components/inputFields/DateField';
-import Button from "../../components/Button";
+import TextField from '../inputFields/TextField';
+import SelectField from '../inputFields/SelectField';
+import DateField from '../inputFields/DateField';
+import Button from "../Button";
+import Table from "../Table";
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
 import { getData } from '../../utils/CRUDUtil';
 import accounting from 'accounting';
 
-export default function ProspectFormPage ( props ) {
+export default function ProspectForm ( props ) {
 
   const { addOrEdit, defaultValues } = props;
   
@@ -130,6 +131,32 @@ export default function ProspectFormPage ( props ) {
     setErrorOpen(false);
   };
 
+  const QuoteList = () => {
+    const columns = [
+      { 
+        id: 'user', 
+        label: 'User Name',
+        format: (user) => user ? `${user.name.firstName ? user.name.firstName : ''} ${user.name.middleName ? user.name.middleName : ''} ${user.name.lastName}` : ''
+      }, { 
+        id: 'amountQuoted', 
+        label: 'Amount',
+        format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : ''
+      }, { 
+        id: 'createdAt', 
+        label: 'Created At',
+        format: (date) => new Date(date).toString().substring(4, 25)
+      }
+    ];
+    
+    return (<Table
+      simple
+      size="small"
+      columns={columns} 
+      rowFilter={q => q.prospect._id === defaultValues._id}
+      baseURL={'/quotes'}
+    />)
+  }
+
   return (
     <Container component="main" maxWidth="md">
       <CssBaseline />
@@ -212,9 +239,10 @@ export default function ProspectFormPage ( props ) {
             </Grid>
             <Grid item xs={12} sm={12} style={{border: '3 px solid #000000'}}></Grid>
             <Grid item xs={12} sm={12}>
-              <h6><u>Payment Mehtod</u></h6>
+              <h5><u>Payment Mehtod</u></h5>
+              <h6>Total: {accounting.formatMoney(prospectAmount, "Rp", 2, ",", ".")}</h6>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Down Payment (Amount)"
                 name="downPaymentAmount"
@@ -224,7 +252,7 @@ export default function ProspectFormPage ( props ) {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Down Payment (Time)"
                 name="downPaymentTime"
@@ -237,7 +265,7 @@ export default function ProspectFormPage ( props ) {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Goods Delivered (Amount)"
                 name="onDeliveryAmount"
@@ -247,7 +275,7 @@ export default function ProspectFormPage ( props ) {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Goods Delivered (Time)"
                 name="onDeliveryTime"
@@ -260,7 +288,7 @@ export default function ProspectFormPage ( props ) {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="User Acceptance (Amount)"
                 name="userAcceptanceAmount"
@@ -270,7 +298,7 @@ export default function ProspectFormPage ( props ) {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="User Acceptance (Time)"
                 name="userAcceptanceTime"
@@ -283,7 +311,7 @@ export default function ProspectFormPage ( props ) {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="After UAT (Amount)"
                 name="afterUATAmount"
@@ -293,7 +321,7 @@ export default function ProspectFormPage ( props ) {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="After UAT (Time)"
                 name="afterUATTime"
@@ -380,9 +408,16 @@ export default function ProspectFormPage ( props ) {
                 }}
               />
             </Grid>
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <h3>Total: {accounting.formatMoney(prospectAmount, "Rp", 2, ",", ".")}</h3>
+            {editMode && 
+              <React.Fragment>
+                <Grid item xs={12} sm={12}>
+                  <h5><u>Quotes History</u></h5>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <QuoteList />
+                </Grid>
+              </React.Fragment>
+            }
           </Grid>
           <Button
             text="Submit"

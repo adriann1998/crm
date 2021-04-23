@@ -1,9 +1,9 @@
 import React from 'react';
-import PageHeader from '../components/PageHeader';
-import Table from '../components/Table';
-import ContactFormPage from './forms/ContactFormPage';
-import { ContactIcon } from '../components/Icons';
-import pageDescriptions from '../components/pageDescriptions';
+import PageHeader from '../../components/PageHeader';
+import Table from '../../components/Table';
+import ContactForm from '../../components/forms/ContactForm';
+import { ContactIcon } from '../../components/Icons';
+import pageDescriptions from '../../components/pageDescriptions';
 
 function ContactPage() {
 
@@ -48,7 +48,7 @@ function ContactPage() {
       <Table 
         columns={columns} 
         baseURL={'/contacts'} 
-        Form={ContactFormPage}
+        Form={ContactForm}
         TableIcon={ContactIcon}
       />
     </React.Fragment>
