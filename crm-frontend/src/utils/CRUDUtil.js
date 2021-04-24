@@ -1,7 +1,12 @@
+const handleForbiddenStatus = (response) => {
+  alert("Your token expired, please re-login");
+  return response
+}
+
 export const getData = (endpoint) => {
   return fetch(endpoint)
-    .then(response => {response.status === 403 ? alert("Token expired") : console.log("a"); return response})
-    .then((response) => (response.status < 400 ? response.json() : null))
+    .then((response) => response.status === 403 ? handleForbiddenStatus(response) : response)
+    .then(response => response.status < 400 ? response.json() : null)
     .catch((err) => console.log(err));
 };
 
@@ -13,8 +18,8 @@ export const postData = async (endpoint, formData) => {
     body: instanceOfFormData ? formData : JSON.stringify(formData),
   };
   return fetch(endpoint, options)
-          .then((response) => (response.status < 400 ? response.json() : null))
-          .catch((err) => console.log(err));
+          .then(response => response.status < 400 ? response.json() : null)
+          .catch(err => console.log(err));
 };
 
 export const putData = async (endpoint, formData) => {
@@ -25,8 +30,8 @@ export const putData = async (endpoint, formData) => {
     body: instanceOfFormData ? formData : JSON.stringify(formData),
   };
   return fetch(endpoint, options)
-          .then((response) => (response.status < 400 ? response.json() : null))
-          .catch((err) => console.log(err));
+          .then(response => response.status < 400 ? response.json() : null)
+          .catch(err => console.log(err));
 };
 
 export const deleteData = async (endpoint) => {
@@ -34,6 +39,6 @@ export const deleteData = async (endpoint) => {
     method: "DELETE",
   };
   return fetch(endpoint, options)
-    .then((response) => (response.status < 400 ? response : null))
-    .catch((err) => console.log(err));
+    .then(response=> response.status < 400 ? response : null)
+    .catch(err => console.log(err));
 };

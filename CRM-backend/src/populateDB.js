@@ -60,7 +60,7 @@ const getRandomCity = () => {return cities[Math.floor(Math.random() * cities.len
 const getRandomState = () => {return states[Math.floor(Math.random() * states.length)]};
 const getRandomPostcode = () => {return postcodes[Math.floor(Math.random() * postcodes.length)]};
 const getRandomPrice = () => {return prices[Math.floor(Math.random() * prices.length)]};
-const getRandomRole = () => {return roles[Math.floor(Math.random() * roles.length)]};
+const getRandomPosition = () => {return roles[Math.floor(Math.random() * roles.length)]};
 const getRandomNumber = (min, max) => { return Math.random() * (max - min) + min; };
 const getRandomDate = (date1, date2) => {
     function randomValueBetween(min, max) {
@@ -134,6 +134,58 @@ const generateDepartmentsDummyData = () => {
         });
     });
 };
+
+const generateUserDummyData = () => {
+    // list of users
+    Department.find({}, (err, departments) => {
+        const N = 50;
+        let users = [];
+        for (let i = 0; i < N; i++) {
+            let departmentId = departments[Math.floor(Math.random() * departments.length)]._id;
+            let newUser = {
+                userEmail: `email${i}@compnet.com`, password: hash("compnet"), 
+                NIK: i.toString().padStart(11, "0"), userDOB: getRandomDOB(),
+                name: {firstName: getRandomFirstName(), lastName: getRandomLastName()},
+                userPhone: {mobile1: getRandomPhone(), mobile2: getRandomPhone(), work: getRandomPhone()},
+                userPosition: getRandomPosition(), reportTo: null,
+                department: departmentId, 
+                userAddress: {
+                    street: getRandomStreet(), city: getRandomCity(), state: getRandomState(), postcode: getRandomPostcode()
+                },
+                userStatus: true,
+                access: 'admin'
+            }
+            users.push(newUser);
+        }
+        // drop table
+        User.deleteMany({}, (err, res) => {
+            if (err) { console.log(err); return };
+            console.log("Deleted USERS");
+            // insert data
+            User.insertMany(users, (err, res) => {
+                if (err) { console.log(err); return };
+                console.log("Inserted USERS");
+                insertDirectorDummyData();
+            });
+        });
+    })
+}
+
+const insertDirectorDummyData = () => {
+    User.find({userPosition: { $eq: 'director' }}, (err, users) => {
+        Department.find({}, (err, departments) => {
+            let i = 0;
+            departments.forEach(department => {
+                const theFilter = {_id: department._id};
+                const theUpdate = {$set: {director: users[i]._id}}
+                Department.findOneAndUpdate(theFilter, theUpdate, (err, department) => {
+                    if (err) { console.log(err)}
+                })
+                i++;
+            })
+        });
+    });
+}
 
 const generateAccountsDummyData = () => {
     // list of accounts
@@ -267,55 +319,4 @@ const generateQuoteDummyData = () => {
             });
         })
     })
-}
-
-const generateUserDummyData = () => {
-    // list of users
-    Department.find({}, (err, departments) => {
-        const N = 50;
-        let users = [];
-        for (let i = 0; i < N; i++) {
-            let departmentId = departments[Math.floor(Math.random() * departments.length)]._id;
-            let newUser = {
-                userEmail: `email${i}@compnet.com`, password: hash("compnet"), 
-                NIK: i.toString().padStart(11, "0"), userDOB: getRandomDOB(),
-                name: {firstName: getRandomFirstName(), lastName: getRandomLastName()},
-                userPhone: {mobile1: getRandomPhone(), mobile2: getRandomPhone(), work: getRandomPhone()},
-                userPosition: getRandomRole(), reportTo: null,
-                department: departmentId, 
-                userAddress: {
-                    street: getRandomStreet(), city: getRandomCity(), state: getRandomState(), postcode: getRandomPostcode()
-                },
-                userStatus: true
-            }
-            users.push(newUser);
-        }
-        // drop table
-        User.deleteMany({}, (err, res) => {
-            if (err) { console.log(err); return };
-            console.log("Deleted USERS");
-            // insert data
-            User.insertMany(users, (err, res) => {
-                if (err) { console.log(err); return };
-                console.log("Inserted USERS");
-                insertDirectorDummyData();
-            });
-        });
-    })
-}
-
-const insertDirectorDummyData = () => {
-    User.find({userPosition: { $eq: 'director' }}, (err, users) => {
-        Department.find({}, (err, departments) => {
-            let i = 0;
-            departments.forEach(department => {
-                const theFilter = {_id: department._id};
-                const theUpdate = {$set: {director: users[i]._id}}
-                Department.findOneAndUpdate(theFilter, theUpdate, (err, department) => {
-                    if (err) { console.log(err)}
-                })
-                i++;
-            })
-        });
-    });
 }

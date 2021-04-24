@@ -1,16 +1,18 @@
 const mongoose = require("mongoose");
 const Quote = require("../models/quote");
-import { toFileObjects } from "./utils/file";
+const User = require("../models/user");
+const { toFileObjects } = require("./utils/file");
+const { scopedQuotes } = require("./permissions/quote")
 
 module.exports = {
   getAll: function (req, res) {
     try{
       Quote.find({})
         .populate("prospect", "prospectName")
-        .populate("user", "userEmail name")
+        .populate("user", "userEmail name userPosition")
         .exec(function (err, quotes) {
           if (err) return res.status(404).json(err);
-          res.json(quotes);
+          res.json(scopedQuotes(req, quotes));
         });
     }
     catch(err){

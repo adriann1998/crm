@@ -97,6 +97,5 @@ export function getRevenue(prospects, {frequency, accumulate}) {
     total += revenue[i].revenue;
     accumulatedRevenue.push(rev)
   };
-  console.log(revenue)
   return [revenue, accumulatedRevenue];
 };

@@ -2,18 +2,19 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const morgan = require("morgan");
-const path = require("path");
+const cors = require("cors");
 
 // Import router callback functions
-const accounts = require("./routers/account");
-const contacts = require("./routers/contact");
-const departments = require("./routers/department");
-const prospects = require("./routers/prospect");
-const quotes = require("./routers/quote");
-const users = require("./routers/user");
-const cors = require("cors");
-import { login, authenticateToken } from "./routers/login";
-import { upload } from "./routers/utils/file";
+const accounts = require("./routes/account");
+const contacts = require("./routes/contact");
+const departments = require("./routes/department");
+const prospects = require("./routes/prospect");
+const quotes = require("./routes/quote");
+const users = require("./routes/user");
+
+// Import utils
+const { login, authenticateToken } = require("./routes/login");
+const { upload } = require("./routes/utils/file");
 
 
 /* ----------------------------------
@@ -43,7 +44,7 @@ Endpoints Configuration
 app.post("/login", login);
 
 //Account RESTFul endpoionts
-app.get("/accounts", authenticateToken, accounts.getAll);
+app.get("/accounts", accounts.getAll);
 app.post("/accounts", accounts.createOne);
 app.get("/accounts/:id", accounts.getOne);
 app.put("/accounts/:id", accounts.updateOne);
@@ -71,7 +72,7 @@ app.put("/prospects/:id", prospects.updateOne);
 app.delete("/prospects/:id", prospects.deleteOne);
 
 //Quote RESTFul endpoionts
-app.get("/quotes", quotes.getAll);
+app.get("/quotes", authenticateToken, quotes.getAll);
 app.post("/quotes", upload.any('files'), quotes.createOne);
 app.get("/quotes/:id", quotes.getOne);
 app.put("/quotes/:id", upload.array('files'), quotes.updateOne);

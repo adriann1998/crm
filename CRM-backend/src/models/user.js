@@ -8,11 +8,6 @@ const validatePhoneNumber = (ph) => {
   return ph === "" ? true : regex.test(ph);
 };
 
-const validateUserPosition = (pos) => {
-  const positions = ["director", "bm", "am"];
-  return positions.includes(String(pos).toLowerCase());
-};
-
 const validatePostcode = (postcode) => {
   const regex = new RegExp("^[1-9][0-9]+$");
   return regex.test(postcode);
@@ -136,11 +131,8 @@ const userSchema = new mongoose.Schema(
     },
     userPosition: {
       type: String,
+      enum: ["director", "bm", "am"],
       required: true,
-      validate: {
-        validator: validateUserPosition,
-        message: "Please enter the correct position",
-      },
     },
     reportTo: {
       type: mongoose.Schema.Types.ObjectId,
