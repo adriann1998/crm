@@ -30,6 +30,7 @@ export default function ProspectForm ( props ) {
   const initialFormValues = {
     prospectName: editMode ? defaultValues.prospectName : "",
     account: editMode ? defaultValues.account._id : "",
+    prospectHolder: editMode? defaultValues.prospectHolder._id : "",
     endUser: editMode ? defaultValues.endUser : "",
     GPM: editMode ? defaultValues.GPM : 0,
     expectedSODate: editMode ? defaultValues.expectedSODate : new Date(),
@@ -55,6 +56,7 @@ export default function ProspectForm ( props ) {
   const [errorOpen, setErrorOpen] = useState(false);
 
   const [accountsChoices, setAccountsChoices] = useState([]);
+  const [prospectHolderChoices, setProspectHolderChoices] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -63,6 +65,21 @@ export default function ProspectForm ( props ) {
         if (data === null) {alert("Err");}
         data = data.map((acc) => ({ value: acc._id, label: acc.accName })); 
         setAccountsChoices(data);
+      }
+    });
+    return () => (mounted = false);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    getData("/users").then((data) => {
+      if (mounted) {
+        if (data === null) { alert("Err");}
+        data = data.map((user) => ({ 
+                        value: user._id, 
+                        label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
+                    }))
+        setProspectHolderChoices(data);
       }
     });
     return () => (mounted = false);
@@ -84,6 +101,7 @@ export default function ProspectForm ( props ) {
     const formData = {
       prospectName: formValues.prospectName,
       account: formValues.account,
+      prospectHolder: formValues.prospectHolder,
       endUser: formValues.endUser,
       prospectAmount: prospectAmount,
       GPM: formValues.GPM,
@@ -134,10 +152,6 @@ export default function ProspectForm ( props ) {
   const QuoteList = () => {
     const columns = [
       { 
-        id: 'user', 
-        label: 'User Name',
-        format: (user) => user ? `${user.name.firstName ? user.name.firstName : ''} ${user.name.middleName ? user.name.middleName : ''} ${user.name.lastName}` : ''
-      }, { 
         id: 'amountQuoted', 
         label: 'Amount',
         format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : ''
@@ -180,7 +194,7 @@ export default function ProspectForm ( props ) {
         </Collapse>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <TextField
                 required={true}
                 label="Prospect Name"
@@ -197,6 +211,16 @@ export default function ProspectForm ( props ) {
                 defaultValue={formValues.account}
                 onChange={handleInputChange}
                 items={accountsChoices}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} variant="outlined">
+              <SelectField
+                required={true}
+                label="Prospect Holder"
+                name="prospectHolder"
+                defaultValue={formValues.prospectHolder}
+                onChange={handleInputChange}
+                items={prospectHolderChoices}
               />
             </Grid>
             <Grid item xs={12} sm={4}>

@@ -2,8 +2,8 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const hash = require('./utils/hash');
 
-function generateAccessToken(userCredentials) {
-    return jwt.sign(userCredentials, process.env.JWT_SECRET_KEY, { expiresIn: '1800s' });
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '1800s' });
 }
 
 export function login(req, res) {
@@ -25,6 +25,7 @@ export function login(req, res) {
                 });
                 return;
             }
+            userCredentials._id = user._id;
             userCredentials.role = user.userPosition;
             token = generateAccessToken(userCredentials); 
             res.send({

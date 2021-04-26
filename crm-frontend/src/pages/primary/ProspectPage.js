@@ -19,8 +19,11 @@ function ProspectPage(  ) {
       id: 'account', 
       label: 'Account',
       format: (account) => account ? account.accName : '-'
-    }, 
-    { 
+    }, { 
+      id: 'prospectHolder', 
+      label: 'Prospect Holder',
+      format: (user) => `${user.name.firstName} ${user.name.lastName ? user.name.lastName : ''}`
+    }, { 
       id: 'prospectAmount', 
       label: 'Amount',
       format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : '-'

@@ -35,6 +35,7 @@ import QuotePage from './pages/primary/QuotePage';
 import UserPage from './pages/primary/UserPage';
 import RevenuePage from './pages/secondary/RevenuePage';
 import SalesPage from './pages/secondary/SalesPage';
+import CompanyTreePage from './pages/secondary/CompanyTreePage';
 import ChatPage from './pages/tertiary/ChatPage';
 
 const drawerWidth = 210;
@@ -187,6 +188,7 @@ export default function Dashboard() {
             <Route path="/revenues" component={RevenuePage}></Route>
             <Route path="/sales" component={SalesPage}></Route>
             <Route path="/chat" component={ChatPage}></Route>
+            <Route path="/companytree" component={CompanyTreePage}></Route>
             <Route component={NotFoundPage} />
           </Switch>
         </div>

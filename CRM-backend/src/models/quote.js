@@ -20,12 +20,6 @@ const quoteSchema = new mongoose.Schema(
       ref: "Prospect",
       validate: validateProspectFK,
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-      validate: validateUserFK,
-    },
     amountQuoted: {
       type: Number,
       required: true,

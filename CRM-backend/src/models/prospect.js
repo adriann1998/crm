@@ -26,6 +26,11 @@ const prospectSchema = new mongoose.Schema(
       ref: "Account",
       validate: validateAccountFK,
     },
+    prospectHolder: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
     prospectAmount: {
       type: Number,
       min: 0,

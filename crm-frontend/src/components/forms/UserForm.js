@@ -42,12 +42,12 @@ export default function UserForm( props ) {
     mobilePhone2: editMode ? defaultValues.userPhone.mobile2 : "",
     workPhone: editMode ? defaultValues.userPhone.work : "",
     userPosition: editMode ? defaultValues.userPosition : "am",
-    reportTo: editMode ? defaultValues.reportTo ? defaultValues.reportTo._id : "" : "",
+    reportTo: editMode ? defaultValues.reportTo ? defaultValues.reportTo : "" : "",
     department: editMode ? defaultValues.department._id : "",
     street: editMode ? defaultValues.userAddress.street : "",
     city: editMode ? defaultValues.userAddress.street : "",
     state: editMode ? defaultValues.userAddress.state : "",
-    postcode: editMode ? defaultValues.userAddress.postcode : 0,
+    postcode: editMode ? defaultValues.userAddress.postcode : "",
   };
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
@@ -56,49 +56,69 @@ export default function UserForm( props ) {
   const [passwordMatch, setPasswordMatch] = useState(true);
 
   const [departmentsChoices, setDepartmentsChoices] = useState([]);
+  const [users, setUsers] = useState([]);
   const [usersChoices, setUsersChoices] = useState([]);
 
   useEffect(() => {
-    let mounted = true;
     getData("/departments").then((data) => {
-      if (mounted) {
-        if (data === null) {
-          alert("Err");
-        }
-        data = data.map((department) => ({ value: department._id, label: department.departmentName }))
-        setDepartmentsChoices(data);
+      if (data === null) {
+        alert("Err");
       }
+      data = data.map((department) => ({ value: department._id, label: department.departmentName }))
+      setDepartmentsChoices(data);
     });
-    return () => (mounted = false);
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    const userFilter = (user) => {
-      if (editMode) { 
-        return formValues.userPosition === "am" ? user.userPosition !== "am" : user.userPosition === "director"; 
-      }
-      return true;
-    };
     getData("/users").then((data) => {
-      if (mounted) {
-        if (data === null) { alert("Err");}
-        data = data.filter(userFilter)
-                   .map((user) => ({ 
-                        value: user._id, 
-                        label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
-                    }))
-        setUsersChoices(data);
-      }
+      if (data === null) { alert("Err");}
+      setUsers(data);
     });
-    return () => (mounted = false);
-  }, [editMode, formValues.userPosition]);
+  }, [])
+
+  useEffect(() => {
+    const userChoicesFilter = (user) => {
+      switch (formValues.userPosition){
+        case "am":
+          return user.userPosition === "bm"
+        case "bm":
+          return user.userPosition === "director"
+        case "director":
+          return false
+        default:
+          return false
+      }
+    };
+    const data = users.filter(userChoicesFilter)
+                .map((user) => ({ 
+                    value: user._id, 
+                    label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
+                }))
+    setUsersChoices(data);
+  }, [editMode, formValues.userPosition, users]);
 
   useEffect(() => {
     setPasswordMatch(formValues.password === formValues.passwordConfirm);
   }, [formValues.password, formValues.passwordConfirm]);
 
   const handleSubmit = async (e) => {
+    const getUser = (userId) => {
+      return users.filter(u => String(u._id) === String(userId))[0]
+    }
+    const getSuperiorHierarchy = () => {
+      const currentUserId = formValues.reportTo;
+      if (currentUserId === null) return [];
+      let hierarchy = [currentUserId];
+      let currentUser = getUser(currentUserId);
+      while (currentUser.reportTo !== null){
+        console.log(currentUser)
+        const superior = getUser(currentUser.reportTo);
+        hierarchy.push(superior._id);
+        currentUser = superior;
+      }
+      console.log(hierarchy)
+      return hierarchy;
+    }
     if (passwordMatch) {
       e.preventDefault();
       const formData = {
@@ -118,6 +138,7 @@ export default function UserForm( props ) {
         },
         userPosition: formValues.userPosition,
         reportTo: formValues.reportTo,
+        superiorHierarchy: getSuperiorHierarchy(),
         department: formValues.department,
         userAddress: {
           street: formValues.street,
@@ -328,7 +349,7 @@ export default function UserForm( props ) {
                 required={true}
                 label="Postcode"
                 name="postcode"
-                defaultValue={formValues.postode}
+                defaultValue={formValues.postcode}
                 onChange={handleInputChange}
               />
             </Grid>

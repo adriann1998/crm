@@ -11,6 +11,11 @@ const accountSchema = new mongoose.Schema(
     accAlias: {
       type: String,
     },
+    accHolder: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    }
   },
   // Schema Options
   {

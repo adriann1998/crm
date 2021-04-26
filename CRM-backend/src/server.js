@@ -44,14 +44,14 @@ Endpoints Configuration
 app.post("/login", login);
 
 //Account RESTFul endpoionts
-app.get("/accounts", accounts.getAll);
+app.get("/accounts", authenticateToken, accounts.getAll);
 app.post("/accounts", accounts.createOne);
 app.get("/accounts/:id", accounts.getOne);
 app.put("/accounts/:id", accounts.updateOne);
 app.delete("/accounts/:id", accounts.deleteOne);
 
 //Contact RESTFul endpoionts
-app.get("/contacts", contacts.getAll);
+app.get("/contacts", authenticateToken, contacts.getAll);
 app.post("/contacts", contacts.createOne);
 app.get("/contacts/:id", contacts.getOne);
 app.put("/contacts/:id", contacts.updateOne);
@@ -65,14 +65,14 @@ app.put("/departments/:id", departments.updateOne);
 app.delete("/departments/:id", departments.deleteOne);
 
 //Prospect RESTFul endpoionts
-app.get("/prospects", prospects.getAll);
+app.get("/prospects", authenticateToken, prospects.getAll);
 app.post("/prospects", prospects.createOne);
 app.get("/prospects/:id", prospects.getOne);
 app.put("/prospects/:id", prospects.updateOne);
 app.delete("/prospects/:id", prospects.deleteOne);
 
 //Quote RESTFul endpoionts
-app.get("/quotes", authenticateToken, quotes.getAll);
+app.get("/quotes", quotes.getAll);
 app.post("/quotes", upload.any('files'), quotes.createOne);
 app.get("/quotes/:id", quotes.getOne);
 app.put("/quotes/:id", upload.array('files'), quotes.updateOne);

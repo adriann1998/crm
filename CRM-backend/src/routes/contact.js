@@ -1,12 +1,23 @@
 const mongoose = require("mongoose");
 const Contact = require("../models/contact");
+const { filterContacts } = require("./permissions/contact")
+
+const populateFields = { 
+  path: 'account',
+  select: 'accName accAlias',
+  populate: {
+    path: 'accHolder',
+    select: 'name superiorHierarchy'
+  } 
+}
+
 module.exports = {
   getAll: function (req, res) {
     Contact.find({})
-      .populate("account", "accName accAlias")
+      .populate(populateFields)
       .exec(function (err, contacts) {
         if (err) return res.status(404).json(err);
-        res.json(contacts);
+        res.json(filterContacts(req, contacts));
       });
   },
   createOne: function (req, res) {

@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 const Account = require("../models/account");
+const { filterAccounts } = require("./permissions/account")
+
 module.exports = {
   getAll: function (req, res) {
-    Account.find({}).exec(function (err, accounts) {
-      if (err) return res.status(404).json(err);
-      res.json(accounts);
-    });
+    Account.find({})
+      .populate('accHolder', 'userEmail userPosition superiorHierarchy')
+      .exec(function (err, accounts) {
+        if (err) return res.status(404).json(err);
+        res.json(filterAccounts(req, accounts));
+      });
   },
   createOne: function (req, res) {
     let newAccountDetails = req.body;
@@ -13,21 +17,35 @@ module.exports = {
     let account = new Account(newAccountDetails);
     account.save(function (err) {
       if (err) return res.status(500).json(err);
-      res.json(account);
+      account.populate('accHolder', 'name userPosition userEmail')
+             .execPopulate(function(err){
+              if (err) return res.status(500).json(err);
+              res.json(account);
+            });
     });
   },
   getOne: function (req, res) {
-    Account.findOne({ _id: req.params.id }).exec(function (err, account) {
-      if (err) return res.status(400).json(err);
-      if (!account) return res.status(404).json();
-      res.json(account);
-    });
+    Account.findOne({ _id: req.params.id })
+      .populate('accHolder', 'name userPosition')
+      .exec(function (err, account) {
+        if (err) return res.status(400).json(err);
+        if (!account) return res.status(404).json();
+        account.populate('accHolder', 'name userPosition userEmail')
+               .execPopulate(function(err){
+                if (err) return res.status(500).json(err);
+                res.json(account);
+              });
+      });
   },
   updateOne: function (req, res) {
     Account.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, account) {
         if (err) return res.status(400).json(err);
         if (!account) return res.status(404).json();
-        res.json(account);
+        account.populate('accHolder', 'name userPosition userEmail')
+               .execPopulate(function(err){
+                if (err) return res.status(500).json(err);
+                res.json(account);
+              });
       }
     );
   },

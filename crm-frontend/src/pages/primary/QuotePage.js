@@ -18,10 +18,6 @@ function QuotePage( ) {
       label: 'Prospect Name',
       format: (prospect) => prospect ? prospect.prospectName : ''
     }, { 
-      id: 'user', 
-      label: 'User Name',
-      format: (user) => user ? `${user.name.firstName ? user.name.firstName : ''} ${user.name.middleName ? user.name.middleName : ''} ${user.name.lastName}` : ''
-    }, { 
       id: 'amountQuoted', 
       label: 'Amount',
       format: (n) => n ? accounting.formatMoney(n, "Rp", 2, ",", ".") : ''

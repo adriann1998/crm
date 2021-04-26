@@ -16,6 +16,10 @@ function AccountPage( ) {
       label: 'Alias',
       format: (accAlias) => accAlias ? accAlias : ''
     }, { 
+      id: 'accHolder', 
+      label: 'Account Holder',
+      format: (user) => user.userEmail
+    }, { 
       id: 'createdAt', 
       label: 'Created At',
       format: (date) => new Date(date).toString().substring(4, 15)

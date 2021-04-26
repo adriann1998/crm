@@ -13,6 +13,7 @@ import HomeWorkIcon from "@material-ui/icons/HomeWork";
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import TextsmsIcon from '@material-ui/icons/Textsms';
+import { ImTree } from "react-icons/im";
 import { Link } from "react-router-dom";
 
 export const primaryList = (
@@ -98,6 +99,14 @@ export const secondaryList = (
           <TrendingUpIcon />
         </ListItemIcon>
         <ListItemText primary="Sales" />
+      </ListItem>
+    </Link>
+    <Link to="/companytree">
+      <ListItem button>
+        <ListItemIcon>
+          <ImTree />
+        </ListItemIcon>
+        <ListItemText primary="Company Tree" />
       </ListItem>
     </Link>
   </div>

@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-const Department = require("../models/department");
-const User = require("../models/user");
-const FKHelper = require("./utils/foreignKeyUtil");
+const User = require("./user");
 
 const validatePhoneNumber = (ph) => {
   const regex = new RegExp("^\\+[0-9]+$");
@@ -32,24 +30,6 @@ const validateNIK = (nik) => {
   const regex = new RegExp("^[0-9]{11}");
   return regex.test(nik);
 };
-
-// const validateDepartmentFK = (id) => {
-//   return FKHelper(Department, id);
-// };
-
-// const validateUserFK = (id) => {
-//   if (id === null || id === undefined) {
-//     return true;
-//   }
-//   return new Promise((resolve, reject) => {
-//     User.findOne({ _id: id })
-//         .exec(function (err, user) {
-//           if (err) return reject(new Error(`Internal server error`));
-//           if (!user) return reject(new Error(`FK Constraint 'checkObjectsExists' for '${id.toString()}' failed`));
-//           return user.userPosition === "director" || user.userPosition === "bm" ? resolve(true) : resolve(false);
-//         });
-//   });
-// };
 
 const userSchema = new mongoose.Schema(
   {
@@ -137,9 +117,12 @@ const userSchema = new mongoose.Schema(
     reportTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null,
-      // validate: validateUserFK,
+      default: null
     },
+    superiorHierarchy: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }],
     department: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

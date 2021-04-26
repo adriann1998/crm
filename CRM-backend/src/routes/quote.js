@@ -1,18 +1,16 @@
 const mongoose = require("mongoose");
 const Quote = require("../models/quote");
-const User = require("../models/user");
 const { toFileObjects } = require("./utils/file");
-const { scopedQuotes } = require("./permissions/quote")
+const { filteredQuotes, canUpdateQuote } = require("./permissions/quote")
 
 module.exports = {
   getAll: function (req, res) {
     try{
       Quote.find({})
         .populate("prospect", "prospectName")
-        .populate("user", "userEmail name userPosition")
         .exec(function (err, quotes) {
           if (err) return res.status(404).json(err);
-          res.json(scopedQuotes(req, quotes));
+          res.json(quotes);
         });
     }
     catch(err){
@@ -29,7 +27,6 @@ module.exports = {
       quote.save(function (err) {
         if (err) return res.status(500).json(err);
         quote.populate("prospect", "prospectName")
-             .populate("user", "userEmail name")
              .execPopulate(function(err){
                 if (err) return res.status(500).json(err);
                 res.json(quote);
@@ -45,7 +42,6 @@ module.exports = {
     try{
       Quote.findOne({ _id: req.params.id })
         .populate("prospect", "prospectName")
-        .populate("user", "userEmail name")
         .exec(function (err, quote) {
           if (err) return res.status(400).json(err);
           if (!quote) return res.status(404).json();

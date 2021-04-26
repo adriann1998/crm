@@ -37,7 +37,6 @@ export default function QuoteForm( props ) {
 
   const initialFormValues = {
     prospect: editMode ? defaultValues.prospect ? defaultValues.prospect._id : "" : "",
-    user: editMode ? (defaultValues.user ? defaultValues.user._id : "") : "",
     amountQuoted: editMode ? defaultValues.amountQuoted : 0,
     files: editMode ? defaultValues.files : []
   };
@@ -47,7 +46,6 @@ export default function QuoteForm( props ) {
   const [errorOpen, setErrorOpen] = useState(false);
 
   const [prospectsChoices, setProspectsChoices] = useState([]);
-  const [usersChoices, setUsersChoices] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -60,22 +58,6 @@ export default function QuoteForm( props ) {
         }));
         data.push({ value: "", label: "No Prospect" });
         setProspectsChoices(data);
-      }
-    });
-    return () => (mounted = false);
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-    getData("/users").then((data) => {
-      if (mounted) {
-        if (data === null) return alert("Err");
-        data = data.map((user) => ({
-          value: user._id,
-          label: `${user.name.firstName}${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`,
-        }));
-        data.push({ value: "", label: "No User" });
-        setUsersChoices(data);
       }
     });
     return () => (mounted = false);
@@ -138,16 +120,6 @@ export default function QuoteForm( props ) {
                 defaultValue={formValues.prospect}
                 onChange={handleInputChange}
                 items={prospectsChoices}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <SelectField
-                required={true}
-                label="User"
-                name="user"
-                defaultValue={formValues.user}
-                onChange={handleInputChange}
-                items={usersChoices}
               />
             </Grid>
             <Grid item xs={12} sm={12}>

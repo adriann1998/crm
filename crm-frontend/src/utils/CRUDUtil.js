@@ -1,5 +1,8 @@
+import { logout } from "./DashboardUtil";
+
 const handleForbiddenStatus = (response) => {
   alert("Your token expired, please re-login");
+  logout();
   return response
 }
 
@@ -18,6 +21,7 @@ export const postData = async (endpoint, formData) => {
     body: instanceOfFormData ? formData : JSON.stringify(formData),
   };
   return fetch(endpoint, options)
+          .then((response) => response.status === 403 ? handleForbiddenStatus(response) : response)
           .then(response => response.status < 400 ? response.json() : null)
           .catch(err => console.log(err));
 };
@@ -30,6 +34,7 @@ export const putData = async (endpoint, formData) => {
     body: instanceOfFormData ? formData : JSON.stringify(formData),
   };
   return fetch(endpoint, options)
+          .then((response) => response.status === 403 ? handleForbiddenStatus(response) : response)
           .then(response => response.status < 400 ? response.json() : null)
           .catch(err => console.log(err));
 };
@@ -39,6 +44,7 @@ export const deleteData = async (endpoint) => {
     method: "DELETE",
   };
   return fetch(endpoint, options)
+    .then((response) => response.status === 403 ? handleForbiddenStatus(response) : response)
     .then(response=> response.status < 400 ? response : null)
     .catch(err => console.log(err));
 };

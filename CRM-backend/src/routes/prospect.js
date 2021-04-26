@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 const Prospect = require("../models/prospect");
+const { filterProspects } = require("./permissions/prospect");
+
 module.exports = {
   getAll: function (req, res) {
     Prospect.find({})
       .populate("account", "accName accAlias")
+      .populate("prospectHolder", "name userEmail userPosition superiorHierarchy")
       .exec(function (err, prospects) {
         if (err) return res.status(404).json(err);
-        res.json(prospects);
+        res.json(filterProspects(req, prospects));
       });
   },
   createOne: function (req, res) {
@@ -16,15 +19,18 @@ module.exports = {
     prospect.save(function (err) {
       console.log(err)
       if (err) return res.status(500).json(err);
-      prospect.populate('account', 'accName accAlias', function(err){
-        if (err) return res.status(500).json(err);
-        res.json(prospect);
-      });
+      prospect.populate('account', 'accName accAlias')
+              .populate("prospectHolder", "name userEmail userPosition") 
+              .execPopulate(function(err){
+                if (err) return res.status(500).json(err);
+                res.json(prospect);
+              });
     });
   },
   getOne: function (req, res) {
     Prospect.findOne({ _id: req.params.id })
       .populate("account", "accName accAlias")
+      .populate("prospectHolder", "name userEmail userPosition")
       .exec(function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
@@ -35,10 +41,12 @@ module.exports = {
     Prospect.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
-        prospect.populate('account', 'accName accAlias', function(err){
-          if (err) return res.status(500).json(err);
-          res.json(prospect);
-        });
+        prospect.populate('account', 'accName accAlias')
+                .populate("prospectHolder", "name userEmail userPosition")
+                .execPopulate(function(err){
+                  if (err) return res.status(500).json(err);
+                  res.json(prospect);
+                });
       }
     );
   },

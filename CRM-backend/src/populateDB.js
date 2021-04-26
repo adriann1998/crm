@@ -9,7 +9,7 @@ const Department = require('./models/department');
 const Prospect = require('./models/prospect');
 const Quote = require('./models/quote');
 const User = require('./models/user');
-const department = require('./models/department');
+const user = require('./routes/user');
 
 // Connection URL
 const dbName = 'CRM';
@@ -22,8 +22,17 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindA
             console.log("Err  ", err);
         } else {
             console.log("-------Connected successfully to server---------");
-            generateDepartmentsDummyData(); // generates deparments, then users, then insertDirector
-            generateAccountsDummyData();    // generates accounts, then prospects, then contacts, then quotes
+            /*
+            generate department
+            generate user
+            insert director
+            insert reportTo
+            generate accounts
+            generate prospects
+            generate contacts
+            generate quotes
+            */
+            generateDepartmentsDummyData();
         }
 });
 
@@ -48,7 +57,7 @@ const cities = ['Melbourne', 'Sydney', 'Wollogong', 'Jakarta', 'PyongYang', 'Ban
 const states = ['VIC','SA','TAS','NSW','QLD','NT','WA'];
 const postcodes = ['3111','3123','3150','2311','4123','3000','3001','4322','4000','4111'];
 const prices = [1000000000,1200000000,1500000000,1750000000,1600000000,2000000000,2300000000,1700000000,1800000000];
-const roles = ['am', 'bm', 'director'];
+const roles = ['am', 'bm'];
 
 const getRandomFirstName = () => {return firstNames[Math.floor(Math.random() * firstNames.length)]};
 const getRandomLastName = () => {return lastNames[Math.floor(Math.random() * lastNames.length)]};
@@ -172,61 +181,94 @@ const generateUserDummyData = () => {
 }
 
 const insertDirectorDummyData = () => {
-    User.find({userPosition: { $eq: 'director' }}, (err, users) => {
+    User.find({}, (err, users) => {
         Department.find({}, (err, departments) => {
             let i = 0;
             departments.forEach(department => {
                 const theFilter = {_id: department._id};
                 const theUpdate = {$set: {director: users[i]._id}}
-                Department.findOneAndUpdate(theFilter, theUpdate, (err, department) => {
+                User.findOneAndUpdate({_id: users[i]._id}, {$set: {userPosition: 'director'}}, (err, user) => {
                     if (err) { console.log(err)}
+                    Department.findOneAndUpdate(theFilter, theUpdate, (err, department) => {
+                        if (err) { console.log(err)}
+                    })
                 })
                 i++;
             })
+            insertReportToDummyData()
         });
     });
 }
 
+const insertReportToDummyData = () => {
+    User.find({}, (err, users) => {
+        const directors = users.filter(u => u.userPosition === 'director');
+        const bms = users.filter(u => u.userPosition === 'bm');
+        users.filter(user => user.userPosition !== 'director').forEach(user => {
+            let reportTo;
+            if (user.userPosition === 'bm') { 
+                reportTo = directors[Math.floor(Math.random() * directors.length)]._id;
+            }
+            else if (user.userPosition === 'am') { 
+                reportTo = bms[Math.floor(Math.random() * bms.length)]._id;
+            }
+            else { 
+                reportTo = null;
+                console.log("wrong")
+            }
+            const theFilter = {_id: user._id}
+            const theUpdate = {$set: {reportTo: reportTo}}
+            User.findOneAndUpdate(theFilter, theUpdate, (err, user) => {
+                if (err) { console.log(err)}
+            })
+        })
+        generateAccountsDummyData();
+    })
+}
+
 const generateAccountsDummyData = () => {
-    // list of accounts
-    const accounts = [
-        {accName: "ABB Sakti Industri, Pt", accAlias:"ABB"},
-        {accName: "Accenture, Pt", accAlias:"ACC"},
-        {accName: "Adaro Energy Tbk, Pt", accAlias:"ADRO"},
-        {accName: "Aero System Indonesia", accAlias:"ASI"},
-        {accName: "Akademik Kepolisian", accAlias:"AKPOL"},
-        {accName: "All Data International"},
-        {accName: "XL Axita Tbk, Pt", accAlias:"EXCL"},
-        {accName: "WIKA WEB"},
-        {accName: "Transportasi Gas Indonesia, Pt", accAlias:"TGI"},
-        {accName: "Toba Bara Sejahtera", accAlias:"TOBA"},
-        {accName: "Telkom Telstra", accAlias:"TELKOM"},
-        {accName: "Kogan.com Pty Ltd", accAlias:"KGN"},
-        {accName: "Qantas Airways", accAlias:"QAN"},
-        {accName: "Myer Holdings Group", accAlias:"MYR"},
-        {accName: "XERO", accAlias:"XERO"},
-        {accName: "CarDeals", accAlias:"CAR"},
-        {accName: "AGL Energy", accAlias:"AGL"},
-        {accName: "Afterpay Ltd", accAlias:"AFP"},
-        {accName: "IPH Ltd", accAlias:"IPH"},
-        {accName: "Metcash Ltd", accAlias:""},
-        {accName: "Mirvac Group", accAlias:"MGR"},
-        {accName: "Mcquaire Group", accAlias:"MQG"},
-        {accName: "Nufarm Ltf", accAlias:"NUF"},
-        {accName: "Origin Energy", accAlias:"ORG"}
-    ];
-    // drop table
-    Account.deleteMany({}, (err, res) => {
-        if (err) { console.log(err); return };
-        console.log("Deleted ACCOUNTS");
-        // insert data
-        Account.insertMany(accounts, (err, res) => {
+    User.find({}, (err, users) => {
+        const userIds = users.map(u => u._id)
+        const getRandomUserId = () => userIds[Math.floor(Math.random() * userIds.length)]
+        const accounts = [
+            {accName: "ABB Sakti Industri, Pt", accAlias:"ABB", accHolder: getRandomUserId()},
+            {accName: "Accenture, Pt", accAlias:"ACC", accHolder: getRandomUserId()},
+            {accName: "Adaro Energy Tbk, Pt", accAlias:"ADRO", accHolder: getRandomUserId()},
+            {accName: "Aero System Indonesia", accAlias:"ASI", accHolder: getRandomUserId()},
+            {accName: "Akademik Kepolisian", accAlias:"AKPOL", accHolder: getRandomUserId()},
+            {accName: "All Data International", accHolder: getRandomUserId()},
+            {accName: "XL Axita Tbk, Pt", accAlias:"EXCL", accHolder: getRandomUserId()},
+            {accName: "WIKA WEB", accHolder: getRandomUserId()},
+            {accName: "Transportasi Gas Indonesia, Pt", accAlias:"TGI", accHolder: getRandomUserId()},
+            {accName: "Toba Bara Sejahtera", accAlias:"TOBA", accHolder: getRandomUserId()},
+            {accName: "Telkom Telstra", accAlias:"TELKOM", accHolder: getRandomUserId()},
+            {accName: "Kogan.com Pty Ltd", accAlias:"KGN", accHolder: getRandomUserId()},
+            {accName: "Qantas Airways", accAlias:"QAN", accHolder: getRandomUserId()},
+            {accName: "Myer Holdings Group", accAlias:"MYR", accHolder: getRandomUserId()},
+            {accName: "XERO", accAlias:"XERO", accHolder: getRandomUserId()},
+            {accName: "CarDeals", accAlias:"CAR", accHolder: getRandomUserId()},
+            {accName: "AGL Energy", accAlias:"AGL", accHolder: getRandomUserId()},
+            {accName: "Afterpay Ltd", accAlias:"AFP", accHolder: getRandomUserId()},
+            {accName: "IPH Ltd", accAlias:"IPH", accHolder: getRandomUserId()},
+            {accName: "Metcash Ltd", accAlias:"", accHolder: getRandomUserId()},
+            {accName: "Mirvac Group", accAlias:"MGR", accHolder: getRandomUserId()},
+            {accName: "Mcquaire Group", accAlias:"MQG", accHolder: getRandomUserId()},
+            {accName: "Nufarm Ltf", accAlias:"NUF", accHolder: getRandomUserId()},
+            {accName: "Origin Energy", accAlias:"ORG", accHolder: getRandomUserId()}
+        ];
+        // drop table
+        Account.deleteMany({}, (err, res) => {
             if (err) { console.log(err); return };
-            console.log("Inserted ACCOUNTS");
-            generateProspectDummyData();
-            generateContactDummyData();
+            console.log("Deleted ACCOUNTS");
+            // insert data
+            Account.insertMany(accounts, (err, res) => {
+                if (err) { console.log(err); return };
+                console.log("Inserted ACCOUNTS");
+                generateProspectDummyData();
+                generateContactDummyData();
+            });
         });
-    });
+    })
 };
 
 const generateContactDummyData = () => {
@@ -258,65 +300,94 @@ const generateContactDummyData = () => {
 
 const generateProspectDummyData = () => {
     // list of prospects
-    Account.find({}, (err, accounts) => {
-        const endUser = [undefined,"XL", "Axita", "Telstra", "Alibaba"]
-        const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
-        const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
-        let prospects = [];
-        for (let i=0; i<80; i++) {
-            const payment = getRandomPayment();
-            const paymentDetails = payment[0];
-            const prospectAmount = payment[1];
-            let randomDate = getRandomDate('01/01/2021','12/31/2028').split('/');
-            randomDate = `${randomDate[2]}-${randomDate[1]}-${randomDate[0]}`
-            const newProspect = {
-                                prospectName: `prospect ${i}`, account: getRandomAccId(), prospectAmount: prospectAmount,
-                                endUser: getRandomEndUser(), GPM: 45, expectedSODate: randomDate, desc:"", payment: paymentDetails
-                                };
-            prospects.push(newProspect);
-        };
-        // drop table
-        Prospect.deleteMany({}, (err, res) => {
-            if (err) { console.log(err); return };
-            console.log("Deleted PROSPECTS");
-            // insert data
-            Prospect.insertMany(prospects, (err, res) => {
+    User.find({}, (err, users) => {
+        Account.find({}, (err, accounts) => {
+            const endUser = [undefined,"XL", "Axita", "Telstra", "Alibaba"]
+            const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
+            const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
+            const userIds = users.map(u => u._id)
+            const getRandomUserId = () => userIds[Math.floor(Math.random() * userIds.length)]
+            let prospects = [];
+            for (let i=0; i<80; i++) {
+                const payment = getRandomPayment();
+                const paymentDetails = payment[0];
+                const prospectAmount = payment[1];
+                let randomDate = getRandomDate('01/01/2021','12/31/2028').split('/');
+                randomDate = `${randomDate[2]}-${randomDate[1]}-${randomDate[0]}`
+                const newProspect = {
+                                    prospectName: `prospect ${i}`, account: getRandomAccId(), prospectHolder: getRandomUserId(),
+                                    prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 45, 
+                                    expectedSODate: randomDate, desc:"", payment: paymentDetails
+                                    };
+                prospects.push(newProspect);
+            };
+            // drop table
+            Prospect.deleteMany({}, (err, res) => {
                 if (err) { console.log(err); return };
-                console.log("Inserted PROSPECTS");
-                generateQuoteDummyData();
+                console.log("Deleted PROSPECTS");
+                // insert data
+                Prospect.insertMany(prospects, (err, res) => {
+                    if (err) { console.log(err); return };
+                    console.log("Inserted PROSPECTS");
+                    generateQuoteDummyData();
+                });
             });
         });
-    });
+    })
 };
 
 const generateQuoteDummyData = () => {
     // list of quotes
     Prospect.find({}, (err, prospects) => {
-        User.find({}, (err, users) => {
-            const descriptions = ["","waiting for customer confirmation", "price too high", "still negotiating price", "customer not happy", "customer happy with the item, but not with price", "customer interested, needs another call", "field inspection required"];
-            const getRandomDescription = () => {return descriptions[Math.floor(Math.random() * descriptions.length)]}
-            const getRandomUserId = () => {return users[Math.floor(Math.random() * users.length)]}
-            const getRandomProspectId = () => {return prospects[Math.floor(Math.random() * prospects.length)]}
-            let quotes = []
-            for (let i = 0; i <140; i++) {
-                const newQuote = {
-                    prospect: getRandomProspectId(), 
-                    user: getRandomUserId(), 
-                    amountQuoted: getRandomPrice() ,
-                    desc: getRandomDescription()
-                };
-                quotes.push(newQuote)
-            }
-            // drop table
-            Quote.deleteMany({}, (err, res) => {
+        const descriptions = ["","waiting for customer confirmation", "price too high", "still negotiating price", "customer not happy", "customer happy with the item, but not with price", "customer interested, needs another call", "field inspection required"];
+        const getRandomDescription = () => {return descriptions[Math.floor(Math.random() * descriptions.length)]}
+        const getRandomProspectId = () => {return prospects[Math.floor(Math.random() * prospects.length)]}
+        let quotes = []
+        for (let i = 0; i <140; i++) {
+            const newQuote = {
+                prospect: getRandomProspectId(),
+                amountQuoted: getRandomPrice() ,
+                desc: getRandomDescription()
+            };
+            quotes.push(newQuote)
+        }
+        // drop table
+        Quote.deleteMany({}, (err, res) => {
+            if (err) { console.log(err); return };
+            console.log("Deleted QUOTES");
+            // insert data
+            Quote.insertMany(quotes, (err, res) => {
                 if (err) { console.log(err); return };
-                console.log("Deleted QUOTES");
-                // insert data
-                Quote.insertMany(quotes, (err, res) => {
-                    if (err) { console.log(err); return };
-                    console.log("Inserted QUOTES");
-                });
+                console.log("Inserted QUOTES");
             });
+        });
+        insertSupriorHierarchyDummyData();
+    })
+}
+
+const insertSupriorHierarchyDummyData = () => {
+    User.find({}, (err, users) => {
+        const getUser = (userId) => {
+            return users.filter(u => String(u._id) === String(userId))[0]
+        }
+        const getSuperiorHierarchy = (user) => {
+            const currentUserId = user.reportTo;
+            if (currentUserId === null) return [];
+            let hierarchy = [currentUserId];
+            let currentUser = getUser(currentUserId);
+            while (currentUser.reportTo !== null){
+                const superior = getUser(currentUser.reportTo);
+                hierarchy.push(superior._id);
+                currentUser = superior;
+            }
+            return hierarchy;
+        }
+        users.forEach(user => {
+            const theFilter = {_id: user._id}
+            const theUpdate = {$set: {superiorHierarchy: getSuperiorHierarchy(user)}};
+            User.findOneAndUpdate(theFilter, theUpdate, (err, user) => {
+                if (err) { console.log(err)}
+            })
         })
     })
 }
