@@ -1,5 +1,5 @@
 // components
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { 
     Avatar,
     Button,
@@ -20,6 +20,7 @@ import Copyright from '../components/Copyright';
 // utils
 import PropTypes from 'prop-types';
 import { validateForm, loginUser } from '../utils/LoginUtil';
+import { UserContext } from '../utils/UserContext';
 
 
 export const useStyles = makeStyles((theme) => ({
@@ -48,6 +49,7 @@ export default function Login ( {setToken} ) {
   const [password, setPassword] = useState(localStorage.password ? localStorage.password : "");
   const [rememberMe, setRememberMe] = useState(localStorage.userEmail && localStorage.password ? true: false);
   const [errorMessage, setErrorMessage] = useState("");
+  const {setUser} = useContext(UserContext)
 
   const classes = useStyles();
 
@@ -59,6 +61,7 @@ export default function Login ( {setToken} ) {
     });
     if (response.token) {
       setToken(response);
+      setUser(response.user)
       if (rememberMe) {
         localStorage.userEmail = userEmail;
         localStorage.password = password;

@@ -17,11 +17,7 @@ module.exports = {
     let account = new Account(newAccountDetails);
     account.save(function (err) {
       if (err) return res.status(500).json(err);
-      account.populate('accHolder', 'name userPosition userEmail')
-             .execPopulate(function(err){
-              if (err) return res.status(500).json(err);
-              res.json(account);
-            });
+      res.json(account);
     });
   },
   getOne: function (req, res) {
@@ -30,22 +26,14 @@ module.exports = {
       .exec(function (err, account) {
         if (err) return res.status(400).json(err);
         if (!account) return res.status(404).json();
-        account.populate('accHolder', 'name userPosition userEmail')
-               .execPopulate(function(err){
-                if (err) return res.status(500).json(err);
-                res.json(account);
-              });
+        res.json(account);
       });
   },
   updateOne: function (req, res) {
     Account.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, account) {
         if (err) return res.status(400).json(err);
         if (!account) return res.status(404).json();
-        account.populate('accHolder', 'name userPosition userEmail')
-               .execPopulate(function(err){
-                if (err) return res.status(500).json(err);
-                res.json(account);
-              });
+        res.json(account);
       }
     );
   },

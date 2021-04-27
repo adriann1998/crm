@@ -17,11 +17,7 @@ module.exports = {
     let user = new User(newUserDetails);
     user.save(function (err) {
       if (err) return res.status(500).json(err);
-      user.populate("department", "departmentName")
-          .execPopulate(function(err){
-            if (err) return res.status(500).json(err);
-            res.json(user);
-          });
+      res.json(user);
     });
   },
   getOne: function (req, res) {
@@ -37,11 +33,7 @@ module.exports = {
     User.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, user) {
         if (err) return res.status(400).json(err);
         if (!user) return res.status(404).json();
-        user.populate("department", "departmentName")
-            .execPopulate(function(err){
-              if (err) return res.status(500).json(err);
-              res.json(user);
-            });
+        res.json(user);
       }
     );
   },

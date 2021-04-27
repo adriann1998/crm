@@ -1,16 +1,25 @@
 const mongoose = require("mongoose");
 const Quote = require("../models/quote");
 const { toFileObjects } = require("./utils/file");
-const { filteredQuotes, canUpdateQuote } = require("./permissions/quote")
+const { filterQuotes, canUpdateQuote } = require("./permissions/quote")
+
+const populateFields = { 
+  path: 'prospect',
+  select: 'prospectName',
+  populate: {
+    path: 'prospectHolder',
+    select: 'name superiorHierarchy'
+  } 
+}
 
 module.exports = {
   getAll: function (req, res) {
     try{
       Quote.find({})
-        .populate("prospect", "prospectName")
+        .populate(populateFields)
         .exec(function (err, quotes) {
           if (err) return res.status(404).json(err);
-          res.json(quotes);
+          res.json(filterQuotes(req, quotes));
         });
     }
     catch(err){
@@ -26,11 +35,7 @@ module.exports = {
       let quote = new Quote(newQuoteDetails);
       quote.save(function (err) {
         if (err) return res.status(500).json(err);
-        quote.populate("prospect", "prospectName")
-             .execPopulate(function(err){
-                if (err) return res.status(500).json(err);
-                res.json(quote);
-              });
+        res.json(quote);
       });
     }
     catch(err){
@@ -60,12 +65,7 @@ module.exports = {
       Quote.findOneAndUpdate({ _id: req.params.id }, updateDetails, {new: true, useFindAndUpdate: false}, function (err, quote) {
           if (err) return res.status(400).json(err);
           if (!quote) return res.status(404).json();
-          quote.populate("user", "userEmail name")
-              .populate("prospect", "prospectName")
-              .execPopulate(function(err){
-                if (err) return res.status(500).json(err);
-                res.json(quote);
-              });
+          res.json(quote);
         }
       );
     }

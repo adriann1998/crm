@@ -35,6 +35,8 @@ export default function RevenuePage() {
   const [filterEndDate, setFilterEndDate] = useState("Mar-2021");
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isAccumulate, setIsAccumulate] = useState(false);
+  // const [usersChoices, setUsersChoices] = useState([]);
+  // const [userFilter, setUserFilter] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -58,6 +60,9 @@ export default function RevenuePage() {
         setYearlyGraphData(revenue);
         setOriginalAccYearlyGraphData(accumulatedRevenue);
         setAccYearlyGraphData(accumulatedRevenue);
+
+        // const usersChoices = getUserChoices(data);
+        // setUsersChoices(usersChoices);
       
         setProspectCount(data.length);
         setIsLoadingData(false);
@@ -91,6 +96,10 @@ export default function RevenuePage() {
   const handleEndDateChange = (e) => {
     setFilterEndDate(e.target.value);
   };
+
+  // const handleUserFilterChange = (e) => {
+  //   setUserFilter(e.target.value);
+  // }
 
   const yAxisFormater = (n) => (n / 1000000000).toFixed(2).toString() + "B";
   const toolTipFormatter = (n) => accounting.formatMoney(n, "Rp", 2, ",", ".");
@@ -140,6 +149,19 @@ export default function RevenuePage() {
       />
     )
   }
+
+  // const UserChoicesFilter = () => {
+  //   return (
+  //     <SelectField
+  //       required={true}
+  //       label="User"
+  //       size="small"
+  //       defaultValue={true}
+  //       onChange={handleUserFilterChange}
+  //       items={usersChoices}
+  //     />
+  //   )
+  // }
 
   return (
     <React.Fragment>

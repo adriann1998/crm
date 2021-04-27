@@ -1,5 +1,5 @@
 // import components
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import clsx from 'clsx';
 import {
   CssBaseline,
@@ -37,6 +37,9 @@ import RevenuePage from './pages/secondary/RevenuePage';
 import SalesPage from './pages/secondary/SalesPage';
 import CompanyTreePage from './pages/secondary/CompanyTreePage';
 import ChatPage from './pages/tertiary/ChatPage';
+
+// utils
+import { UserContext } from './utils/UserContext';
 
 const drawerWidth = 210;
 const useStyles = makeStyles((theme) => ({
@@ -123,6 +126,7 @@ export default function Dashboard() {
 
   const classes = useStyles();
   const [open, setOpen] = useState(true);
+  const {user} = useContext(UserContext)
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -147,7 +151,7 @@ export default function Dashboard() {
           <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Compnet - {localStorage.getItem('userEmail')}
+            {user ? user.userEmail : ''} 
           </Typography>
           <IconButton color="inherit" onClick={logout}>
             <Badge color="secondary">

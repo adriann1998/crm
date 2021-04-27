@@ -26,15 +26,11 @@ module.exports = {
     let contact = new Contact(newContactDetails);
     contact.save(function (err) {
       if (err) return res.status(500).json(err);
-      contact.populate('account', 'accName accAlias', function(err){
-        if (err) return res.status(500).json(err);
-        res.json(contact);
-      });
+      res.json(contact);
     });
   },
   getOne: function (req, res) {
     Contact.findOne({ _id: req.params.id })
-      .populate("account", "accName accAlias")
       .exec(function (err, contact) {
         if (err) return res.status(400).json(err);
         if (!contact) return res.status(404).json();
@@ -45,10 +41,7 @@ module.exports = {
     Contact.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, contact) {
         if (err) return res.status(400).json(err);
         if (!contact) return res.status(404).json();
-        contact.populate('account', 'accName accAlias', function(err){
-          if (err) return res.status(500).json(err);
-          res.json(contact);
-        });
+        res.json(contact);
       }
     );
   },

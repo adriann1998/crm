@@ -99,3 +99,30 @@ export function getRevenue(prospects, {frequency, accumulate}) {
   };
   return [revenue, accumulatedRevenue];
 };
+
+export function getUserChoices(prospects) {
+  const sortByNIK = (a, b) => {
+    return parseInt(a.NIK) - parseInt(b.NIK)
+  }
+  const uniqueNIK = (data) => {
+    let i = 1;
+    while (i < data.length) {
+      if (data[i].NIK === data[i-1].NIK){
+        data.splice(i, 1);
+      }
+      i ++;
+    };
+    return data;
+  }
+  let usersChoices = prospects.map(prospect => {
+    const prospectHolder = prospect.prospectHolder;
+    return {
+      value: prospectHolder._id,
+      label: `${prospectHolder.NIK} - ${prospectHolder.name.firstName}.${prospectHolder.name.lastName[0]}`,
+      NIK: prospectHolder.NIK
+    }
+  }).sort(sortByNIK)
+  usersChoices = uniqueNIK(usersChoices)
+  usersChoices.splice(0, 0, {value: true, label: "All"});
+  return usersChoices;
+}

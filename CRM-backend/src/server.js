@@ -72,7 +72,7 @@ app.put("/prospects/:id", prospects.updateOne);
 app.delete("/prospects/:id", prospects.deleteOne);
 
 //Quote RESTFul endpoionts
-app.get("/quotes", quotes.getAll);
+app.get("/quotes", authenticateToken, quotes.getAll);
 app.post("/quotes", upload.any('files'), quotes.createOne);
 app.get("/quotes/:id", quotes.getOne);
 app.put("/quotes/:id", upload.array('files'), quotes.updateOne);

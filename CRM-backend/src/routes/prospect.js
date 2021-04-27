@@ -6,7 +6,7 @@ module.exports = {
   getAll: function (req, res) {
     Prospect.find({})
       .populate("account", "accName accAlias")
-      .populate("prospectHolder", "name userEmail userPosition superiorHierarchy")
+      .populate("prospectHolder", "name userEmail userPosition superiorHierarchy NIK")
       .exec(function (err, prospects) {
         if (err) return res.status(404).json(err);
         res.json(filterProspects(req, prospects));
@@ -17,20 +17,13 @@ module.exports = {
     newProspectDetails._id = new mongoose.Types.ObjectId();
     let prospect = new Prospect(newProspectDetails);
     prospect.save(function (err) {
-      console.log(err)
       if (err) return res.status(500).json(err);
-      prospect.populate('account', 'accName accAlias')
-              .populate("prospectHolder", "name userEmail userPosition") 
-              .execPopulate(function(err){
-                if (err) return res.status(500).json(err);
-                res.json(prospect);
-              });
+      res.json(prospect);
     });
   },
   getOne: function (req, res) {
     Prospect.findOne({ _id: req.params.id })
       .populate("account", "accName accAlias")
-      .populate("prospectHolder", "name userEmail userPosition")
       .exec(function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
@@ -41,12 +34,7 @@ module.exports = {
     Prospect.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
-        prospect.populate('account', 'accName accAlias')
-                .populate("prospectHolder", "name userEmail userPosition")
-                .execPopulate(function(err){
-                  if (err) return res.status(500).json(err);
-                  res.json(prospect);
-                });
+        res.json(prospect);
       }
     );
   },

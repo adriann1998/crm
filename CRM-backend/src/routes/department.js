@@ -15,15 +15,11 @@ module.exports = {
     let department = new Department(newDepartmentDetails);
     department.save(function (err) {
       if (err) return res.status(500).json(err);
-      department.populate('director', 'name', function(err){
-        if (err) return res.status(500).json(err);
-        res.json(department);
-      });
+      res.json(department);
     });
   },
   getOne: function (req, res) {
     Department.findOne({ _id: req.params.id })
-      .populate("director", "name")
       .exec(function (err, department) {
         if (err) return res.status(400).json(err);
         if (!department) return res.status(404).json();
@@ -34,10 +30,7 @@ module.exports = {
     Department.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, department) {
         if (err) return res.status(400).json(err);
         if (!department) return res.status(404).json();
-        department.populate('director', 'name', function(err){
-          if (err) return res.status(500).json(err);
-          res.json(department);
-        });
+        res.json(department);
       }
     );
   },

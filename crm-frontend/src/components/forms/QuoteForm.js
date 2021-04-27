@@ -36,7 +36,7 @@ export default function QuoteForm( props ) {
   const classes = useFormStyles();
 
   const initialFormValues = {
-    prospect: editMode ? defaultValues.prospect ? defaultValues.prospect._id : "" : "",
+    prospect: editMode ? defaultValues.prospect._id : "",
     amountQuoted: editMode ? defaultValues.amountQuoted : 0,
     files: editMode ? defaultValues.files : []
   };
@@ -48,6 +48,10 @@ export default function QuoteForm( props ) {
   const [prospectsChoices, setProspectsChoices] = useState([]);
 
   useEffect(() => {
+    console.log(formValues)
+  }, [formValues])
+
+  useEffect(() => {
     let mounted = true;
     getData("/prospects").then((data) => {
       if (mounted) {
@@ -56,7 +60,6 @@ export default function QuoteForm( props ) {
           value: prospect._id,
           label: prospect.prospectName,
         }));
-        data.push({ value: "", label: "No Prospect" });
         setProspectsChoices(data);
       }
     });
@@ -65,9 +68,7 @@ export default function QuoteForm( props ) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formValues.files)
     const fileObjs = await mapToFileObject(formValues.files);
-    console.log(fileObjs)
     let formData = new FormData();
     formData.append("prospect", formValues.prospect);
     formData.append("user", formValues.user);

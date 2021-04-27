@@ -29,7 +29,8 @@ export function login(req, res) {
             userCredentials.role = user.userPosition;
             token = generateAccessToken(userCredentials); 
             res.send({
-                token: token
+                token: token,
+                user: user
             });
         });
     }
