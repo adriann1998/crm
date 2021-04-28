@@ -46,8 +46,8 @@ export default function CompanyTreePage() {
     <div className="custom-container">
       <Tree
         data={treeData}
-        height={800}
-        width={800}
+        height={window.innerWidth}
+        width={window.innerWidth}
       />
     </div>
   );

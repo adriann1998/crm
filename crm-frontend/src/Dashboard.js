@@ -11,6 +11,7 @@ import {
   Divider,
   IconButton,
   Badge,
+  Avatar,
   makeStyles
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -39,7 +40,7 @@ import CompanyTreePage from './pages/secondary/CompanyTreePage';
 import ChatPage from './pages/tertiary/ChatPage';
 
 // utils
-import { UserContext } from './utils/UserContext';
+import { UserContext } from './utils/Context';
 
 const drawerWidth = 210;
 const useStyles = makeStyles((theme) => ({
@@ -119,7 +120,15 @@ const useStyles = makeStyles((theme) => ({
   },
   fixedHeight: {
     height: 240,
-  }
+  },
+  small: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
 }));
 
 export default function Dashboard() {
@@ -148,7 +157,7 @@ export default function Dashboard() {
             onClick={handleDrawerOpen}
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
-          <MenuIcon />
+            <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             {user ? user.userEmail : ''} 
@@ -156,6 +165,11 @@ export default function Dashboard() {
           <IconButton color="inherit" onClick={logout}>
             <Badge color="secondary">
               <ExitToAppIcon />
+            </Badge>
+          </IconButton>
+          <IconButton color="inherit" onClick={(e) => {alert("hello")}}>
+            <Badge color="secondary">
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.large}/>
             </Badge>
           </IconButton>
         </Toolbar>

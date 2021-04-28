@@ -52,6 +52,7 @@ function UserPage(  ) {
         baseURL={'/users'} 
         Form={UserForm}
         TableIcon={UserIcon}
+        editable
       />
     </React.Fragment>
   );

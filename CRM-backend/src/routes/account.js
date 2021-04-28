@@ -17,7 +17,11 @@ module.exports = {
     let account = new Account(newAccountDetails);
     account.save(function (err) {
       if (err) return res.status(500).json(err);
-      res.json(account);
+      account.populate('accHolder', 'userEmail userPosition superiorHierarchy')
+             .execPopulate((err) => {
+                if (err) return res.status(500).json(err);
+                res.json(account);
+             })
     });
   },
   getOne: function (req, res) {

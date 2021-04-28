@@ -18,7 +18,12 @@ module.exports = {
     let prospect = new Prospect(newProspectDetails);
     prospect.save(function (err) {
       if (err) return res.status(500).json(err);
-      res.json(prospect);
+      prospect.populate("account", "accName accAlias")
+              .populate("prospectHolder", "name userEmail userPosition superiorHierarchy NIK")
+              .execPopulate((err) => {
+                if (err) return res.status(500).json(err);
+                res.json(prospect);
+              })
     });
   },
   getOne: function (req, res) {

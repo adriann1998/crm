@@ -9,7 +9,6 @@ const Department = require('./models/department');
 const Prospect = require('./models/prospect');
 const Quote = require('./models/quote');
 const User = require('./models/user');
-const user = require('./routes/user');
 
 // Connection URL
 const dbName = 'CRM';
@@ -31,6 +30,8 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindA
             generate prospects
             generate contacts
             generate quotes
+            insert Suprior Hierarchy
+            onAllComplete
             */
             generateDepartmentsDummyData();
         }
@@ -57,7 +58,7 @@ const cities = ['Melbourne', 'Sydney', 'Wollogong', 'Jakarta', 'PyongYang', 'Ban
 const states = ['VIC','SA','TAS','NSW','QLD','NT','WA'];
 const postcodes = ['3111','3123','3150','2311','4123','3000','3001','4322','4000','4111'];
 const prices = [1000000000,1200000000,1500000000,1750000000,1600000000,2000000000,2300000000,1700000000,1800000000];
-const roles = ['am', 'bm'];
+const roles = ['am', 'am', 'bm'];
 
 const getRandomFirstName = () => {return firstNames[Math.floor(Math.random() * firstNames.length)]};
 const getRandomLastName = () => {return lastNames[Math.floor(Math.random() * lastNames.length)]};
@@ -145,9 +146,8 @@ const generateDepartmentsDummyData = () => {
 };
 
 const generateUserDummyData = () => {
-    // list of users
     Department.find({}, (err, departments) => {
-        const N = 50;
+        const N = 100;
         let users = [];
         for (let i = 0; i < N; i++) {
             let departmentId = departments[Math.floor(Math.random() * departments.length)]._id;
@@ -275,7 +275,7 @@ const generateContactDummyData = () => {
     // list of contacts
     Account.find({}, (err, accounts) => {
         const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
-        const N = 80;
+        const N = 100;
         let contacts = [];
         for (var i = 0; i < N; i++) {
             let newItem = {
@@ -308,7 +308,8 @@ const generateProspectDummyData = () => {
             const userIds = users.map(u => u._id)
             const getRandomUserId = () => userIds[Math.floor(Math.random() * userIds.length)]
             let prospects = [];
-            for (let i=0; i<80; i++) {
+            const N = 100;
+            for (let i=0; i<N; i++) {
                 const payment = getRandomPayment();
                 const paymentDetails = payment[0];
                 const prospectAmount = payment[1];
@@ -343,7 +344,8 @@ const generateQuoteDummyData = () => {
         const getRandomDescription = () => {return descriptions[Math.floor(Math.random() * descriptions.length)]}
         const getRandomProspectId = () => {return prospects[Math.floor(Math.random() * prospects.length)]}
         let quotes = []
-        for (let i = 0; i <140; i++) {
+        const N = 200;
+        for (let i = 0; i <N; i++) {
             const newQuote = {
                 prospect: getRandomProspectId(),
                 amountQuoted: getRandomPrice() ,

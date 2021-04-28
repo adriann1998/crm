@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import LoginPage from './pages/LoginPage'
 import Dasboard from './Dashboard'
 import useToken from './utils/SetTokenUtil';
-import { UserContext } from './utils/UserContext';
+import { UserContext } from './utils/Context';
 import {
   BrowserRouter as Router,
 } from 'react-router-dom';

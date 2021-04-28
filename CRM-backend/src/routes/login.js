@@ -13,7 +13,8 @@ export function login(req, res) {
         userCredentials.role = 'admin';
         token = generateAccessToken(userCredentials);
         res.send({
-            token: token
+            token: token,
+            user: 'admin'
         })
     }
     else{

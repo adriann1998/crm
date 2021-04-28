@@ -34,6 +34,7 @@ function DepartmentPage() {
         baseURL={'/departments'}
         Form={DepartmentForm}
         TableIcon={DepartmentIcon}
+        editable
       />
     </React.Fragment>
   );

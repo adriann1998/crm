@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   CssBaseline,
   Grid,
@@ -17,10 +17,12 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useFormStyles, useForm } from '../../utils/FormUtil';
 import { getData } from '../../utils/CRUDUtil';
 import accounting from 'accounting';
+import { UserContext } from "../../utils/Context";
 
 export default function ProspectForm ( props ) {
 
   const { addOrEdit, defaultValues } = props;
+  const { user } = useContext(UserContext);
   
   const editMode = defaultValues !== undefined;
   const classes = useFormStyles();
@@ -30,7 +32,6 @@ export default function ProspectForm ( props ) {
   const initialFormValues = {
     prospectName: editMode ? defaultValues.prospectName : "",
     account: editMode ? defaultValues.account._id : "",
-    prospectHolder: editMode? defaultValues.prospectHolder._id : "",
     endUser: editMode ? defaultValues.endUser : "",
     GPM: editMode ? defaultValues.GPM : 0,
     expectedSODate: editMode ? defaultValues.expectedSODate : new Date(),
@@ -56,7 +57,6 @@ export default function ProspectForm ( props ) {
   const [errorOpen, setErrorOpen] = useState(false);
 
   const [accountsChoices, setAccountsChoices] = useState([]);
-  const [prospectHolderChoices, setProspectHolderChoices] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -65,21 +65,6 @@ export default function ProspectForm ( props ) {
         if (data === null) {alert("Err");}
         data = data.map((acc) => ({ value: acc._id, label: acc.accName })); 
         setAccountsChoices(data);
-      }
-    });
-    return () => (mounted = false);
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-    getData("/users").then((data) => {
-      if (mounted) {
-        if (data === null) { alert("Err");}
-        data = data.map((user) => ({ 
-                        value: user._id, 
-                        label: `${user.name.firstName} ${user.name.lastName ? "." + user.name.lastName.substring(0, 1) : ""} - ${user.NIK}`
-                    }))
-        setProspectHolderChoices(data);
       }
     });
     return () => (mounted = false);
@@ -101,7 +86,7 @@ export default function ProspectForm ( props ) {
     const formData = {
       prospectName: formValues.prospectName,
       account: formValues.account,
-      prospectHolder: formValues.prospectHolder,
+      prospectHolder: user._id,
       endUser: formValues.endUser,
       prospectAmount: prospectAmount,
       GPM: formValues.GPM,
@@ -163,11 +148,11 @@ export default function ProspectForm ( props ) {
     ];
     
     return (<Table
-      simple
       size="small"
       columns={columns} 
       rowFilter={q => q.prospect._id === defaultValues._id}
       baseURL={'/quotes'}
+      simple
     />)
   }
 
@@ -194,7 +179,7 @@ export default function ProspectForm ( props ) {
         </Collapse>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 required={true}
                 label="Prospect Name"
@@ -211,16 +196,6 @@ export default function ProspectForm ( props ) {
                 defaultValue={formValues.account}
                 onChange={handleInputChange}
                 items={accountsChoices}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} variant="outlined">
-              <SelectField
-                required={true}
-                label="Prospect Holder"
-                name="prospectHolder"
-                defaultValue={formValues.prospectHolder}
-                onChange={handleInputChange}
-                items={prospectHolderChoices}
               />
             </Grid>
             <Grid item xs={12} sm={4}>

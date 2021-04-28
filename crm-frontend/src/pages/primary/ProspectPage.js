@@ -62,6 +62,8 @@ function ProspectPage(  ) {
         baseURL={'/prospects'}
         Form={ProspectForm}
         TableIcon={ProspectIcon}
+        editable
+        deleteable
       />
     </React.Fragment>
   );

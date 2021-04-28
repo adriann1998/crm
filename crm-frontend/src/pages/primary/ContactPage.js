@@ -50,6 +50,8 @@ function ContactPage() {
         baseURL={'/contacts'} 
         Form={ContactForm}
         TableIcon={ContactIcon}
+        editable
+        deleteable
       />
     </React.Fragment>
   );

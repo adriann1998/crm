@@ -42,6 +42,8 @@ function AccountPage( ) {
           baseURL={'/accounts'} 
           Form={AccountForm}
           TableIcon={AccountIcon}
+          editable
+          deleteable
         />
     </React.Fragment>
   );

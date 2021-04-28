@@ -73,7 +73,7 @@ Object.containsValue = (obj, target) => {
 
 export default function Table( props ) {
 
-  const { columns, rowFilter, baseURL, Form, TableIcon, simple, size } = props;
+  const { columns, rowFilter, baseURL, Form, TableIcon, simple, size, editable, deleteable } = props;
 
   const classes = useStyles();
 
@@ -103,15 +103,11 @@ export default function Table( props ) {
   }
 
   useEffect(() => {
-    let mounted = true;
     getData(baseURL).then((data) => {
-      if (mounted) {
-        data === null 
-        ? console.log("Err") 
-        : setRows(data.filter(rowFilter ? rowFilter : (n => n)));
-      }
+      data === null 
+      ? console.log("Err") 
+      : setRows(data.filter(rowFilter ? rowFilter : (n => n)));
     });
-    return () => (mounted = false);
   }, [baseURL, rowFilter]);
 
   const handleDeleteRow = (_id) => {
@@ -248,6 +244,35 @@ export default function Table( props ) {
     </React.Fragment>
   )
 
+  const EditDeleteCell = ( props ) => {
+    const { row } = props;
+    const cell = (!editable && !deleteable) 
+            ? null 
+            : (
+              <TableCell className={classes.selectTableCell}>
+                { editable && 
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleEditRow(row)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                }
+                {deleteable &&
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => {
+                      handleDeleteRow(row._id);
+                    }}
+                  >
+                    <DeleteOutlineIcon />
+                  </IconButton>
+                }
+              </TableCell>
+            )
+    return cell;
+  }
+
   return (
     <React.Fragment>
       <Paper className={classes.root}>
@@ -256,7 +281,7 @@ export default function Table( props ) {
           <MaterialUITable stickyHeader aria-label="sticky table" size={size || "medium"}>
             <TableHead className={classes.tableHead}>
               <TableRow>
-                {!simple && <TableCell align="left" width="150" />}
+                {!simple && (editable || deleteable) && <TableCell align="left" width="130" />}
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
@@ -279,24 +304,7 @@ export default function Table( props ) {
               {rowsAfterPaginAndSorting().map((row) => {
                   return (
                     <TableRow key={row._id} hover role="checkbox" tabIndex={-1}>
-                      {!simple && 
-                        <TableCell className={classes.selectTableCell}>
-                          <IconButton
-                            aria-label="edit"
-                            onClick={() => handleEditRow(row)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            aria-label="delete"
-                            onClick={() => {
-                              handleDeleteRow(row._id);
-                            }}
-                          >
-                            <DeleteOutlineIcon />
-                          </IconButton>
-                        </TableCell>
-                      }
+                      {!simple && <EditDeleteCell row={row}/> }
                       {columns.map((column, index) => {
                         const value = row[column.id];
                         return (

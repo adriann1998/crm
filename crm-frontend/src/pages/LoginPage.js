@@ -20,8 +20,7 @@ import Copyright from '../components/Copyright';
 // utils
 import PropTypes from 'prop-types';
 import { validateForm, loginUser } from '../utils/LoginUtil';
-import { UserContext } from '../utils/UserContext';
-
+import { UserContext } from '../utils/Context';
 
 export const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,7 +34,7 @@ export const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: theme.spacing(1),
   },
   submit: {
