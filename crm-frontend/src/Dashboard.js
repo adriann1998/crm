@@ -1,6 +1,6 @@
-// import components
-import React, { useState, useContext } from 'react';
-import clsx from 'clsx';
+// components
+import React, { useState, useEffect, useContext } from "react";
+import clsx from "clsx";
 import {
   CssBaseline,
   Drawer,
@@ -12,35 +12,42 @@ import {
   IconButton,
   Badge,
   Avatar,
-  makeStyles
-} from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import Copyright from './components/Copyright';
-import { primaryList, secondaryList, tertiaryList } from './components/NavigationList';
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  makeStyles,
+} from "@material-ui/core";
+import Copyright from "./components/Copyright";
 import {
-  Route,
-  Switch
-} from 'react-router-dom';
-import { logout } from './utils/DashboardUtil';
+  primaryList,
+  secondaryList,
+  tertiaryList,
+} from "./components/NavigationList";
+import { Route, Switch, useHistory } from "react-router-dom";
+// icons
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import PersonIcon from '@material-ui/icons/Person';
 
-// import Pages
-import HomePage from './pages/primary/HomePage';
-import NotFoundPage from './pages/NotFoundPage';
-import AccountPage from './pages/primary/AccountPage';
-import ContactPage from './pages/primary/ContactPage';
-import DepartmentPage from './pages/primary/DepartmentPage';
-import ProspectPage from './pages/primary/ProspectPage';
-import QuotePage from './pages/primary/QuotePage';
-import UserPage from './pages/primary/UserPage';
-import RevenuePage from './pages/secondary/RevenuePage';
-import SalesPage from './pages/secondary/SalesPage';
-import CompanyTreePage from './pages/secondary/CompanyTreePage';
-import ChatPage from './pages/tertiary/ChatPage';
+// Pages
+import ProfilePage from "./pages/ProfilePage";
+import HomePage from "./pages/primary/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
+import AccountPage from "./pages/primary/AccountPage";
+import ContactPage from "./pages/primary/ContactPage";
+import DepartmentPage from "./pages/primary/DepartmentPage";
+import ProspectPage from "./pages/primary/ProspectPage";
+import QuotePage from "./pages/primary/QuotePage";
+import UserPage from "./pages/primary/UserPage";
+import RevenuePage from "./pages/secondary/RevenuePage";
+import SalesPage from "./pages/secondary/SalesPage";
+import CompanyTreePage from "./pages/secondary/CompanyTreePage";
+import ChatPage from "./pages/tertiary/ChatPage";
 
 // utils
-import { UserContext } from './utils/Context';
+import { UserContext } from "./utils/Context";
+import { logout } from "./utils/DashboardUtil";
 
 const drawerWidth = 210;
 const useStyles = makeStyles((theme) => ({
@@ -106,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: "100vh",
     overflow: "auto",
-    paddingTop: theme.spacing(10)
+    paddingTop: theme.spacing(10),
   },
   container: {
     paddingTop: theme.spacing(10),
@@ -121,67 +128,120 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
-  small: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-  },
-  large: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-  },
+  logo: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9,
+    marginTop:'30'
+  }
 }));
 
 export default function Dashboard() {
+  const styles = useStyles();
+  const { user } = useContext(UserContext);
+  const history = useHistory();
 
-  const classes = useStyles();
-  const [open, setOpen] = useState(true);
-  const {user} = useContext(UserContext)
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(null);
+
+  useEffect(() => {
+    setIsAdmin(user === "admin");
+    console.log(user);
+  }, [user]);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setDrawerOpen(true);
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setDrawerOpen(false);
   };
 
+  const handleAvatarClick = (event) => {
+    setAvatarMenuOpen(event.currentTarget);
+  };
+
+  const handleAvatarClose = () => {
+    setAvatarMenuOpen(null);
+  };
+
+  const AvatarMenuList = () => {
+    return (
+      <Menu
+        anchorEl={avatarMenuOpen}
+        keepMounted
+        open={Boolean(avatarMenuOpen)}
+        onClose={handleAvatarClose}
+      >
+        {!isAdmin && 
+          <MenuItem onClick={(e) => {history.push('/profile'); handleAvatarClose(e)}}>
+            <ListItemIcon>
+              <PersonIcon fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="inherit">Porfile</Typography>
+          </MenuItem>
+        }
+        <MenuItem onClick={logout}>
+          <ListItemIcon>
+            <ExitToAppIcon fontSize="small" />
+          </ListItemIcon>
+          <Typography variant="inherit">Logout</Typography>
+        </MenuItem>
+      </Menu>
+    )
+  }
+
   return (
-    <div className={classes.root}>
+    <div className={styles.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
+      <AppBar
+        position="absolute"
+        className={clsx(styles.appBar, drawerOpen && styles.appBarShift)}
+      >
+        <Toolbar className={styles.toolbar}>
           <IconButton
             edge="start"
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+            className={clsx(
+              styles.menuButton,
+              drawerOpen && styles.menuButtonHidden
+            )}
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {user ? user.userEmail : ''} 
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={styles.title}
+          >
+            {user ? user.userEmail : ""}
           </Typography>
-          <IconButton color="inherit" onClick={logout}>
+          <IconButton color="inherit" onClick={handleAvatarClick}>
             <Badge color="secondary">
-              <ExitToAppIcon />
+              <Avatar
+                alt={isAdmin || !user ? 'user' : `${user.userEmail}`}
+                src="/images/kitten.jpg"
+              />
             </Badge>
           </IconButton>
-          <IconButton color="inherit" onClick={(e) => {alert("hello")}}>
-            <Badge color="secondary">
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.large}/>
-            </Badge>
-          </IconButton>
+          <AvatarMenuList />
         </Toolbar>
       </AppBar>
       <Drawer
         variant="permanent"
         classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+          paper: clsx(
+            styles.drawerPaper,
+            !drawerOpen && styles.drawerPaperClose
+          ),
         }}
-        open={open}
+        open={drawerOpen}
       >
-        <div className={classes.toolbarIcon}>
+        <div className={styles.toolbarIcon}>
           <IconButton onClick={handleDrawerClose}>
             <ChevronLeftIcon />
           </IconButton>
@@ -193,10 +253,11 @@ export default function Dashboard() {
         <Divider />
         <List>{tertiaryList}</List>
       </Drawer>
-      <main className={classes.content}>
-        <div style={{width: '98%', margin:"auto"}}>
+      <main className={styles.content}>
+        <div style={{ width: "98%", margin: "auto" }}>
           <Switch>
-            <Route path="/" exact component={HomePage}  />
+            <Route path="/" exact component={HomePage} />
+            <Route path="/profile" exact component={ProfilePage} />
             <Route path="/accounts" component={AccountPage} />
             <Route path="/contacts" component={ContactPage} />
             <Route path="/departments" component={DepartmentPage} />
@@ -214,4 +275,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-};
+}
