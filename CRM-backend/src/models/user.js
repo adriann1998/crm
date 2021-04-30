@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("./user");
+const Department = require("./department");
 
 const validatePhoneNumber = (ph) => {
   const regex = new RegExp("^\\+[0-9]+$");
@@ -126,8 +126,7 @@ const userSchema = new mongoose.Schema(
     department: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Department",
-      // validate: validateDepartmentFK,
+      ref: "Department"
     },
     userAddress: {
       street: {
@@ -156,6 +155,11 @@ const userSchema = new mongoose.Schema(
       default: true,
       required: true,
     },
+    access: {
+      type: String,
+      enum: ['regular', 'admin'],
+      required: true
+    }
   },
   // Schema Options
   {
@@ -166,6 +170,6 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', function (next) {
   this.userPosition = this.userPosition.toLowerCase();
   next();
-})
+});
 
 module.exports = mongoose.model("User", userSchema);

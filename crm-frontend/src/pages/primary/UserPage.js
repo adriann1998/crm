@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import UserForm from '../../components/forms/UserForm';
 import { UserIcon } from '../../components/Icons';
 import pageDescriptions from '../../components/pageDescriptions';
+import { UserContext } from '../../utils/Context';
 
 function UserPage(  ) {
+
+  const { user } = useContext(UserContext);
 
   const columns = [
     { 
@@ -52,7 +55,9 @@ function UserPage(  ) {
         baseURL={'/users'} 
         Form={UserForm}
         TableIcon={UserIcon}
-        editable
+        editable={user && user.access === 'admin'}
+        deleteable={user && user.access === 'admin'}
+        appendable={user && user.access === 'admin'}
       />
     </React.Fragment>
   );

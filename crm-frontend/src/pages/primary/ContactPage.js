@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import ContactForm from '../../components/forms/ContactForm';
 import { ContactIcon } from '../../components/Icons';
 import pageDescriptions from '../../components/pageDescriptions';
+import { UserContext } from '../../utils/Context';
 
 function ContactPage() {
+
+  const { user } = useContext(UserContext);
 
   const columns = [
     { 
@@ -50,8 +53,9 @@ function ContactPage() {
         baseURL={'/contacts'} 
         Form={ContactForm}
         TableIcon={ContactIcon}
-        editable
-        deleteable
+        editable={user && user.access === 'regular'}
+        deleteable={user && user.access === 'regular'}
+        appendable={user && user.access === 'regular'}
       />
     </React.Fragment>
   );

@@ -146,6 +146,7 @@ export default function UserForm( props ) {
           state: formValues.state,
           postcode: formValues.postcode,
         },
+        access: 'regular'
       };
       const response = await addOrEdit(formData, defaultValues, editMode);
       if (response === null) {

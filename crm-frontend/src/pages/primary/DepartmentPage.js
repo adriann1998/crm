@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import DepartmentForm from '../../components/forms/DepartmentForm';
 import { DepartmentIcon } from '../../components/Icons';
 import pageDescriptions from '../../components/pageDescriptions';
+import { UserContext } from '../../utils/Context';
 
 function DepartmentPage() {
+
+  const { user } = useContext(UserContext);
 
   const columns = [
     { 
@@ -34,7 +37,9 @@ function DepartmentPage() {
         baseURL={'/departments'}
         Form={DepartmentForm}
         TableIcon={DepartmentIcon}
-        editable
+        editable={user && user.access === 'admin'}
+        deleteable={user && user.access === 'admin'}
+        appendable={user && user.access === 'admin'}
       />
     </React.Fragment>
   );

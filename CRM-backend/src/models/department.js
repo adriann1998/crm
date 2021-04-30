@@ -28,7 +28,7 @@ const departmentSchema = new mongoose.Schema(
       ref: "User",
       default: null,
       // validate: validateDirector,
-    },
+    }
   },
   // Schema Options
   {

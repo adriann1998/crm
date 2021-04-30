@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import AccountForm from '../../components/forms/AccountForm';
 import { AccountIcon } from '../../components/Icons';
 import pageDescriptions from '../../components/pageDescriptions';
+import { UserContext } from '../../utils/Context';
 
 function AccountPage( ) {
+
+  const { user } = useContext(UserContext);
 
   const columns = [
     { 
@@ -43,7 +46,8 @@ function AccountPage( ) {
           Form={AccountForm}
           TableIcon={AccountIcon}
           editable
-          deleteable
+          deleteable={user && user.access === 'admin'}
+          appendable={user && user.access === 'admin'}
         />
     </React.Fragment>
   );

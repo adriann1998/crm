@@ -14,7 +14,9 @@ export function login(req, res) {
         token = generateAccessToken(userCredentials);
         res.send({
             token: token,
-            user: 'admin'
+            user: {
+                access: 'admin'
+            }
         })
     }
     else{

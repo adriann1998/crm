@@ -40,6 +40,7 @@ function QuotePage( ) {
         baseURL={'/quotes'} 
         Form={QuoteForm}
         TableIcon={QuoteIcon}
+        appendable
       />
     </React.Fragment>
   );

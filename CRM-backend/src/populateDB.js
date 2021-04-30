@@ -162,7 +162,7 @@ const generateUserDummyData = () => {
                     street: getRandomStreet(), city: getRandomCity(), state: getRandomState(), postcode: getRandomPostcode()
                 },
                 userStatus: true,
-                access: 'admin'
+                access: 'regular'
             }
             users.push(newUser);
         }

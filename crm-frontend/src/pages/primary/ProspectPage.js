@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import ProspectForm from '../../components/forms/ProspectForm';
 import accounting from 'accounting';
 import { ProspectIcon } from '../../components/Icons';
 import pageDescriptions from '../../components/pageDescriptions';
+import { UserContext } from '../../utils/Context';
 
 function ProspectPage(  ) {
+
+  const { user } = useContext(UserContext);
 
   const columns = [
     { 
@@ -62,8 +65,9 @@ function ProspectPage(  ) {
         baseURL={'/prospects'}
         Form={ProspectForm}
         TableIcon={ProspectIcon}
-        editable
-        deleteable
+        editable={user && user.access === 'regular'}
+        deleteable={false}
+        appendable={user && user.access === 'regular'}
       />
     </React.Fragment>
   );

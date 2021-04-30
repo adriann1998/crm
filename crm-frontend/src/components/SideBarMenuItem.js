@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { 
   MenuItem,
   ListItemText,
@@ -15,11 +15,6 @@ export default function SideBarMenuItem( props ) {
 
   const history = useHistory();
   const { user } = useContext(UserContext);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    setIsAdmin(user === "admin");
-  }, [user]);
 
   const routeChange = (event) => {
     const { myValue } = event.currentTarget.dataset;
@@ -28,7 +23,7 @@ export default function SideBarMenuItem( props ) {
 
   return (
     <React.Fragment>
-      {(adminOnly && isAdmin) || !adminOnly ? 
+      {(adminOnly && user && user.access === 'admin') || !adminOnly ? 
         <MenuItem data-my-value={path} onClick={routeChange}>
           <ListItemIcon>
             <Icon />

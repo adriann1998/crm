@@ -132,6 +132,14 @@ const useStyles = makeStyles((theme) => ({
     height: 0,
     paddingTop: '56.25%', // 16:9,
     marginTop:'30'
+  },
+  avatarSmall: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  avatarLarge: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
   }
 }));
 

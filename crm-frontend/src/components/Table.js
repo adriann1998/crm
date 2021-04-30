@@ -73,14 +73,14 @@ Object.containsValue = (obj, target) => {
 
 export default function Table( props ) {
 
-  const { columns, rowFilter, baseURL, Form, TableIcon, simple, size, editable, deleteable } = props;
+  const { columns, rowFilter, baseURL, Form, TableIcon, simple, size, editable, deleteable, appendable } = props;
 
   const classes = useStyles();
 
   const [rows, setRows] = useState([]);
   const [formDefaultValues, setFormDefaultValues] = useState(undefined);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [deletePopup, setDeletePopup] = useState(false);
   const [formPopup, setFormPopup] = useState(false);
   const [deleteRowId, setDeleteRowId] = useState("");
@@ -233,14 +233,16 @@ export default function Table( props ) {
           )
         }}
       />
-      <Button
-        onClick={() => {setFormPopup(true)}} 
-        variant="outlined"
-        color="primary"
-        startIcon={<AddIcon/>}
-        text="Add New"
-        className={classes.newButton}
-      />
+      {appendable && 
+        <Button
+          onClick={() => {setFormPopup(true)}} 
+          variant="outlined"
+          color="primary"
+          startIcon={<AddIcon/>}
+          text="Add New"
+          className={classes.newButton}
+        />
+      }
     </React.Fragment>
   )
 
@@ -320,7 +322,7 @@ export default function Table( props ) {
           </MaterialUITable>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
