@@ -4,7 +4,8 @@ import {
   Grid,
   Container,
   IconButton,
-  Collapse
+  Collapse,
+  FormHelperText
 } from '@material-ui/core';
 import TextField from '../inputFields/TextField';
 import Button from "../Button";
@@ -19,6 +20,7 @@ export default function AccountForm( props ) {
   const { user } = useContext(UserContext);
 
   const editMode = defaultValues !== undefined;
+  const editAccess = (!editMode || user._id === defaultValues.accHolder._id);
 
   const classes = useFormStyles();
 
@@ -26,7 +28,7 @@ export default function AccountForm( props ) {
 
   const initialFormValues = {
     accName: editMode ? defaultValues.accName : "",
-    accAlias: editMode ? defaultValues.accName : ""
+    accAlias: editMode ? defaultValues.accAlias : ""
   };
 
   const { formValues, handleInputChange } = useForm(initialFormValues);
@@ -92,7 +94,11 @@ export default function AccountForm( props ) {
             text="Submit"
             type="submit"
             className={classes.submit}
+            disabled={!editAccess}
           />
+          <FormHelperText style={{color: 'red'}}>
+            {editAccess ? '' : 'No Edit Access - You do not own this Account'}
+          </FormHelperText>
         </form>
       </div>
     </Container>

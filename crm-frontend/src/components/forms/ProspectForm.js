@@ -5,7 +5,8 @@ import {
   Container,
   IconButton,
   Collapse,
-  InputAdornment
+  InputAdornment,
+  FormHelperText
 } from '@material-ui/core';
 import TextField from '../inputFields/TextField';
 import SelectField from '../inputFields/SelectField';
@@ -25,6 +26,7 @@ export default function ProspectForm ( props ) {
   const { user } = useContext(UserContext);
   
   const editMode = defaultValues !== undefined;
+  const editAccess = (!editMode || user._id === defaultValues.prospectHolder._id);
   const classes = useFormStyles();
 
   const [prospectAmount, setProspectAmount] = useState(0);
@@ -59,16 +61,13 @@ export default function ProspectForm ( props ) {
   const [accountsChoices, setAccountsChoices] = useState([]);
 
   useEffect(() => {
-    let mounted = true;
     getData("/accounts").then((data) => {
-      if (mounted) {
-        if (data === null) {alert("Err");}
-        data = data.map((acc) => ({ value: acc._id, label: acc.accName })); 
-        setAccountsChoices(data);
-      }
+      if (data === null) {alert("Err");}
+      // const accFilter = (acc) => user && acc.accHolder._id === user._id;
+      data = data.map((acc) => ({ value: acc._id, label: acc.accName })); 
+      setAccountsChoices(data);
     });
-    return () => (mounted = false);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     let total = 0;
@@ -422,7 +421,11 @@ export default function ProspectForm ( props ) {
             text="Submit"
             type="submit"
             className={classes.submit}
+            disabled={!editAccess}
           />
+          <FormHelperText style={{color: 'red'}}>
+            {editAccess ? '' : 'No Edit Access - You do not own this Prospect'}
+          </FormHelperText>
         </form>
       </div>
     </Container>

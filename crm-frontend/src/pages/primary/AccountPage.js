@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import AccountForm from '../../components/forms/AccountForm';
@@ -10,14 +10,20 @@ function AccountPage( ) {
 
   const { user } = useContext(UserContext);
 
+  useEffect(() => {
+    console.log(user)
+  }, [user])
+
   const columns = [
     { 
       id: 'accName', 
-      label: 'Name'
+      label: 'Name',
+      sortable: true
     }, { 
       id: 'accAlias', 
       label: 'Alias',
-      format: (accAlias) => accAlias ? accAlias : ''
+      sortable: true,
+      format: (accAlias) => accAlias ? accAlias : '',
     }, { 
       id: 'accHolder', 
       label: 'Account Holder',
@@ -45,9 +51,9 @@ function AccountPage( ) {
           baseURL={'/accounts'} 
           Form={AccountForm}
           TableIcon={AccountIcon}
-          editable
-          deleteable={user && user.access === 'admin'}
-          appendable={user && user.access === 'admin'}
+          editable={user && user.access === 'regular'}
+          deleteable={user && user.access === 'regular'}
+          appendable={user && user.access === 'regular'}
         />
     </React.Fragment>
   );

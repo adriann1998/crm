@@ -66,7 +66,7 @@ function ProspectPage(  ) {
         Form={ProspectForm}
         TableIcon={ProspectIcon}
         editable={user && user.access === 'regular'}
-        deleteable={false}
+        deleteable={user && user.access === 'admin'}
         appendable={user && user.access === 'regular'}
       />
     </React.Fragment>

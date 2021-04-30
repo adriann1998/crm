@@ -37,7 +37,11 @@ module.exports = {
     Account.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, account) {
         if (err) return res.status(400).json(err);
         if (!account) return res.status(404).json();
-        res.json(account);
+        account.populate('accHolder', 'userEmail userPosition superiorHierarchy')
+              .execPopulate((err) => {
+                if (err) return res.status(500).json(err);
+                res.json(account);
+              })
       }
     );
   },

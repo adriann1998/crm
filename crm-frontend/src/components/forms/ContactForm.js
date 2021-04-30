@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   CssBaseline,
   Grid,
   Container,
   IconButton,
   Collapse,
+  FormHelperText
 } from "@material-ui/core";
 import TextField from "../inputFields/TextField";
 import SelectField from "../inputFields/SelectField";
@@ -13,12 +14,15 @@ import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import { useFormStyles, useForm } from "../../utils/FormUtil";
 import { getData } from "../../utils/CRUDUtil";
+import { UserContext } from "../../utils/Context";
 
 export default function ContactForm( props ) {
 
   const { addOrEdit, defaultValues } = props;
+  const {user} = useContext(UserContext)
   
   const editMode = defaultValues !== undefined;
+  const editAccess = (!editMode || user._id === defaultValues.account.accHolder._id);
 
   const classes = useFormStyles();
 
@@ -40,17 +44,14 @@ export default function ContactForm( props ) {
   const [accountsChoices, setAccountsChoices] = useState([]);
 
   useEffect(() => {
-    let mounted = true;
     getData("/accounts").then((data) => {
-      if (mounted) {
-        if (data === null) {alert("Err");}
-        setAccountsChoices(data.map((acc) => {
-          return {value: acc._id, label: acc.accName}
-        }))
-      }
+      if (data === null) {alert("Err");}
+      // const accFilter = (acc) => user && acc.accHolder._id === user._id;
+      setAccountsChoices(data.map((acc) => {
+        return {value: acc._id, label: acc.accName}
+      }))
     });
-    return () => (mounted = false);
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,6 +131,7 @@ export default function ContactForm( props ) {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
+                required
                 label="Contact Email"
                 name="contactEmail"
                 type="email"
@@ -139,17 +141,18 @@ export default function ContactForm( props ) {
             </Grid>
             <Grid item xs={12} sm={4}>
               <SelectField
-                required={true}
+                required
                 label="Account"
                 name="account"
                 defaultValue={formValues.account}
+                disabled={accountsChoices.length === 0}
                 onChange={handleInputChange}
                 items={accountsChoices}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                required={true}
+                required
                 label="Mobile PhoneNumber"
                 name="mobilePhone"
                 defaultValue={formValues.mobilePhone}
@@ -177,7 +180,11 @@ export default function ContactForm( props ) {
             text="Submit"
             type="submit"
             className={classes.submit}
+            disabled={!editAccess}
           />
+          <FormHelperText style={{color: 'red'}}>
+            {editAccess ? '' : 'No Edit Access - You do not own this Contact'}
+          </FormHelperText>
         </form>
       </div>
     </Container>

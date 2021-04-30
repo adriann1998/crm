@@ -1,18 +1,25 @@
 // components
-import React from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import QuoteForm from '../../components/forms/QuoteForm';
 import accounting from 'accounting';
 import { QuoteIcon } from '../../components/Icons';
 import pageDescriptions from '../../components/pageDescriptions';
+import { UserContext } from '../../utils/Context';
 
 function QuotePage( ) {
+
+  const { user } = useContext(UserContext);
 
   const columns = [
     { 
       id: '_id', 
       label: 'Quote Id'
+    }, { 
+      id: 'prospect', 
+      label: 'Account Name',
+      format: (prospect) => prospect ? prospect.account.accName : ''
     }, { 
       id: 'prospect', 
       label: 'Prospect Name',
@@ -40,7 +47,8 @@ function QuotePage( ) {
         baseURL={'/quotes'} 
         Form={QuoteForm}
         TableIcon={QuoteIcon}
-        appendable
+        editable
+        appendable={user && user.access === 'regular'}
       />
     </React.Fragment>
   );

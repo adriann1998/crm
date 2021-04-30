@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   CssBaseline,
   Grid,
   Container,
   IconButton,
   Collapse,
+  FormHelperText
 } from "@material-ui/core";
 import TextField from "../inputFields/TextField";
 import SelectField from "../inputFields/SelectField";
@@ -14,6 +15,7 @@ import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import { useFormStyles, useForm } from "../../utils/FormUtil";
 import { getData } from "../../utils/CRUDUtil";
+import { UserContext } from "../../utils/Context";
 
 const mapToFileObject = async (files) => {
   return Promise.all(files.map(async (f) =>  {
@@ -30,6 +32,7 @@ const mapToFileObject = async (files) => {
 export default function QuoteForm( props ) {
   
   const { addOrEdit, defaultValues } = props;
+  const { user } = useContext(UserContext);
   
   const editMode = defaultValues !== undefined;
 
@@ -48,23 +51,16 @@ export default function QuoteForm( props ) {
   const [prospectsChoices, setProspectsChoices] = useState([]);
 
   useEffect(() => {
-    console.log(formValues)
-  }, [formValues])
-
-  useEffect(() => {
-    let mounted = true;
     getData("/prospects").then((data) => {
-      if (mounted) {
-        if (data === null) return alert("Err");
-        data = data.map((prospect) => ({
-          value: prospect._id,
-          label: prospect.prospectName,
-        }));
-        setProspectsChoices(data);
-      }
+      if (data === null) return alert("Err");
+      // const prospectFilter = (prospect) => prospect.prospectHolder._id === user._id;
+      data = data.map((prospect) => ({
+        value: prospect._id,
+        label: prospect.prospectName,
+      }));
+      setProspectsChoices(data);
     });
-    return () => (mounted = false);
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,7 +145,15 @@ export default function QuoteForm( props ) {
               />
             </Grid>
           </Grid>
-          <Button text="Submit" type="submit" className={classes.submit} />
+          <Button 
+            text="Submit" 
+            type="submit" 
+            className={classes.submit} 
+            disabled={editMode}
+          />
+          <FormHelperText style={{color: 'red'}}>
+            {editMode ? `Quotes are view only` : ''}
+          </FormHelperText>
         </form>
       </div>
     </Container>

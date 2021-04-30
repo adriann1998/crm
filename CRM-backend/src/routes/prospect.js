@@ -29,6 +29,7 @@ module.exports = {
   getOne: function (req, res) {
     Prospect.findOne({ _id: req.params.id })
       .populate("account", "accName accAlias")
+      .populate("prospectHolder", "name userEmail userPosition superiorHierarchy NIK")
       .exec(function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
@@ -39,7 +40,12 @@ module.exports = {
     Prospect.findOneAndUpdate({ _id: req.params.id }, req.body, {new: true}, function (err, prospect) {
         if (err) return res.status(400).json(err);
         if (!prospect) return res.status(404).json();
-        res.json(prospect);
+        prospect.populate("account", "accName accAlias")
+              .populate("prospectHolder", "name userEmail userPosition superiorHierarchy NIK")
+              .execPopulate((err) => {
+                if (err) return res.status(500).json(err);
+                res.json(prospect);
+              })
       }
     );
   },

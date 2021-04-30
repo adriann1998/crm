@@ -280,7 +280,7 @@ const generateContactDummyData = () => {
         for (var i = 0; i < N; i++) {
             let newItem = {
                 name: {firstName: getRandomFirstName(), lastName: getRandomLastName()},
-                account: getRandomAccId(), contactTitle: getRandomTitle(), contactEmail: `email${N}@company.co.au`,
+                account: getRandomAccId(), contactTitle: getRandomTitle(), contactEmail: `email${i}@company.co.au`,
                 contactPhone: {mobile: getRandomPhone(), work: getRandomPhone(), office: getRandomPhone()}
             }
             contacts.push(newItem);
@@ -300,23 +300,22 @@ const generateContactDummyData = () => {
 
 const generateProspectDummyData = () => {
     // list of prospects
-    User.find({}, (err, users) => {
-        Account.find({}, (err, accounts) => {
+    Account.find({}, (err, accounts) => {
+        User.find({}, (err, users) => {
             const endUser = [undefined,"XL", "Axita", "Telstra", "Alibaba"]
             const getRandomEndUser = () => {return endUser[Math.floor(Math.random() * endUser.length)]};
-            const getRandomAccId  = () => {return accounts[Math.floor(Math.random() * accounts.length)]._id};
-            const userIds = users.map(u => u._id)
-            const getRandomUserId = () => userIds[Math.floor(Math.random() * userIds.length)]
             let prospects = [];
             const N = 100;
             for (let i=0; i<N; i++) {
                 const payment = getRandomPayment();
                 const paymentDetails = payment[0];
                 const prospectAmount = payment[1];
-                let randomDate = getRandomDate('01/01/2021','12/31/2028').split('/');
-                randomDate = `${randomDate[2]}-${randomDate[1]}-${randomDate[0]}`
+                const randomAccount = accounts[Math.floor(Math.random() * accounts.length)]
+                const accId = randomAccount._id;
+                const prospectHolderId = randomAccount.accHolder;
+                let randomDate = getRandomDate('01/01/2021','12/31/2028').split('/').reverse().join('-');
                 const newProspect = {
-                                    prospectName: `prospect ${i}`, account: getRandomAccId(), prospectHolder: getRandomUserId(),
+                                    prospectName: `prospect ${i}`, account: accId, prospectHolder: prospectHolderId,
                                     prospectAmount: prospectAmount, endUser: getRandomEndUser(), GPM: 45, 
                                     expectedSODate: randomDate, desc:"", payment: paymentDetails
                                     };

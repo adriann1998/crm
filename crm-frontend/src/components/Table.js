@@ -104,6 +104,7 @@ export default function Table( props ) {
 
   useEffect(() => {
     getData(baseURL).then((data) => {
+      console.log(data)
       data === null 
       ? console.log("Err") 
       : setRows(data.filter(rowFilter ? rowFilter : (n => n)));
@@ -174,6 +175,7 @@ export default function Table( props ) {
     }
     if (response !== null) {
       if (editMode) {
+        console.log(response)
         let newRows = rows;
         const index = rows.findIndex(r => r._id === response._id);
         newRows[index] = response;
@@ -252,7 +254,7 @@ export default function Table( props ) {
             ? null 
             : (
               <TableCell className={classes.selectTableCell}>
-                { editable && 
+                {editable && 
                   <IconButton
                     aria-label="edit"
                     onClick={() => handleEditRow(row)}
@@ -291,13 +293,16 @@ export default function Table( props ) {
                     style={{ minWidth: column.minWidth }}
                     sortDirection={orderBy === column.id ? order : false}
                   >
-                    <TableSortLabel
-                      active={orderBy === column.id}
-                      direction={orderBy === column.id ? order : 'asc'}
-                      onClick={(e) => handleSortRequest(column.id)}
-                    >
-                      {column.label}
-                    </TableSortLabel>
+                    {column.sortable
+                      ? (<TableSortLabel
+                          active={orderBy === column.id}
+                          direction={orderBy === column.id ? order : 'asc'}
+                          onClick={(e) => handleSortRequest(column.id)}
+                        >
+                          {column.label}
+                        </TableSortLabel>)
+                      : column.label
+                    }
                   </TableCell>
                 ))}
               </TableRow>

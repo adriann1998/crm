@@ -16,6 +16,7 @@ module.exports = {
     Contact.find({})
       .populate(populateFields)
       .exec(function (err, contacts) {
+        console.log(contacts[0])
         if (err) return res.status(404).json(err);
         res.json(filterContacts(req, contacts));
       });
@@ -26,7 +27,11 @@ module.exports = {
     let contact = new Contact(newContactDetails);
     contact.save(function (err) {
       if (err) return res.status(500).json(err);
-      res.json(contact);
+      contact.populate(populateFields)
+            .execPopulate((err) => {
+              if (err) res.status(500).json(err);
+              res.json(contact);
+            });
     });
   },
   getOne: function (req, res) {
@@ -34,7 +39,11 @@ module.exports = {
       .exec(function (err, contact) {
         if (err) return res.status(400).json(err);
         if (!contact) return res.status(404).json();
-        res.json(contact);
+        contact.populate(populateFields)
+            .execPopulate((err) => {
+              if (err) res.status(500).json(err);
+              res.json(contact);
+            });
       });
   },
   updateOne: function (req, res) {

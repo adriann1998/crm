@@ -36,6 +36,7 @@ export default function PrimaryList() {
         path="/departments"
         text="Department"
         Icon={HomeWorkIcon}
+        adminOnly
       />
 
       <SideBarMenuItem 
@@ -54,6 +55,7 @@ export default function PrimaryList() {
         path="/users"
         text="User"
         Icon={PersonIcon}
+        adminOnly
       />
 
     </div>

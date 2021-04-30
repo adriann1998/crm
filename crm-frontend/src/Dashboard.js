@@ -154,7 +154,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     setIsAdmin(user === "admin");
-    console.log(user);
   }, [user]);
 
   const handleDrawerOpen = () => {
