@@ -17,25 +17,24 @@ const users = require("./routes/user");
 const { login, authenticateToken } = require("./routes/login");
 const { upload } = require("./routes/utils/file");
 
-
 /* ----------------------------------
 Express Server Configuration
 ---------------------------------- */
 const app = express();
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {console.log(`Server is runningat port ${PORT}`)});
+app.listen(PORT, () => {
+  console.log(`Server is runningat port ${PORT}`);
+});
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use(express.static('public'))
-
+app.use(express.static("public"));
 
 /* ----------------------------------
 Database Configuration
 ---------------------------------- */
-require('./database')();
-
+require("./database")();
 
 /* ----------------------------------
 Endpoints Configuration
@@ -74,9 +73,9 @@ app.delete("/prospects/:id", prospects.deleteOne);
 
 //Quote RESTFul endpoionts
 app.get("/quotes", authenticateToken, quotes.getAll);
-app.post("/quotes", upload.any('files'), quotes.createOne);
+app.post("/quotes", upload.any("files"), quotes.createOne);
 app.get("/quotes/:id", quotes.getOne);
-app.put("/quotes/:id", upload.array('files'), quotes.updateOne);
+app.put("/quotes/:id", upload.array("files"), quotes.updateOne);
 app.delete("/quotes/:id", quotes.deleteOne);
 
 //User RESTFul endpoionts
@@ -87,9 +86,9 @@ app.put("/users/:id", users.updateOne);
 app.delete("/users/:id", users.deleteOne);
 
 // static front end
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'));
-    app.get('*', (req,res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-    })
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
 }

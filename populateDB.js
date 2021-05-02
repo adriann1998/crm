@@ -388,7 +388,7 @@ const insertSupriorHierarchyDummyData = () => {
             const theUpdate = {$set: {superiorHierarchy: getSuperiorHierarchy(user)}};
             User.findOneAndUpdate(theFilter, theUpdate, (err, user) => {
                 if (err) { console.log(err)}
-            })
-        })
-    })
-}
+            });
+        });
+    });
+};
