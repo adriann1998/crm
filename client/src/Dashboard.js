@@ -15,6 +15,7 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
+  Box,
   makeStyles,
 } from "@material-ui/core";
 import Copyright from "./components/Copyright";
@@ -29,6 +30,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import PersonIcon from '@material-ui/icons/Person';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 // Pages
 import ProfilePage from "./pages/ProfilePage";
@@ -184,12 +186,21 @@ export default function Dashboard() {
         open={Boolean(avatarMenuOpen)}
         onClose={handleAvatarClose}
       >
+        <Typography fontWeight="fontWeightBold">
+          <Box fontWeight="fontWeightBold" m={1}>
+            Signed in as
+          </Box>
+          <Box fontWeight="fontWeightLight" m={1}>
+            {isAdmin ? 'admin' : user && user.userEmail}
+          </Box>
+        </Typography>  
+        <Divider />
         {!isAdmin && 
           <MenuItem onClick={(e) => {history.push('/profile'); handleAvatarClose(e)}}>
             <ListItemIcon>
               <PersonIcon fontSize="small" />
             </ListItemIcon>
-            <Typography variant="inherit">Porfile</Typography>
+            <Typography variant="inherit">Your Porfile</Typography>
           </MenuItem>
         }
         <MenuItem onClick={logout}>
@@ -238,6 +249,7 @@ export default function Dashboard() {
                 src="/images/kitten.jpg"
               />
             </Badge>
+            <ArrowDropDownIcon />
           </IconButton>
           <AvatarMenuList />
         </Toolbar>
