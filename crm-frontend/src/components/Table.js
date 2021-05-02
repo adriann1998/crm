@@ -24,6 +24,7 @@ import PopupDialog from "./PopupDialog";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import SearchIcon from '@material-ui/icons/Search';
 // utils
 import { getData, deleteData, putData, postData } from "../utils/CRUDUtil";
@@ -48,6 +49,9 @@ const useStyles = makeStyles(theme => ({
   newButton: {
     margin: theme.spacing(3,2,3,2),
     float: "right",
+  },
+  iconButton: {
+    margin: theme.spacing(3)
   }
 }));
 
@@ -79,10 +83,12 @@ export default function Table( props ) {
 
   const [rows, setRows] = useState([]);
   const [formDefaultValues, setFormDefaultValues] = useState(undefined);
+  const [selectedRowData, setSelectedRowData] = useState(undefined);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [deletePopup, setDeletePopup] = useState(false);
   const [formPopup, setFormPopup] = useState(false);
+  const [viewPopup, setViewPopup] = useState(false);
   const [deleteRowId, setDeleteRowId] = useState("");
   const [order, setOrder] = useState("");
   const [orderBy, setOrderBy] = useState(""); 
@@ -104,14 +110,14 @@ export default function Table( props ) {
 
   useEffect(() => {
     getData(baseURL).then((data) => {
-      console.log(data)
       data === null 
       ? console.log("Err") 
       : setRows(data.filter(rowFilter ? rowFilter : (n => n)));
     });
   }, [baseURL, rowFilter]);
 
-  const handleDeleteRow = (_id) => {
+  const handleDeleteRow = (row) => {
+    const _id = row._id;
     setDeletePopup(true);
     setDeleteRowId(_id);
   };
@@ -131,6 +137,11 @@ export default function Table( props ) {
   const handleFormPopupClose = () => {
     setFormPopup(false);
     setFormDefaultValues(undefined);
+  }
+
+  const handleViewPopupClose = () => {
+    setViewPopup(false);
+    setSelectedRowData(undefined);
   }
 
   const handleCloseDeleteDialog = () => {
@@ -190,35 +201,33 @@ export default function Table( props ) {
     return response;
   }
 
-  const DeleteDialog = () => {
-    return (
-      <Dialog
-        open={deletePopup}
-        onClose={handleCloseDeleteDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{`Delete?`}</DialogTitle>
-        <DialogContent dividers>
-            Row cannot be reverted once deleted
-        </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={handleCloseDeleteDialog} 
-            color="inheret"
-            text="Cancel"
-            size="small"
-          />
-          <Button 
-            onClick={handleDeleteRowConfirm} 
-            color="primary"
-            text="OK"
-            size="small"
-          />
-        </DialogActions>
-      </Dialog>
-    );
-  };
+  const DeleteDialog = () => (
+    <Dialog
+      open={deletePopup}
+      onClose={handleCloseDeleteDialog}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">{`Delete?`}</DialogTitle>
+      <DialogContent dividers>
+          Row cannot be reverted once deleted
+      </DialogContent>
+      <DialogActions>
+        <Button 
+          onClick={handleCloseDeleteDialog} 
+          color="inheret"
+          text="Cancel"
+          size="small"
+        />
+        <Button 
+          onClick={handleDeleteRowConfirm} 
+          color="primary"
+          text="OK"
+          size="small"
+        />
+      </DialogActions>
+    </Dialog>
+  );
 
   const TableHeader = () => (
     <React.Fragment>
@@ -237,7 +246,7 @@ export default function Table( props ) {
       />
       {appendable && 
         <Button
-          onClick={() => {setFormPopup(true)}} 
+          onClick={() => setFormPopup(true)} 
           variant="outlined"
           color="primary"
           startIcon={<AddIcon/>}
@@ -248,44 +257,64 @@ export default function Table( props ) {
     </React.Fragment>
   )
 
-  const EditDeleteCell = ( props ) => {
-    const { row } = props;
-    const cell = (!editable && !deleteable) 
-            ? null 
-            : (
-              <TableCell className={classes.selectTableCell}>
-                {editable && 
-                  <IconButton
-                    aria-label="edit"
-                    onClick={() => handleEditRow(row)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                }
-                {deleteable &&
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => {
-                      handleDeleteRow(row._id);
-                    }}
-                  >
-                    <DeleteOutlineIcon />
-                  </IconButton>
-                }
-              </TableCell>
-            )
-    return cell;
-  }
+  const ActionCell = ( {row} ) => (
+    <TableCell className={classes.selectTableCell}>
+      {editable && 
+        <IconButton
+          aria-label="edit"
+          onClick={() => handleEditRow(row)}
+        >
+          <EditIcon style={{fill: 1==2 ? "red" : "rgba(0, 0, 0, 0.54)"}}/>
+        </IconButton>
+      }
+      {deleteable &&
+        <IconButton
+          aria-label="delete"
+          onClick={() => handleDeleteRow(row)}
+          // style={classes.iconButton}
+        >
+          <DeleteOutlineIcon />
+        </IconButton>
+      }
+      <IconButton
+        aria-label="view"
+        onClick={() => setViewPopup(true)}
+        // style={classes.iconButton}
+      >
+        <VisibilityIcon />
+      </IconButton>
+    </TableCell>
+  )
+
+  const FormPopupDialog = () => (
+    <PopupDialog
+      title={
+        <div>
+          <TableIcon style={{marginRight: 20}}/>
+            {baseURL[1].toUpperCase()}{baseURL.substring(2,baseURL.length-1)}
+        </div>
+      }
+      maxWidth="md"
+      openPopup={formPopup}
+      handleClose={handleFormPopupClose}
+    >
+      <Form
+        addOrEdit={addOrEdit}
+        defaultValues={formDefaultValues}
+      />
+    </PopupDialog>
+  )
 
   return (
     <React.Fragment>
+    
       <Paper className={classes.root}>
         {!simple && <TableHeader />}
         <TableContainer className={classes.container}>
           <MaterialUITable stickyHeader aria-label="sticky table" size={size || "medium"}>
             <TableHead className={classes.tableHead}>
               <TableRow>
-                {!simple && (editable || deleteable) && <TableCell align="left" width="130" />}
+                {!simple && <TableCell align="left" width="130" />}
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
@@ -311,7 +340,7 @@ export default function Table( props ) {
               {rowsAfterPaginAndSorting().map((row) => {
                   return (
                     <TableRow key={row._id} hover role="checkbox" tabIndex={-1}>
-                      {!simple && <EditDeleteCell row={row}/> }
+                      {!simple && <ActionCell row={row}/> }
                       {columns.map((column, index) => {
                         const value = row[column.id];
                         return (
@@ -337,24 +366,22 @@ export default function Table( props ) {
         />
       </Paper>
       <DeleteDialog />
-      {!simple && 
-        <PopupDialog
-          title={
-            <div>
-              <TableIcon style={{marginRight: 20}}/>
-                {baseURL[1].toUpperCase()}{baseURL.substring(2,baseURL.length-1)}
-            </div>
-          }
-          maxWidth="md"
-          openPopup={formPopup}
-          handleClose={handleFormPopupClose}
-        >
-          <Form
-            addOrEdit={addOrEdit}
-            defaultValues={formDefaultValues}
-          />
-        </PopupDialog>
-      }
+      <FormPopupDialog />
+      <PopupDialog
+        title={
+          <div>
+            <TableIcon style={{marginRight: 20}}/>
+              {baseURL[1].toUpperCase()}{baseURL.substring(2,baseURL.length-1)}
+          </div>
+        }
+        openPopup={viewPopup}
+        handleClose={handleViewPopupClose}
+      >
+        {selectedRowData && selectedRowData.values.forEach((n) => {
+          console.log(n)
+          return n
+        })}
+      </PopupDialog>
     </React.Fragment>
   );
 }

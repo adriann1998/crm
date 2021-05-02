@@ -1,8 +1,9 @@
-// Import middleware
+// Import libraries and middlewares
 const bodyParser = require("body-parser");
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const path = require("path");
 
 // Import router callback functions
 const accounts = require("./routes/account");
@@ -21,8 +22,8 @@ const { upload } = require("./routes/utils/file");
 Express Server Configuration
 ---------------------------------- */
 const app = express();
-const PORT = 8080;
-app.listen(PORT, () => {console.log(`Server is running at port ${PORT}`)});
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {console.log(`Server is runningat port ${PORT}`)});
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -84,3 +85,11 @@ app.post("/users", users.createOne);
 app.get("/users/:id", users.getOne);
 app.put("/users/:id", users.updateOne);
 app.delete("/users/:id", users.deleteOne);
+
+// static front end
+if (process.env.NODE_ENV) {
+    app.use(express.static('client/build'));
+    app.get('*', (req,res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    })
+}

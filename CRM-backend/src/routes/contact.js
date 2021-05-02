@@ -16,7 +16,6 @@ module.exports = {
     Contact.find({})
       .populate(populateFields)
       .exec(function (err, contacts) {
-        console.log(contacts[0])
         if (err) return res.status(404).json(err);
         res.json(filterContacts(req, contacts));
       });

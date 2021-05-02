@@ -119,6 +119,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(10),
     paddingBottom: theme.spacing(4),
   },
+  mainDiv: { 
+    width: "98%", 
+    margin: "auto" 
+  },
   paper: {
     padding: theme.spacing(2),
     display: "flex",
@@ -261,7 +265,7 @@ export default function Dashboard() {
         <List>{tertiaryList}</List>
       </Drawer>
       <main className={styles.content}>
-        <div style={{ width: "98%", margin: "auto" }}>
+        <div className={styles.mainDiv}>
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/profile" exact component={ProfilePage} />
