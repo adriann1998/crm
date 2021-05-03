@@ -48,7 +48,7 @@ function AccountPage( ) {
         />
         <Table 
           columns={columns} 
-          baseURL={'/accounts'} 
+          baseURL={'/api/accounts'} 
           Form={AccountForm}
           TableIcon={AccountIcon}
           editable={user && user.access === 'regular'}

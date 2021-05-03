@@ -50,7 +50,7 @@ function ContactPage() {
       />
       <Table 
         columns={columns} 
-        baseURL={'/contacts'} 
+        baseURL={'/api/contacts'} 
         Form={ContactForm}
         TableIcon={ContactIcon}
         editable={user && user.access === 'regular'}

@@ -52,7 +52,7 @@ function UserPage(  ) {
       />
       <Table 
         columns={columns} 
-        baseURL={'/users'} 
+        baseURL={'/api/users'} 
         Form={UserForm}
         TableIcon={UserIcon}
         editable={user && user.access === 'admin'}
