@@ -3,6 +3,7 @@ import clsx from "clsx";
 import {
   Grid,
   Paper,
+  Typography,
   makeStyles
 } from "@material-ui/core";
 
@@ -25,19 +26,15 @@ export default function ProfilePage() {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={8} lg={9}>
+      <Grid item xs={12} sm={4}>
         <Paper className={fixedHeightPaper}>
-          Chart
+          <Typography variant="h6">Personal Information</Typography>
+          
         </Paper>
       </Grid>
-      <Grid item xs={12} md={4} lg={3}>
+      <Grid item xs={12} sm={8}>
         <Paper className={fixedHeightPaper}>
           Depostis
-        </Paper>
-      </Grid>
-      <Grid item xs={12}>
-        <Paper className={styles.paper}>
-          Orders
         </Paper>
       </Grid>
     </Grid>

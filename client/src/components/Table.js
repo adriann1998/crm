@@ -154,6 +154,11 @@ export default function Table( props ) {
     setFormPopup(true);
   };
 
+  const handleViewRow = (row) => {
+    setViewPopup(true)
+    console.log(row)
+  };
+
   const handleSortRequest = (cellId) => {
     const isAsc = orderBy === cellId && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -162,12 +167,12 @@ export default function Table( props ) {
 
   const handleSearchRequest = (e) => {
     setFilterFn({
-      fn: items => {
+      fn: (items) => {
         if (e.target.value === ''){
           return items;
         }
         else {
-          return items.filter((item) => Object.containsValue(item, e.target.value))
+          return items.filter((item) => Object.containsValue(item, e.target.value.toLowerCase()));
         }
       }
     })
@@ -229,34 +234,6 @@ export default function Table( props ) {
     </Dialog>
   );
 
-  const TableHeader = () => (
-    <React.Fragment>
-      <TextField
-        label="Search..."
-        size="medium"
-        className={classes.inputSearch}
-        onChange={handleSearchRequest}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon/>
-            </InputAdornment>
-          )
-        }}
-      />
-      {appendable && 
-        <Button
-          onClick={() => setFormPopup(true)} 
-          variant="outlined"
-          color="primary"
-          startIcon={<AddIcon/>}
-          text="Add New"
-          className={classes.newButton}
-        />
-      }
-    </React.Fragment>
-  )
-
   const ActionCell = ( {row} ) => (
     <TableCell className={classes.selectTableCell}>
       {editable && 
@@ -266,7 +243,7 @@ export default function Table( props ) {
         >
           <EditIcon  
             fontSize="small"
-            color='action'
+            color='default'
           />
         </IconButton>
       }
@@ -283,7 +260,7 @@ export default function Table( props ) {
       }
       <IconButton
         aria-label="view"
-        onClick={() => setViewPopup(true)}
+        onClick={() => handleViewRow(row)}
       >
         <VisibilityIcon 
           fontSize="small"
@@ -314,9 +291,32 @@ export default function Table( props ) {
 
   return (
     <React.Fragment>
-    
       <Paper className={classes.root}>
-        {!simple && <TableHeader />}
+        {!simple && 
+          <TextField
+            label="Search..."
+            size="medium"
+            className={classes.inputSearch}
+            onChange={handleSearchRequest}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon/>
+                </InputAdornment>
+              )
+            }}
+          />
+        }
+        {!simple && appendable && 
+          <Button
+            onClick={() => setFormPopup(true)} 
+            variant="outlined"
+            color="primary"
+            startIcon={<AddIcon/>}
+            text="Add New"
+            className={classes.newButton}
+          />
+        }
         <TableContainer className={classes.container}>
           <MaterialUITable stickyHeader aria-label="sticky table" size={size || "medium"}>
             <TableHead className={classes.tableHead}>

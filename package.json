@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd client && npm run build",
     "install-client": "cd client && npm install",
-    "start": "npx nodemon --exec npx babel-node server.js",
+    "start": "npx nodemon --ignore 'client/' --exec npx babel-node server.js",
     "client": "cd client && npm start",
     "dev": "concurrently \"npm start\" \"cd client && npm start\"",
     "heroku-postbuild": "npm run install-client && npm run build"

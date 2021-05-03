@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import AccountForm from '../../components/forms/AccountForm';
@@ -9,10 +9,6 @@ import { UserContext } from '../../utils/Context';
 function AccountPage( ) {
 
   const { user } = useContext(UserContext);
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
 
   const columns = [
     { 
