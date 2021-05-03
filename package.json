@@ -9,6 +9,7 @@
     "install-client": "cd client && npm install",
     "start": "npx nodemon --exec npx babel-node server.js",
     "client": "cd client && npm start",
+    "dev": "concurrently \"npm start\" \"cd client && npm start\"",
     "heroku-postbuild": "npm run install-client && npm run build"
   },
   "keywords": [],

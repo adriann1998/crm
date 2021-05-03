@@ -2,8 +2,9 @@
 const mongoose = require("mongoose");
 
 module.exports = () => {
+  const dbName = 'CRM';
   mongoose.connect(
-    "mongodb://localhost:27017/CRM",
+    `mongodb+srv://admin:admin@cluster0.pcl3y.mongodb.net/${dbName}?retryWrites=true`,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

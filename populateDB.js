@@ -12,7 +12,7 @@ const User = require('./models/user');
 
 // Connection URL
 const dbName = 'CRM';
-const url = "mongodb://localhost:27017/" + dbName;
+const url = `mongodb+srv://admin:admin@cluster0.pcl3y.mongodb.net/${dbName}?retryWrites=true`;
 
 //Connect to mongoDB server
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
