@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     float: "right",
   },
   iconButton: {
-    margin: theme.spacing(3)
+    margin: theme.spacing(0)
   }
 }));
 
@@ -264,24 +264,31 @@ export default function Table( props ) {
           aria-label="edit"
           onClick={() => handleEditRow(row)}
         >
-          <EditIcon style={{fill: 1==2 ? "red" : "rgba(0, 0, 0, 0.54)"}}/>
+          <EditIcon  
+            fontSize="small"
+            color='action'
+          />
         </IconButton>
       }
       {deleteable &&
         <IconButton
           aria-label="delete"
           onClick={() => handleDeleteRow(row)}
-          // style={classes.iconButton}
         >
-          <DeleteOutlineIcon />
+          <DeleteOutlineIcon 
+            fontSize="small"
+            color='secondary'
+          />
         </IconButton>
       }
       <IconButton
         aria-label="view"
         onClick={() => setViewPopup(true)}
-        // style={classes.iconButton}
       >
-        <VisibilityIcon />
+        <VisibilityIcon 
+          fontSize="small"
+          color='primary'
+        />
       </IconButton>
     </TableCell>
   )

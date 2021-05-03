@@ -4,15 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon --exec npx babel-node .\\server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+    "build": "cd client && npm run build",
+    "install-client": "cd client && npm install",
+    "start": "npx nodemon --exec npx babel-node server.js",
+    "client": "cd client && npm start",
+    "heroku-postbuild": "npm run install-client && npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "concurrently": "^6.0.2",
     "connect-multiparty": "^2.2.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.0.0",
