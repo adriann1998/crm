@@ -8,6 +8,7 @@ module.exports = () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
+      dbName: "CRM"
     },
     function (err) {
       if (err) {
