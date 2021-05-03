@@ -34,7 +34,7 @@ function DepartmentPage() {
       />
       <Table 
         columns={columns} 
-        baseURL={'/api/departments'}
+        baseURL={'/departments'}
         Form={DepartmentForm}
         TableIcon={DepartmentIcon}
         editable={user && user.access === 'admin'}

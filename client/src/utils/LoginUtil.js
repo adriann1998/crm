@@ -3,7 +3,7 @@ export const validateForm = (userEmail, password) => {
 }
 
 export const loginUser = async (credentials) => {
-    return fetch('/api/login', {
+    return fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

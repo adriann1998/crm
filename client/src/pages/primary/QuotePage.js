@@ -44,7 +44,7 @@ function QuotePage( ) {
       />
       <Table 
         columns={columns} 
-        baseURL={'/api/quotes'} 
+        baseURL={'/quotes'} 
         Form={QuoteForm}
         TableIcon={QuoteIcon}
         editable

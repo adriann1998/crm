@@ -62,7 +62,7 @@ function ProspectPage(  ) {
       />
       <Table 
         columns={columns}
-        baseURL={'/api/prospects'}
+        baseURL={'/prospects'}
         Form={ProspectForm}
         TableIcon={ProspectIcon}
         editable={user && user.access === 'regular'}
